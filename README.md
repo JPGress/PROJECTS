@@ -29,7 +29,7 @@ This project is licensed under the MIT License. Feel free to use, modify, and di
 
 - **Author**: JPGress (a.k.a. R3v4N | M0r14rtY | 0.0wL)
 - **LinkedIn**: [linkedin.com/in/jpgress](https://linkedin.com/in/jpgress)
-- **Email**: pedro@s17cyber.com | jpgress@gmail.com
+- **Email**: <pedro@s17cyber.com> | <jpgress@gmail.com>
 
 ---
 
