@@ -23,6 +23,6 @@ This project is licensed under the MIT License. Feel free to use, modify, and di
 
 📞 Contact
 
-Author: JPGress (R3v4N | M0r14rtY | 0.0wL)
-LinkedIn: linkedin.com/in/pedrogress/
-Email: pedro@s17cyber.com | jpgress@gmail.com
+- Author: JPGress (R3v4N | M0r14rtY | 0.0wL)
+- LinkedIn: linkedin.com/in/pedrogress/
+- Email: pedro@s17cyber.com | jpgress@gmail.com
