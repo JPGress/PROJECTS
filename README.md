@@ -1,9 +1,6 @@
 # 🚀 CyberSec Scripts Portfolio
 
----
 Welcome to my portfolio of Cybersecurity Scripts. This repository serves as my flagship project, showcasing tools and scripts I’ve developed to solve cybersecurity challenges. It reflects my expertise, passion, and creativity in the field of CyberSec.
-
----
 
 ## 🛠 Available Tools
 
@@ -26,6 +23,6 @@ This project is licensed under the MIT License. Feel free to use, modify, and di
 
 📞 Contact
 
-Author: JPGress <R3v4N | M0r14rtY | 0.0wL>
-LinkedIn: linkedin.com/in/jpgress
+Author: JPGress (R3v4N | M0r14rtY | 0.0wL)
+LinkedIn: linkedin.com/in/pedrogress/
 Email: pedro@s17cyber.com | jpgress@gmail.com
