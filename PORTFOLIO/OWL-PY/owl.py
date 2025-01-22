@@ -647,19 +647,20 @@ def v_dns_zt():
 
     try:
         # Get nameservers for specified domain
-        ns_command = f"host -t ns {target}"
+        ns_command = f"dig AXFR {target}"
         ns_output = subprocess.check_output(ns_command, shell=True, text=True)
         ns_servers = [line.split()[-1] for line in ns_output.splitlines() if line]
 
         # Iterate over nameservers and list authority zone records
         for server in ns_servers:
             print(f"\nQuerying zone records in {server}...")
-            zone_command = f"host -l -a {target} {server}"
+            zone_command = f"dig AXFR {target} {server}"
             try:
                 zone_output = subprocess.check_output(zone_command, shell=True, text=True)
                 print(zone_output)
             except subprocess.CalledProcessError as e:
                 print(f"Error when querying {server}: {e}")
+                pause()
 
     except subprocess.CalledProcessError as e:
         print(f"Error getting nameservers: {e}")
