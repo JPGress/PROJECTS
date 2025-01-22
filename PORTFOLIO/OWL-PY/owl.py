@@ -25,6 +25,7 @@ import whois  # To query WHOIS information about domains.
 import dns.resolver  # For resolving DNS records.
 import webbrowser  # To open web pages in the browser.
 import time  # To handle time-related functions (e.g., delays, timestamps).
+import threading # For threading operations.
 from datetime import datetime, timezone  # For working with dates and timezones.
 from concurrent.futures import ThreadPoolExecutor  # To perform tasks concurrently (multi-threading).
 from urllib.parse import quote  # For encoding URLs.
@@ -33,6 +34,7 @@ from selenium.webdriver.chrome.service import Service  # For managing the Chrome
 from selenium.common.exceptions import WebDriverException  # For handling exceptions related to WebDriver operations
 from selenium.webdriver.common.by import By  # For locating elements in Selenium
 from selenium.webdriver.chrome.options import Options  # For configuring Chrome browser options
+from queue import Queue # For implementing a thread-safe queue
 
 # Define the top 1,000 most common ports
 # Explanation:
