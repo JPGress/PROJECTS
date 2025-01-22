@@ -643,28 +643,28 @@ def iv_metadata_analysis():
 
 def v_dns_zt():
     print("DNS Zone Transfer")
-    target = input("Digite a URL do alvo: ").strip()
+    target = input("Enter the target URL: ").strip()
 
     try:
-        # Obter servidores de nomes para o domínio especificado
+        # Get nameservers for specified domain
         ns_command = f"host -t ns {target}"
         ns_output = subprocess.check_output(ns_command, shell=True, text=True)
         ns_servers = [line.split()[-1] for line in ns_output.splitlines() if line]
 
-        # Iterar sobre os servidores de nomes e listar os registros de zona de autoridade
+        # Iterate over nameservers and list authority zone records
         for server in ns_servers:
-            print(f"\nConsultando registros de zona em {server}...")
+            print(f"\nQuerying zone records in {server}...")
             zone_command = f"host -l -a {target} {server}"
             try:
                 zone_output = subprocess.check_output(zone_command, shell=True, text=True)
                 print(zone_output)
             except subprocess.CalledProcessError as e:
-                print(f"Erro ao consultar {server}: {e}")
+                print(f"Error when querying {server}: {e}")
 
     except subprocess.CalledProcessError as e:
-        print(f"Erro ao obter servidores de nomes: {e}")
+        print(f"Error getting nameservers: {e}")
 
-    input("\nPressione ENTER para continuar...")
+    pause()
 
 def vi_subdomain_takeover():
     print("vi_subdomain_takeover()")
