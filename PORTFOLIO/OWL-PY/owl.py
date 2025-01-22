@@ -370,16 +370,14 @@ def main():
             pause()
             iv_metadata_analysis()
 
-        elif choice == "5":  # Reserved for future functionality
+        elif choice == "5":  # DNS Zone Transfer
             v_dns_zt()
             
         elif choice == "6":  # Subdomain Takeover
             vi_subdomain_takeover()
         
         elif choice == "7":  # DNS reverse
-            print("[WARNING] This function is not implemented yet")
-            pause()
-            vii_dns_reverse()
+            vii_rev_dns()
             
         elif choice == "8":  # Reserved for future functionality
             print("[WARNING] This function is not implemented yet")
@@ -781,8 +779,59 @@ def vi_subdomain_takeover():
     else:
         print("Returning to the main program...")
 
-def vii_dns_reverse():
-    print("vii_dns_reverse()")
+def vii_rev_dns():
+    print("DNS Reverse Lookup")
+    
+    # Step 1: Get the base address for the reverse DNS lookup
+    address = input("Enter the base address for the DNS reverse lookup (e.g., 192.168.1): ").strip()
+    
+    # Step 2: Get the start of the IP range
+    try:
+        start = int(input("Enter the start of the IP range: ").strip())
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+        return
+    
+    # Step 3: Get the end of the IP range
+    try:
+        end = int(input("Enter the end of the IP range: ").strip())
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+        return
+    
+    # Step 4: Define the output file name
+    output_file = f"{address}.{start}-{end}.txt"
+    
+    # Step 5: Ensure the output file is fresh
+    if os.path.exists(output_file):
+        os.remove(output_file)  # Remove the file if it already exists
+    
+    # Step 6: Perform reverse DNS lookups for the specified range
+    with open(output_file, 'w') as output:
+        for range_val in range(start, end + 1):  # Iterate over the specified range
+            full_address = f"{address}.{range_val}"
+            try:
+                # Use the `host` command to perform the reverse lookup
+                result = subprocess.check_output(["host", "-t", "ptr", full_address], text=True)
+                
+                # Extract the PTR record if it exists
+                if "pointer" in result:
+                    ptr_record = result.split()[-1].strip()
+                    if ".ip-" not in ptr_record:  # Exclude unwanted records
+                        output.write(ptr_record + "\n")
+            except subprocess.CalledProcessError:
+                # Ignore errors for addresses without a PTR record
+                continue
+
+    # Step 7: Display the output file contents
+    with open(output_file, 'r') as output:
+        print(output.read())
+
+    # Step 8: Wait for user input before returning to the main menu
+    pause()
+
+    # Placeholder for returning to the main menu (ensure 'main_menu()' is defined elsewhere)
+    main()
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
