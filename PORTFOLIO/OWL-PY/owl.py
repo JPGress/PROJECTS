@@ -680,34 +680,50 @@ def v_dns_zt():
     pause()
 
 def vi_subdomain_takeover():
-    # Prompt the user for the host to attack
-    host = input("Enter the host for the Subdomain takeover attack: ").strip()
-    
-    # Prompt the user for the file containing the domains to be tested
-    file_path = input("Point to the file with the domains to be tested: ").strip()
-    
-    # Define the command to check the CNAMEs of subdomains
-    command = "host -t cname"
-    
-    # Check if the file exists
-    if not os.path.isfile(file_path):
-        print(f"Error: The file '{file_path}' does not exist.")
+    print("Subdomain Takeover Vulnerability Scanner")
+
+    # Step 1: Get the target host and validate the format
+    host = input("Enter the host for the Subdomain takeover attack (e.g., example.com): ").strip()
+    if not re.match(r"^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", host):
+        print("Invalid host format. Please enter a valid domain.")
         return
-    
-    # Open the file and iterate over each domain
-    with open(file_path, 'r') as file:
-        for line in file:
-            domain = line.strip()
-            full_command = f"{command} {domain}.{host}"
-            result = os.popen(full_command).read()
-            if "alias for" in result:
-                print(result)
-    
-    # Wait for the user to press Enter to continue
+
+    # Step 2: Get the file path and validate its existence
+    file_path = input("Enter the path to the file with subdomains: ").strip()
+    if not os.path.isfile(file_path):
+        print(f"Error: The file '{file_path}' does not exist or is inaccessible.")
+        return
+
+    # Step 3: Open the file and process each subdomain
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                domain = line.strip()
+                full_domain = f"{domain}.{host}"
+                
+                # Use subprocess to safely execute the CNAME query
+                try:
+                    result = subprocess.check_output(["host", "-t", "cname", full_domain], text=True)
+                    
+                    # Check for CNAME alias in the output
+                    if "is an alias for" in result:
+                        print(f"[CNAME Found] {full_domain}: {result.strip()}")
+                
+                except subprocess.CalledProcessError as e:
+                    print(f"Error querying {full_domain}: {e}")
+
+    except Exception as e:
+        print(f"An error occurred while reading the file: {e}")
+
+    # Step 4: Wait for user input before continuing
     pause()
-    
-    # Call the main menu function (assuming it is defined elsewhere)
-    main()
+
+    # Step 5: Return to the main menu (if applicable)
+    # Ensure 'main()' is defined elsewhere in the code
+    if 'main' in globals():
+        main()
+    else:
+        print("Returning to the main program...")
 
 def vii_dns_reverse():
     print("vii_dns_reverse()")
