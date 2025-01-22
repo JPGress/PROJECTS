@@ -366,7 +366,7 @@ def main():
             iii_google_hacking()
 
         elif choice == "4":  # Metadata analysis
-            print("[WARNING] Metadata analysis requires Selenium. This function is unstable")
+            print("[>>> WARNING! <<<] Metadata analysis requires Selenium. This function is unstable [>>> WARNING! <<<]")
             pause()
             iv_metadata_analysis()
 
