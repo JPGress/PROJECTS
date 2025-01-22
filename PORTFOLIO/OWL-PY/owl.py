@@ -405,9 +405,8 @@ def main():
         elif choice == "7":  # DNS reverse
             vii_rev_dns()
             
-        elif choice == "8":  # Reserved for future functionality
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "8":  # DNS recon
+            viii_recon_dns()
             
         elif choice == "9":  # Reserved for future functionality
             print("[WARNING] This function is not implemented yet")
@@ -867,6 +866,66 @@ def vii_rev_dns():
 
     # Placeholder for returning to the main menu (ensure 'main_menu()' is defined elsewhere)
     main()
+
+def viii_recon_dns():
+    """
+    Perform DNS reconnaissance by iterating over a subdomain wordlist.
+    """
+    # Step 1: Load the subdomain wordlist
+    wordlist_path = "/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"
+    try:
+        with open(wordlist_path, 'r') as file:
+            subdomains = [line.strip() for line in file if line.strip()]
+    except FileNotFoundError:
+        print(f"Error: Wordlist file not found at {wordlist_path}.")
+        return
+
+    # Get the total number of subdomains
+    total_lines = len(subdomains)
+    if total_lines == 0:
+        print("Error: Wordlist is empty.")
+        return
+
+    print("DNS Recon")
+
+    # Step 2: Prompt the user for the domain to test
+    domain = input("Enter the domain for DNS recon (e.g., businesscorp.com.br): ").strip()
+    if not domain:
+        print("Error: Domain input cannot be empty.")
+        return
+
+    # Step 3: Initialize the output file
+    output_file = f"dns_recon_{domain}.txt"
+    with open(output_file, 'w') as f:
+        f.write("")  # Clear the file if it already exists
+
+    # Step 4: Perform DNS lookups for each subdomain
+    for index, subdomain in enumerate(subdomains, start=1):
+        full_domain = f"{subdomain}.{domain}"
+        try:
+            # Execute the DNS lookup using the `host` command
+            result = subprocess.check_output(
+                ["host", full_domain],
+                text=True,
+                stderr=subprocess.DEVNULL  # Suppress error messages
+            )
+            # Append results to the output file
+            with open(output_file, 'a') as f:
+                f.write(result)
+        except subprocess.CalledProcessError:
+            # Ignore subdomains that don't resolve
+            pass
+
+        # Step 5: Display progress
+        print(f"--------SEARCHING---------> {index}/{total_lines}")
+
+    # Step 6: Wait for user input to continue
+    print(f"\nRecon completed. Results saved to: {output_file}")
+    pause()
+
+    # Step 7: Return to the main menu
+    main()
+
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
