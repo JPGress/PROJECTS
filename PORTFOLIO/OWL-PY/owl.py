@@ -222,9 +222,9 @@ def reverse_lookup_worker(address_queue, results, timeout):
         finally:
             address_queue.task_done()
 
-def worker(queue, domain, output_file, results_lock):
+def worker(queue, domain, output_file, results_lock, progress):
     """
-    Worker function to process DNS lookups.
+    Worker function to process DNS lookups and update progress.
     """
     while not queue.empty():
         subdomain = queue.get()
@@ -244,8 +244,12 @@ def worker(queue, domain, output_file, results_lock):
             # Ignore subdomains that don't resolve
             pass
         finally:
+            # Update progress counter
+            with progress['lock']:
+                progress['count'] += 1
+                if progress['count'] % 100 == 0:  # Print progress every 100 subdomains
+                    print(f"Processed {progress['count']} subdomains...")
             queue.task_done()
-
 # Check if the required modules are installed
 """
 #def check_requirements(skip_selenium=False):
@@ -931,12 +935,15 @@ def viii_recon_dns():
     for subdomain in subdomains:
         queue.put(subdomain)
 
+    # Progress tracking dictionary
+    progress = {'count': 0, 'lock': threading.Lock()}
+
     # Step 5: Create worker threads
     num_threads = 20  # Adjust this value based on your system's capability
     threads = []
 
     for _ in range(num_threads):
-        thread = threading.Thread(target=worker, args=(queue, domain, output_file, results_lock))
+        thread = threading.Thread(target=worker, args=(queue, domain, output_file, results_lock, progress))
         threads.append(thread)
         thread.start()
 
