@@ -198,6 +198,30 @@ def validate_url(url):
     """
     return url.startswith("http") and "." in url
 
+def reverse_lookup_worker(address_queue, results, timeout):
+    """
+    Worker function to perform reverse DNS lookups concurrently.
+    """
+    while not address_queue.empty():
+        try:
+            full_address = address_queue.get()
+            result = subprocess.check_output(
+                ["host", "-t", "ptr", full_address],
+                text=True,
+                timeout=timeout
+            )
+            if "pointer" in result:
+                ptr_record = result.split()[-1].strip()
+                if ".ip-" not in ptr_record:  # Filter unwanted records
+                    results.append(ptr_record)
+        except subprocess.CalledProcessError:
+            # Ignore errors for addresses without PTR records
+            pass
+        except subprocess.TimeoutExpired:
+            print(f"Timeout expired for {full_address}")
+        finally:
+            address_queue.task_done()
+
 # Check if the required modules are installed
 """
 #def check_requirements(skip_selenium=False):
