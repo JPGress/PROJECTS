@@ -279,7 +279,7 @@ def texto_main_menu():
         "Metadata analysis (unstable)",
         "DNS Zone Transference",
         "SubDomain Take Over",
-        # "DNS reverse",
+        "DNS reverse",
         # "DNS recon",
         # "OSINTool",
         # "MiTM",
@@ -374,10 +374,12 @@ def main():
             v_dns_zt()
             
         elif choice == "6":  # Subdomain Takeover
-            # Implement this function in the future
-            print("[WARNING] Subdomain Takeover functionality is not implemented yet")
-            pause()
             vi_subdomain_takeover()
+        
+        elif choice == "7":  # DNS reverse
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            vii_dns_reverse()
 
         else:  # Invalid input handling
             print("[ERROR] Invalid choice. Please try again.")
@@ -643,32 +645,72 @@ def iv_metadata_analysis():
 
 def v_dns_zt():
     print("DNS Zone Transfer")
-    target = input("Enter the target URL: ").strip()
+
+    # Validate target domain input
+    target = input("Enter the target domain (e.g., example.com): ").strip()
+    if not re.match(r"^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", target):
+        print("Invalid domain. Please enter a valid domain name.")
+        return
 
     try:
-        # Get nameservers for specified domain
-        ns_command = f"dig AXFR {target}"
-        ns_output = subprocess.check_output(ns_command, shell=True, text=True)
-        ns_servers = [line.split()[-1] for line in ns_output.splitlines() if line]
+        # Get nameservers for the target domain
+        print(f"Retrieving nameservers for {target}...")
+        ns_command = ["dig", "NS", target]
+        ns_output = subprocess.check_output(ns_command, text=True).splitlines()
 
-        # Iterate over nameservers and list authority zone records
+        # Extract nameservers from the output
+        ns_servers = [line.split()[-1] for line in ns_output if "NS" in line and line.startswith(target)]
+        if not ns_servers:
+            print("No nameservers found.")
+            return
+
+        # Attempt zone transfers from each nameserver
         for server in ns_servers:
-            print(f"\nQuerying zone records in {server}...")
-            zone_command = f"dig AXFR {target} {server}"
+            print(f"\nAttempting zone transfer on nameserver: {server}")
+            zone_command = ["dig", "AXFR", target, f"@{server}"]
             try:
-                zone_output = subprocess.check_output(zone_command, shell=True, text=True)
+                zone_output = subprocess.check_output(zone_command, text=True)
                 print(zone_output)
             except subprocess.CalledProcessError as e:
-                print(f"Error when querying {server}: {e}")
-                pause()
+                print(f"Zone transfer failed for {server}: {e}")
 
     except subprocess.CalledProcessError as e:
-        print(f"Error getting nameservers: {e}")
+        print(f"Error retrieving nameservers: {e}")
 
     pause()
 
 def vi_subdomain_takeover():
-    print("vi_subdomain_takeover()")
+    # Prompt the user for the host to attack
+    host = input("Enter the host for the Subdomain takeover attack: ").strip()
+    
+    # Prompt the user for the file containing the domains to be tested
+    file_path = input("Point to the file with the domains to be tested: ").strip()
+    
+    # Define the command to check the CNAMEs of subdomains
+    command = "host -t cname"
+    
+    # Check if the file exists
+    if not os.path.isfile(file_path):
+        print(f"Error: The file '{file_path}' does not exist.")
+        return
+    
+    # Open the file and iterate over each domain
+    with open(file_path, 'r') as file:
+        for line in file:
+            domain = line.strip()
+            full_command = f"{command} {domain}.{host}"
+            result = os.popen(full_command).read()
+            if "alias for" in result:
+                print(result)
+    
+    # Wait for the user to press Enter to continue
+    pause()
+    
+    # Call the main menu function (assuming it is defined elsewhere)
+    main()
+
+def vii_dns_reverse():
+    print("vii_dns_reverse()")
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
