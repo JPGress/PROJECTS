@@ -50,7 +50,6 @@ COMMON_PORTS = list(range(1, 1025)) + [  # Add the first 1,024 ports.
     27017  # MongoDB database
 ]
 
-
 """
 AUXILIARY FUNCTIONS
 """
@@ -280,7 +279,7 @@ def texto_main_menu():
         "Metadata analysis (unstable)",
         "DNS Zone Transference",
         # Uncommented options can be added in future versions.
-        # "SubDomain Take Over",
+        "SubDomain Take Over",
         # "DNS reverse",
         # "DNS recon",
         # "OSINTool",
@@ -637,6 +636,35 @@ def iv_metadata_analysis():
         extract_metadata(folder_name)
     else:
         print("No results found.")
+
+def v_dns_zt():
+    print("DNS Zone Transfer")
+    target = input("Digite a URL do alvo: ").strip()
+
+    try:
+        # Obter servidores de nomes para o domínio especificado
+        ns_command = f"host -t ns {target}"
+        ns_output = subprocess.check_output(ns_command, shell=True, text=True)
+        ns_servers = [line.split()[-1] for line in ns_output.splitlines() if line]
+
+        # Iterar sobre os servidores de nomes e listar os registros de zona de autoridade
+        for server in ns_servers:
+            print(f"\nConsultando registros de zona em {server}...")
+            zone_command = f"host -l -a {target} {server}"
+            try:
+                zone_output = subprocess.check_output(zone_command, shell=True, text=True)
+                print(zone_output)
+            except subprocess.CalledProcessError as e:
+                print(f"Erro ao consultar {server}: {e}")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Erro ao obter servidores de nomes: {e}")
+
+    input("\nPressione ENTER para continuar...")
+
+# Example usage
+if __name__ == "__main__":
+    v_dns_zt()
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
