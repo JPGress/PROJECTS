@@ -807,53 +807,62 @@ def vi_subdomain_takeover():
 
 def vii_rev_dns():
     print("DNS Reverse Lookup")
-    
+
     # Step 1: Get the base address for the reverse DNS lookup
-    address = input("Enter the base address for the DNS reverse lookup (e.g., 192.168.1): ").strip()
-    
-    # Step 2: Get the start of the IP range
+    base_address = input("Enter the base address for the DNS reverse lookup (e.g., 192.168.1): ").strip()
+
+    # Step 2: Get the start and end of the IP range
     try:
         start = int(input("Enter the start of the IP range: ").strip())
-    except ValueError:
-        print("Invalid input. Please enter a valid number.")
-        return
-    
-    # Step 3: Get the end of the IP range
-    try:
         end = int(input("Enter the end of the IP range: ").strip())
     except ValueError:
-        print("Invalid input. Please enter a valid number.")
+        print("Invalid input. Please enter valid numbers.")
         return
-    
-    # Step 4: Define the output file name
-    output_file = f"{address}.{start}-{end}.txt"
-    
-    # Step 5: Ensure the output file is fresh
+
+    # Validate IP range
+    if start < 0 or end > 255 or start > end:
+        print("Invalid range. Please enter a valid range (0-255).")
+        return
+
+    # Step 3: Output file setup
+    output_file = f"{base_address}.{start}-{end}.txt"
     if os.path.exists(output_file):
-        os.remove(output_file)  # Remove the file if it already exists
-    
-    # Step 6: Perform reverse DNS lookups for the specified range
-    with open(output_file, 'w') as output:
-        for range_val in range(start, end + 1):  # Iterate over the specified range
-            full_address = f"{address}.{range_val}"
-            try:
-                # Use the `host` command to perform the reverse lookup
-                result = subprocess.check_output(["host", "-t", "ptr", full_address], text=True)
-                
-                # Extract the PTR record if it exists
-                if "pointer" in result:
-                    ptr_record = result.split()[-1].strip()
-                    if ".ip-" not in ptr_record:  # Exclude unwanted records
-                        output.write(ptr_record + "\n")
-            except subprocess.CalledProcessError:
-                # Ignore errors for addresses without a PTR record
-                continue
+        os.remove(output_file)
 
-    # Step 7: Display the output file contents
-    with open(output_file, 'r') as output:
-        print(output.read())
+    # Step 4: Create a queue with all addresses
+    address_queue = Queue()
+    for i in range(start, end + 1):
+        address_queue.put(f"{base_address}.{i}")
 
-    # Step 8: Wait for user input before returning to the main menu
+    # Step 5: Start worker threads for reverse lookup
+    results = []
+    num_threads = 10  # Number of concurrent threads
+    timeout = 5       # Timeout for each lookup in seconds
+    threads = []
+
+    for _ in range(num_threads):
+        thread = threading.Thread(target=reverse_lookup_worker, args=(address_queue, results, timeout))
+        threads.append(thread)
+        thread.start()
+
+    try:
+        # Wait for all threads to finish
+        for thread in threads:
+            thread.join()
+    except KeyboardInterrupt:
+        print("\nExecution interrupted by user.")
+        return
+
+    # Step 6: Write results to the output file
+    with open(output_file, 'w') as f:
+        for record in results:
+            f.write(record + '\n')
+
+    # Step 7: Display results to the user
+    print(f"\nReverse DNS lookup completed. Results saved to: {output_file}")
+    with open(output_file, 'r') as f:
+        print(f.read())
+
     pause()
 
     # Placeholder for returning to the main menu (ensure 'main_menu()' is defined elsewhere)
