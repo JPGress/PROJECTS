@@ -222,6 +222,30 @@ def reverse_lookup_worker(address_queue, results, timeout):
         finally:
             address_queue.task_done()
 
+def worker(queue, domain, output_file, results_lock):
+    """
+    Worker function to process DNS lookups.
+    """
+    while not queue.empty():
+        subdomain = queue.get()
+        full_domain = f"{subdomain}.{domain}"
+        try:
+            # Perform the DNS lookup using the `host` command
+            result = subprocess.check_output(
+                ["host", full_domain],
+                text=True,
+                stderr=subprocess.DEVNULL
+            )
+            # Write the result to the output file
+            with results_lock:
+                with open(output_file, 'a') as f:
+                    f.write(result)
+        except subprocess.CalledProcessError:
+            # Ignore subdomains that don't resolve
+            pass
+        finally:
+            queue.task_done()
+
 # Check if the required modules are installed
 """
 #def check_requirements(skip_selenium=False):
@@ -869,10 +893,11 @@ def vii_rev_dns():
 
 def viii_recon_dns():
     """
-    Perform DNS reconnaissance by iterating over a subdomain wordlist.
+    Perform DNS reconnaissance using multithreading for faster processing.
     """
-    # Step 1: Load the subdomain wordlist
     wordlist_path = "/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"
+
+    # Step 1: Load the subdomain wordlist
     try:
         with open(wordlist_path, 'r') as file:
             subdomains = [line.strip() for line in file if line.strip()]
@@ -880,7 +905,6 @@ def viii_recon_dns():
         print(f"Error: Wordlist file not found at {wordlist_path}.")
         return
 
-    # Get the total number of subdomains
     total_lines = len(subdomains)
     if total_lines == 0:
         print("Error: Wordlist is empty.")
@@ -899,33 +923,35 @@ def viii_recon_dns():
     with open(output_file, 'w') as f:
         f.write("")  # Clear the file if it already exists
 
-    # Step 4: Perform DNS lookups for each subdomain
-    for index, subdomain in enumerate(subdomains, start=1):
-        full_domain = f"{subdomain}.{domain}"
-        try:
-            # Execute the DNS lookup using the `host` command
-            result = subprocess.check_output(
-                ["host", full_domain],
-                text=True,
-                stderr=subprocess.DEVNULL  # Suppress error messages
-            )
-            # Append results to the output file
-            with open(output_file, 'a') as f:
-                f.write(result)
-        except subprocess.CalledProcessError:
-            # Ignore subdomains that don't resolve
-            pass
+    # Step 4: Set up threading
+    queue = Queue()
+    results_lock = threading.Lock()  # Lock for safely writing to the output file
 
-        # Step 5: Display progress
-        print(f"--------SEARCHING---------> {index}/{total_lines}")
+    # Enqueue all subdomains
+    for subdomain in subdomains:
+        queue.put(subdomain)
 
-    # Step 6: Wait for user input to continue
+    # Step 5: Create worker threads
+    num_threads = 20  # Adjust this value based on your system's capability
+    threads = []
+
+    for _ in range(num_threads):
+        thread = threading.Thread(target=worker, args=(queue, domain, output_file, results_lock))
+        threads.append(thread)
+        thread.start()
+
+    # Wait for all threads to finish
+    try:
+        for thread in threads:
+            thread.join()
+    except KeyboardInterrupt:
+        print("\nExecution interrupted by user.")
+        return
+
+    # Step 6: Display final message and progress
     print(f"\nRecon completed. Results saved to: {output_file}")
     pause()
-
-    # Step 7: Return to the main menu
     main()
-
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
