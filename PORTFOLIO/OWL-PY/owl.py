@@ -278,7 +278,6 @@ def texto_main_menu():
         "Google Hacking",
         "Metadata analysis (unstable)",
         "DNS Zone Transference",
-        # Uncommented options can be added in future versions.
         "SubDomain Take Over",
         # "DNS reverse",
         # "DNS recon",
@@ -367,13 +366,18 @@ def main():
             iii_google_hacking()
 
         elif choice == "4":  # Metadata analysis
-            if args.skip_selenium:
-                print("[WARNING] Metadata analysis requires Selenium. Skipping due to --skip-selenium flag.")
-            else:
-                iv_metadata_analysis()
+            print("[WARNING] Metadata analysis requires Selenium. This function is unstable")
+            pause()
+            iv_metadata_analysis()
 
         elif choice == "5":  # Reserved for future functionality
-            print("Option 5 selected. (Placeholder for future functionality)")
+            v_dns_zt()
+            
+        elif choice == "6":  # Subdomain Takeover
+            # Implement this function in the future
+            print("[WARNING] Subdomain Takeover functionality is not implemented yet")
+            pause()
+            vi_subdomain_takeover()
 
         else:  # Invalid input handling
             print("[ERROR] Invalid choice. Please try again.")
@@ -662,9 +666,8 @@ def v_dns_zt():
 
     input("\nPressione ENTER para continuar...")
 
-# Example usage
-if __name__ == "__main__":
-    v_dns_zt()
+def vi_subdomain_takeover():
+    print("vi_subdomain_takeover()")
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
