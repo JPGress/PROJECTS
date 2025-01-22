@@ -371,6 +371,7 @@ function ii_parsing_html(){
     read -r 2> /dev/null
     main_menu;
 }
+
 # Define a função iii_google_hacking
 function iii_google_hacking(){  
     SEARCH="firefox"
