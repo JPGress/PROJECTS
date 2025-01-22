@@ -380,6 +380,34 @@ def main():
             print("[WARNING] This function is not implemented yet")
             pause()
             vii_dns_reverse()
+            
+        #elif choice == "8":  # Reserved for future functionality
+        
+        #elif choice == "9":  # Reserved for future functionality
+        
+        #elif choice == "10":  # Reserved for future functionality
+        
+        #elif choice == "11":  # Reserved for future functionality
+        
+        #elif choice == "12":  # Reserved for future functionality
+        
+        #elif choice == "13":  # Debian root password change memo
+        
+        #elif choice == "14":  # Red Hat root password change memo
+        
+        #elif choice == "15":  # Vim usage memento
+        
+        #elif choice == "16":  # rbash escaping techniques
+        
+        #elif choice == "17":  # Wireless Network Attacks
+        
+        #elif choice == "18":  # Windows Tip Reminders
+        
+        #elif choice == "19":  # NMAP Network Scanner
+        
+        #elif choice == "20":  # xxxxx
+        
+        #elif choice == "21":  # xxiv_revshell_windows
 
         else:  # Invalid input handling
             print("[ERROR] Invalid choice. Please try again.")
