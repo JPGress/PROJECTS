@@ -280,22 +280,22 @@ def texto_main_menu():
         "DNS Zone Transference",
         "SubDomain Take Over",
         "DNS reverse",
-        # "DNS recon",
-        # "OSINTool",
-        # "MiTM",
-        # "Portscan (bash sockets)",
-        # "Useful commands for network management",
-        # "Examples of the find command",
-        # "Debian root password change memo",
-        # "Red Hat root password change memo",
-        # "Vim usage memento",
-        # "rbash escaping techniques (function under test)",
-        # "Wireless Network Attacks",
-        # "Windows Tip Reminders",
-        # "NMAP Network Scanner",
-        # "xxxxx",
-        # "xxiv_revshell_windows",
-        # "xxv_rdp_windows"
+        "DNS recon",
+        "OSINTool",
+        "MiTM",
+        "Portscan (bash sockets)",
+        "Useful commands for network management",
+        "Examples of the find command",
+        "Debian root password change memo",
+        "Red Hat root password change memo",
+        "Vim usage memento",
+        "rbash escaping techniques (function under test)",
+        "Wireless Network Attacks",
+        "Windows Tip Reminders",
+        "NMAP Network Scanner",
+        "xxxxx",
+        "xxiv_revshell_windows",
+        "xxv_rdp_windows"
     ]
 
     # Print each menu option with a numeric index
@@ -381,34 +381,62 @@ def main():
             pause()
             vii_dns_reverse()
             
-        #elif choice == "8":  # Reserved for future functionality
-        
-        #elif choice == "9":  # Reserved for future functionality
-        
-        #elif choice == "10":  # Reserved for future functionality
-        
-        #elif choice == "11":  # Reserved for future functionality
-        
-        #elif choice == "12":  # Reserved for future functionality
-        
-        #elif choice == "13":  # Debian root password change memo
-        
-        #elif choice == "14":  # Red Hat root password change memo
-        
-        #elif choice == "15":  # Vim usage memento
-        
-        #elif choice == "16":  # rbash escaping techniques
-        
-        #elif choice == "17":  # Wireless Network Attacks
-        
-        #elif choice == "18":  # Windows Tip Reminders
-        
-        #elif choice == "19":  # NMAP Network Scanner
-        
-        #elif choice == "20":  # xxxxx
-        
-        #elif choice == "21":  # xxiv_revshell_windows
-
+        elif choice == "8":  # Reserved for future functionality
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "9":  # Reserved for future functionality
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "10":  # Reserved for future functionality
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "11":  # Reserved for future functionality
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "12":  # Reserved for future functionality
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "13":  # Debian root password change memo
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "14":  # Red Hat root password change memo
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "15":  # Vim usage memento
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "16":  # rbash escaping techniques
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "17":  # Wireless Network Attacks
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "18":  # Windows Tip Reminders
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "19":  # NMAP Network Scanner
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "20":  # xxxxx
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
+        elif choice == "21":  # xxiv_revshell_windows
+            print("[WARNING] This function is not implemented yet")
+            pause()
+            
         else:  # Invalid input handling
             print("[ERROR] Invalid choice. Please try again.")
 
