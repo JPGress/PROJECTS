@@ -332,6 +332,20 @@ def setup_mitm_environment(interface, network):
         print(f"Error setting up MITM environment: {e}")
         exit(1)
 
+def scan_port(host, port, timeout=0.5):
+    """
+    Check if a specific port is open on a given host.
+    """
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(timeout)
+            result = s.connect_ex((host, port))
+            if result == 0:
+                return port
+    except Exception:
+        pass
+    return None
+
 # Check if the required modules are installed
 """
 #def check_requirements(skip_selenium=False):
@@ -526,9 +540,8 @@ def main():
             pause()
             x_mitm()
             
-        elif choice == "11":  # Reserved for future functionality
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "11":  # Portscan (bash sockets)
+            xi_portscan_bashsocket()
             
         elif choice == "12":  # Reserved for future functionality
             print("[WARNING] This function is not implemented yet")
@@ -1126,6 +1139,56 @@ def x_mitm():
     setup_mitm_environment(interface, network)
 
     # Step 5: End the script and return to the main menu
+    input("Press Enter to continue...")
+    main()
+
+def xi_portscan_bashsocket():
+    """
+    Perform a port scan on a target host using Python sockets and multithreading.
+    """
+    print("Enhanced Socket-based Port Scanner")
+    
+    # Step 1: Get user input
+    target_host = input("Enter the target for the port scan (e.g., 192.168.9.5): ").strip()
+    if not target_host:
+        print("Error: No target provided. Exiting.")
+        return
+
+    # Validate IP address
+    try:
+        socket.inet_aton(target_host)
+    except socket.error:
+        print(f"Error: Invalid IP address '{target_host}'. Exiting.")
+        return
+
+    try:
+        start_port = int(input("Enter the starting port (default: 1): ") or 1)
+        end_port = int(input("Enter the ending port (default: 1024): ") or 1024)
+    except ValueError:
+        print("Error: Invalid port range. Exiting.")
+        return
+
+    # Step 2: Perform the port scan
+    print(f"Scanning {target_host} from port {start_port} to {end_port}...")
+    start_time = time.time()
+
+    open_ports = []
+    with ThreadPoolExecutor(max_workers=50) as executor:  # 50 concurrent threads
+        futures = [executor.submit(scan_port, target_host, port) for port in range(start_port, end_port + 1)]
+        for future in futures:
+            result = future.result()
+            if result is not None:
+                open_ports.append(result)
+
+    # Step 3: Display results
+    end_time = time.time()
+    scan_duration = end_time - start_time
+    if open_ports:
+        print(f"Open ports on {target_host}: {', '.join(map(str, open_ports))}")
+    else:
+        print(f"No open ports found on {target_host}.")
+
+    print(f"Scan completed in {scan_duration:.2f} seconds.")
     input("Press Enter to continue...")
     main()
 
