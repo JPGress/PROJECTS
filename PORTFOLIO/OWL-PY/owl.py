@@ -789,7 +789,7 @@ def main():
             elif choice == "18":  # Wifi attack workflow
                 print("[>>> WARNING! <<<] This feature has not been properly tested. Proceed at your own risk. [>>> WARNING! <<<]")
                 pause()
-                wifi_attack_workflow()
+                xviii_wifi_attack_workflow()
 
             elif choice == "19":  # NMAP Network Scanner
                 print("[WARNING] This function is not implemented yet")
@@ -1703,7 +1703,7 @@ def xvii_escape_rbash():
     pause()
 
 # Main function to execute all steps of a wireless penetration test workflow.
-def wifi_attack_workflow():
+def xviii_wifi_attack_workflow():
     """
     Main function to execute all steps of a wireless penetration test workflow.
     Includes helper functions for setup, monitoring, attacks, and password cracking.
