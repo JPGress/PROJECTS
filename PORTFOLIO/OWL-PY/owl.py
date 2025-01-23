@@ -10,8 +10,8 @@ Usage:
 Run the script in the command line for various network and security tasks.
 """
 
-#TODO:Add a more detailed header to explain the purpose, features, and usage of the script.
-#TODO:Configure proxy chains for added security when the script is initialized.
+#TODO: Add a more detailed header to explain the purpose, features, and usage of the script.
+#TODO: Configure proxy chains for added security when the script is initialized.
 
 # Import required modules
 import argparse  # For handling command-line arguments.
@@ -354,8 +354,7 @@ def scan_port(host, port, timeout=0.5):
         pass
     return None
 
-#!FIXME: Need to fix the export_to_file function
-# Export the content to a text file.
+# Export the content to a text file. #!FIXME #TODO: Need to fix the export_to_file function
 def export_to_file(content):
     """
     Export the content to a text file.
@@ -654,11 +653,11 @@ def main():
         elif choice == "7":  # DNS reverse
             vii_rev_dns()
             
-        elif choice == "8":  # DNS recon
+        elif choice == "8":  # DNS recon #TODO: This function needs to be tested and refined for better performance.
             viii_recon_dns()
             
-        elif choice == "9":  # OSINT Tool
-            ix_general_google_query()
+        elif choice == "9":  # OSINT Tool #TODO: NEEDS REFACTORING TO BRING MORE OBJECTIVITY TO THE CODE
+            ix_general_google_query() 
             
         elif choice == "10":  # MiTM
             print("[>>> WARNING! <<<] This feature is not fully tested. Proceed at your own risk. [>>> WARNING! <<<]")
@@ -680,7 +679,7 @@ def main():
         elif choice == "15":  # RedHat root password change memo
             xv_redhat_reset_root_password()
             
-        elif choice == "16":  # rbash escaping techniques
+        elif choice == "16":  # rbash escaping techniques #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
             print("[WARNING] This function is not implemented yet")
             pause()
             
@@ -1115,7 +1114,6 @@ def viii_recon_dns():
     """
     Perform DNS reconnaissance using multithreading for faster processing.
     
-    TODO: This function needs to be tested and refined for better performance.
     """
     wordlist_path = "/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"
 
