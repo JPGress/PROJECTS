@@ -674,9 +674,8 @@ def main():
         elif choice == "13":  # Examples of the find command
             xiii_find_examples()
             
-        elif choice == "14":  # Red Hat root password change memo
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "14":  # Debian root password change memo
+            xiv_debian_reset_root_password()
             
         elif choice == "15":  # Vim usage memento
             print("[WARNING] This function is not implemented yet")
@@ -1462,6 +1461,45 @@ def xiii_find_examples():
             print("Invalid choice. Please select a valid option.")
 
         input("\nPress ENTER to continue...")
+
+# Guide the user through the process of resetting the root password on Debian-based systems.
+def xiv_debian_reset_root_password():
+    """
+    Guide the user through the process of resetting the root password on Debian-based systems.
+    Includes a 'go back' option.
+    """
+    while True:
+        # Clear the screen
+        print("\033c", end="")  # ANSI escape code to clear the screen
+
+        # Display the header
+        print("\n### Resetting the root password on Debian-based Operating Systems ###\n")
+
+        # Steps for resetting the root password
+        steps = [
+            "1. Restart the target computer.",
+            "2. Edit the GRUB menu by pressing the 'e' key.",
+            "3. Locate the line starting with 'linux boot...', and replace 'ro quiet' at the end of the line with 'init=/bin/bash rw'.",
+            "4. Press 'Ctrl+x' to boot the system with the modified parameters.",
+            "5. Once the system initializes, execute 'passwd root' and set the new password.",
+            "6. Restart the system using the command: 'reboot -f'."
+        ]
+
+        # Display the steps interactively
+        for step in steps:
+            print(step)
+            choice = input("\nPress ENTER to continue or 'b' to go back to the previous menu: ").strip().lower()
+            if choice == "b":
+                print("Returning to the main menu...")
+                return  # Exit this function to go back to the main menu
+
+        # Final confirmation message
+        print("\n### At this point, if everything went well, you now have the root user password. ###\n")
+
+        # Allow the user to return to the main menu
+        input("Press ENTER to go back to the main menu...")
+        return  # Exit this function to go back to the main menu
+
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
