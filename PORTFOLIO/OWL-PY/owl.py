@@ -677,9 +677,8 @@ def main():
         elif choice == "14":  # Debian root password change memo
             xiv_debian_reset_root_password()
             
-        elif choice == "15":  # Vim usage memento
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "15":  # RedHat root password change memo
+            xv_redhat_reset_root_password()
             
         elif choice == "16":  # rbash escaping techniques
             print("[WARNING] This function is not implemented yet")
@@ -1500,6 +1499,47 @@ def xiv_debian_reset_root_password():
         input("Press ENTER to go back to the main menu...")
         return  # Exit this function to go back to the main menu
 
+# Guide the user through the process of resetting the root password on Red Hat-based systems.
+def xv_redhat_reset_root_password():
+    """
+    Guide the user through the process of resetting the root password on Red Hat-based systems.
+    Includes handling for CentOS/Fedora and Rocky/Alma distributions.
+    """
+    while True:
+        # Clear the screen
+        print("\033c", end="")  # ANSI escape code to clear the screen
+
+        # Display the header
+        print("\n### Resetting the root password on Red Hat-based Operating Systems ###\n")
+
+        # Steps for resetting the root password
+        steps = [
+            "1. Restart the target computer.",
+            "2. Edit the GRUB menu by pressing the 'e' key.",
+            "3. Locate the line starting with 'linux16...', and replace 'rghb quiet LANG=en_US.UTF-8' with 'init=/bin/bash rw' (for CentOS/Fedora).",
+            "4. Press 'Ctrl+x' to boot the system with the modified parameters.",
+            "5. Once the system initializes, disable SELinux temporarily by running: 'setenforce 0'.",
+            "6. Set the new root password by running: 'passwd root', then type the new password.",
+            "7. If SELinux is enforcing, edit the file '/etc/selinux/config' and change 'SELINUX=enforcing' to 'SELINUX=disabled'.",
+            "8. Restart the system using the command: '/sbin/halt –reboot -f'.",
+            "9. For Rocky/Alma Linux, you may need to edit the GRUB menu again (press 'e') and ensure the 'init=/bin/bash rw' modification is applied.",
+            "10. After restarting, log in as root with the new password."
+        ]
+
+        # Display the steps interactively
+        for step in steps:
+            print(step)
+            choice = input("\nPress ENTER to continue or 'b' to go back to the previous menu: ").strip().lower()
+            if choice == "b":
+                print("Returning to the main menu...")
+                return  # Exit this function to go back to the main menu
+
+        # Final confirmation message
+        print("\n### At this point, if everything went well, you now have the root user password. ###\n")
+
+        # Allow the user to return to the main menu
+        input("Press ENTER to go back to the main menu...")
+        return  # Exit this function to go back to the main menu
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
