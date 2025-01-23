@@ -775,9 +775,8 @@ def main():
         elif choice == "16":  # Vim memo 
             xvi_vim_memento()
             
-        elif choice == "17":  # Wireless Network Attacks #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "17":  # Escape restricted bash #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
+            xvii_escape_rbash()
             
         elif choice == "18":  # Windows Tip Reminders
             print("[WARNING] This function is not implemented yet")
