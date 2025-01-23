@@ -27,6 +27,7 @@ import webbrowser  # To open web pages in the browser.
 import time  # To handle time-related functions (e.g., delays, timestamps).
 import threading # For threading operations.
 import platform
+import shutil
 from datetime import datetime, timezone  # For working with dates and timezones.
 from concurrent.futures import ThreadPoolExecutor  # To perform tasks concurrently (multi-threading).
 from urllib.parse import quote  # For encoding URLs.
@@ -469,6 +470,98 @@ def execute_find_command(command):
     except FileNotFoundError:
         print("Command 'find' is not available on this system.")
 
+# Attempt to escape from rbash using Vim.
+def vim_escape_rbash():
+    """
+    Attempt to escape from rbash using Vim.
+    """
+    vim_command = "vim.tiny -E -c :!/bin/sh"
+
+    terminal_commands = [
+        ("konsole", ["konsole", "--hold", "-e", vim_command]),
+        ("gnome-terminal", ["gnome-terminal", "--", vim_command]),
+        ("xfce4-terminal", ["xfce4-terminal", "--execute", vim_command]),
+        ("tilix", ["tilix", "--action=app-new-window", vim_command]),
+        ("xterm", ["xterm", "-e", vim_command]),
+    ]
+
+    for terminal, command in terminal_commands:
+        if shutil.which(terminal):
+            try:
+                subprocess.run(command, check=True)
+                return
+            except subprocess.CalledProcessError:
+                print(f"Failed to execute Vim escape using {terminal}. Trying next option.")
+    
+    print("No supported terminal found. Unable to escape rbash using Vim.")
+    sys.exit(1)
+
+# Attempt to escape from rbash using the `find` command.
+def find_escape_rbash():
+    """
+    Attempt to escape from rbash using the `find` command.
+    """
+    find_command = "find . -exec /bin/sh \\; -quit"
+
+    terminal_commands = [
+        ("tilix", ["tilix", "--action=app-new-window", find_command]),
+        ("gnome-terminal", ["gnome-terminal", "--", find_command]),
+        ("xfce4-terminal", ["xfce4-terminal", "--execute", find_command]),
+        ("konsole", ["konsole", "--hold", "-e", find_command]),
+        ("xterm", ["xterm", "-e", find_command]),
+    ]
+
+    for terminal, command in terminal_commands:
+        if shutil.which(terminal):
+            try:
+                subprocess.run(command, check=True)
+                return
+            except subprocess.CalledProcessError:
+                print(f"Failed to execute Find escape using {terminal}. Trying next option.")
+    
+    print("No supported terminal found. Unable to escape rbash using Find.")
+    sys.exit(1)
+
+# Attempt to escape from rbash using the `man` command.
+def man_escape_rbash():
+    """
+    Attempt to escape from rbash using the `man` command.
+    """
+    man_command = "man man; echo 'To escape rbash, after man starts, type !sh and press Enter.' && read"
+
+    terminal_commands = [
+        ("tilix", ["tilix", "--action=app-new-window", man_command]),
+        ("gnome-terminal", ["gnome-terminal", "--", man_command]),
+        ("xfce4-terminal", ["xfce4-terminal", "--execute", man_command]),
+        ("konsole", ["konsole", "--hold", "-e", man_command]),
+        ("xterm", ["xterm", "-e", man_command]),
+    ]
+
+    for terminal, command in terminal_commands:
+        if shutil.which(terminal):
+            try:
+                subprocess.run(command, check=True)
+                return
+            except subprocess.CalledProcessError:
+                print(f"Failed to execute Man escape using {terminal}. Trying next option.")
+    
+    print("No supported terminal found. Unable to escape rbash using Man.")
+    sys.exit(1)
+
+# Check if required commands are available and execute the appropriate escape method.
+def check_installed_commands():
+    """
+    Check if required commands are available and execute the appropriate escape method.
+    """
+    if shutil.which("vim"):
+        vim_escape_rbash()
+    elif shutil.which("find"):
+        find_escape_rbash()
+    elif shutil.which("man"):
+        man_escape_rbash()
+    else:
+        print("None of the required commands (vim, find, man) are installed. Unable to escape rbash.")
+        sys.exit(1)
 
 # Check if the required modules are installed
 """
@@ -1590,6 +1683,14 @@ def xvi_vim_memento():
         if choice == "b":
             print("Returning to the main menu...")
             return  # Exit this function to go back to the main menu
+
+# Main function to orchestrate the escape process from rbash.
+def xvii_escape_rbash():
+    """
+    Main function to orchestrate the escape process from rbash.
+    """
+    check_installed_commands()
+    pause()
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
