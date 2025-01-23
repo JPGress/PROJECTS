@@ -137,17 +137,17 @@ function main_menu(){
             ;; # Portscan
         2) ii_parsing_html;
             ;; # Parsing HTML
-        3) desabilitado; #* DESABILITADO PARA PROVA -> iii_google_hacking 
+        3) iii_google_hacking;
             ;; # Google Hacking
-        4) desabilitado; #* DESABILITADO PARA PROVA -> iv_analise_metadados;
+        4) iv_analise_metadados;
             ;; # Analise de Metadados Direto da Internet
-        5) desabilitado; #* DESABILITADO PARA PROVA -> v_dns_zt;
+        5) v_dns_zt;
             ;; # DNS Zone Transfer
-        6) desabilitado; #* DESABILITADO PARA PROVA -> vi_Subdomain_takeover;
+        6) vi_Subdomain_takeover;
             ;; # Subdomain takeover
         7) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> vii_rev_dns #XXX
             ;;
-        8) desabilitado; #* DESABILITADO PARA PROVA -> viii_recon_dns;
+        8) viii_recon_dns;
             ;; # DNS recon
         9) desabilitado; #! NECESSITA REFATORAÇÃO PARA TRAZER MAIS OBJETIVIDADE AO CÓDIGO -> ix_consulta_geral_google
             ;; #TODO ADC COMENTÁRIO
@@ -253,8 +253,6 @@ function i_portscan(){
     read -r
     main_menu; # Retorna ao menu principal
 }
-
-
 # Define a função ii_parsing_html
 function ii_parsing_html(){
     
@@ -371,7 +369,6 @@ function ii_parsing_html(){
     read -r 2> /dev/null
     main_menu;
 }
-
 # Define a função iii_google_hacking
 function iii_google_hacking(){  
     SEARCH="firefox"
