@@ -15,28 +15,34 @@ Run the script in the command line for various network and security tasks.
 
 # Import required modules
 import argparse  # For handling command-line arguments.
-import subprocess  # To execute system commands from the script.
-import sys  # For system-specific parameters and functions.
+import concurrent.futures  # Provides high-level tools for managing concurrency.
+from concurrent.futures import ThreadPoolExecutor  # To perform tasks concurrently (multi-threading).
+import datetime  # Provides classes for manipulating dates and times.
+from datetime import datetime, timezone  # For working with dates and timezones.
+import dns.resolver  # For resolving DNS records.
 import os  # For interacting with the operating system (e.g., file paths).
-import socket  # Provides low-level networking interfaces.
+import platform  # To retrieve information about the system's platform.
+import queue  # A queue module for thread-safe queues.
+from queue import Queue  # For implementing a thread-safe queue.
 import re  # Regular expressions for pattern matching.
 import requests  # For making HTTP requests.
-import whois  # To query WHOIS information about domains.
-import dns.resolver  # For resolving DNS records.
-import webbrowser  # To open web pages in the browser.
+import selenium  # A library for automating browser interactions.
+from selenium import webdriver  # For automating web browser interactions.
+from selenium.webdriver.chrome.service import Service  # For managing the ChromeDriver service.
+from selenium.webdriver.chrome.options import Options  # For configuring Chrome browser options.
+from selenium.webdriver.common.by import By  # For locating elements in Selenium.
+from selenium.common.exceptions import WebDriverException  # For handling exceptions related to WebDriver operations.
+import shutil  # For high-level file operations (e.g., copying files).
+import socket  # Provides low-level networking interfaces.
+import subprocess  # To execute system commands from the script.
+import sys  # For system-specific parameters and functions.
+import threading  # For running multiple threads simultaneously.
 import time  # To handle time-related functions (e.g., delays, timestamps).
-import threading # For threading operations.
-import platform
-import shutil
-from datetime import datetime, timezone  # For working with dates and timezones.
-from concurrent.futures import ThreadPoolExecutor  # To perform tasks concurrently (multi-threading).
+import urllib.parse  # For working with URLs.
 from urllib.parse import quote  # For encoding URLs.
-from selenium import webdriver  # For automating web browser interactions
-from selenium.webdriver.chrome.service import Service  # For managing the ChromeDriver service
-from selenium.common.exceptions import WebDriverException  # For handling exceptions related to WebDriver operations
-from selenium.webdriver.common.by import By  # For locating elements in Selenium
-from selenium.webdriver.chrome.options import Options  # For configuring Chrome browser options
-from queue import Queue # For implementing a thread-safe queue
+import webbrowser  # To open web pages in the browser.
+import whois  # To query WHOIS information about domains.
+
 
 # Define the top 1,000 most common ports
 # Explanation:
