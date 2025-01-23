@@ -671,9 +671,8 @@ def main():
         elif choice == "12":  # Useful commands for Linux network management
             xii_useful_linux_commands()
             
-        elif choice == "13":  # Debian root password change memo
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "13":  # Examples of the find command
+            xiii_find_examples()
             
         elif choice == "14":  # Red Hat root password change memo
             print("[WARNING] This function is not implemented yet")
