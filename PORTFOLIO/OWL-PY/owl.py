@@ -436,9 +436,8 @@ def main():
         elif choice == "8":  # DNS recon
             viii_recon_dns()
             
-        elif choice == "9":  # Reserved for future functionality
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "9":  # OSINT Tool
+            ix_general_google_query()
             
         elif choice == "10":  # Reserved for future functionality
             print("[WARNING] This function is not implemented yet")
@@ -960,6 +959,64 @@ def viii_recon_dns():
     # Step 6: Display final message and progress
     print(f"\nRecon completed. Results saved to: {output_file}")
     pause()
+    main()
+
+def ix_general_google_query():
+    """
+    Perform a general query on Google using Selenium with a user-provided CSV file.
+    """
+    print("General Google Query")
+
+    # Step 1: Prompt the user to provide the CSV file path
+    lista_path = input("Enter the path to the CSV file with queries (e.g., queries.csv): ").strip()
+    try:
+        with open(lista_path, 'r') as csv_file:
+            csv_reader = csv.reader(csv_file)
+            queries = [(row[0], row[1]) for row in csv_reader]  # Extract (name, CPF) pairs
+    except FileNotFoundError:
+        print(f"Error: File not found at {lista_path}. Please try again.")
+        return
+    except IndexError:
+        print(f"Error: The file {lista_path} does not have the required columns. Please check the format.")
+        return
+
+    # Step 2: Set up Selenium WebDriver (Chrome in this case)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")  # Run in headless mode (no GUI)
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(options=options)
+
+    # Step 3: Iterate over the queries
+    for name, cpf in queries:
+        print("===")
+        print(f"Searching for: {name} + {cpf}")
+
+        # Step 3.1: Construct the Google search URL
+        search_url = f"https://www.google.com/search?q=intext:{name}+intext:{cpf}"
+
+        # Step 3.2: Perform the Google search
+        try:
+            driver.get(search_url)
+            time.sleep(2)  # Wait for results to load (adjust if needed)
+
+            # Step 3.3: Extract search results (filtering for links to PDFs)
+            results = driver.find_elements(By.XPATH, "//a[contains(@href, '.pdf')]")
+            for result in results:
+                pdf_link = result.get_attribute("href")
+                if pdf_link:  # Filter out empty links
+                    print(pdf_link)
+        except Exception as e:
+            print(f"Error during search: {e}")
+
+        # Step 3.4: Wait for the user to press Enter before proceeding
+        input("Press Enter to continue to the next search...")
+
+    # Step 4: Clean up and close the WebDriver
+    driver.quit()
+    print("============ End of Query ===========")
+
+    # Return to the main menu
     main()
 
 # Run the main function when the script is executed directly
