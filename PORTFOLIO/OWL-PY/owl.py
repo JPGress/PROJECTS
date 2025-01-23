@@ -703,100 +703,104 @@ def main():
     #if not check_requirements(skip_selenium=args.skip_selenium):
     #    print("[ERROR] Requirements not met. Exiting.")
     #    return
+    
+    # Try except for keyboard interrupts
+    try:
+        # Infinite loop to display the menu repeatedly until the user exits
+        while True:
+            # Display the main menu and capture the user's choice
+            choice = texto_main_menu()
 
-    # Infinite loop to display the menu repeatedly until the user exits
-    while True:
-        # Display the main menu and capture the user's choice
-        choice = texto_main_menu()
+            # Handle user choice
+            if choice == "0":  # Exit option
+                print("Exiting Owl. Goodbye!")
+                break
 
-        # Handle user choice
-        if choice == "0":  # Exit option
-            print("Exiting Owl. Goodbye!")
-            break
+            elif choice == "1":  # Port scanning
+                target_ip = input("Enter target IP or hostname: ").strip()
+                start_port = input("Enter the starting port (or leave blank for default): ").strip()
+                end_port = input("Enter the ending port (or leave blank for default): ").strip()
+                verbose = args.verbose or input("Verbose output? (yes/no, default no): ").strip().lower() in ["yes", "y"]
 
-        elif choice == "1":  # Port scanning
-            target_ip = input("Enter target IP or hostname: ").strip()
-            start_port = input("Enter the starting port (or leave blank for default): ").strip()
-            end_port = input("Enter the ending port (or leave blank for default): ").strip()
-            verbose = args.verbose or input("Verbose output? (yes/no, default no): ").strip().lower() in ["yes", "y"]
+                start_port = int(start_port) if start_port else None
+                end_port = int(end_port) if end_port else None
 
-            start_port = int(start_port) if start_port else None
-            end_port = int(end_port) if end_port else None
+                result_file = i_port_scan(target_ip, start_port, end_port, verbose)
+                print(f"Results stored in: {result_file}")
 
-            result_file = i_port_scan(target_ip, start_port, end_port, verbose)
-            print(f"Results stored in: {result_file}")
+            elif choice == "2":  # HTML parsing
+                ii_parsing_html()
 
-        elif choice == "2":  # HTML parsing
-            ii_parsing_html()
+            elif choice == "3":  # Google hacking
+                iii_google_hacking()
 
-        elif choice == "3":  # Google hacking
-            iii_google_hacking()
+            elif choice == "4":  # Metadata analysis
+                print("[>>> WARNING! <<<] Metadata analysis requires Selenium. This function is unstable [>>> WARNING! <<<]")
+                pause()
+                iv_metadata_analysis()
 
-        elif choice == "4":  # Metadata analysis
-            print("[>>> WARNING! <<<] Metadata analysis requires Selenium. This function is unstable [>>> WARNING! <<<]")
-            pause()
-            iv_metadata_analysis()
+            elif choice == "5":  # DNS Zone Transfer
+                v_dns_zt()
 
-        elif choice == "5":  # DNS Zone Transfer
-            v_dns_zt()
-            
-        elif choice == "6":  # Subdomain Takeover
-            vi_subdomain_takeover()
-        
-        elif choice == "7":  # DNS reverse
-            vii_rev_dns()
-            
-        elif choice == "8":  # DNS recon #TODO: This function needs to be tested and refined for better performance.
-            viii_recon_dns()
-            
-        elif choice == "9":  # OSINT Tool #TODO: NEEDS REFACTORING TO BRING MORE OBJECTIVITY TO THE CODE
-            ix_general_google_query() 
-            
-        elif choice == "10":  # MiTM
-            print("[>>> WARNING! <<<] This feature is not fully tested. Proceed at your own risk. [>>> WARNING! <<<]")
-            pause()
-            x_mitm()
-            
-        elif choice == "11":  # Portscan (bash sockets)
-            xi_portscan_bashsocket()
-            
-        elif choice == "12":  # Useful commands for Linux network management
-            xii_useful_linux_commands()
-            
-        elif choice == "13":  # Examples of the find command
-            xiii_find_examples()
-            
-        elif choice == "14":  # Debian root password change memo
-            xiv_debian_reset_root_password()
-            
-        elif choice == "15":  # RedHat root password change memo #!FIXME #TODO: NEEDS MAINTENANCE AND REFACTORING AFTER SAVING WRONG CODE AND NOT NOTICING IT
-            xv_redhat_reset_root_password()
-            
-        elif choice == "16":  # Vim memo 
-            xvi_vim_memento()
-            
-        elif choice == "17":  # Escape restricted bash #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
-            xvii_escape_rbash()
-            
-        elif choice == "18":  # Windows Tip Reminders
-            print("[WARNING] This function is not implemented yet")
-            pause()
-            
-        elif choice == "19":  # NMAP Network Scanner
-            print("[WARNING] This function is not implemented yet")
-            pause()
-            
-        elif choice == "20":  # xxxxx
-            print("[WARNING] This function is not implemented yet")
-            pause()
-            
-        elif choice == "21":  # xxiv_revshell_windows
-            print("[WARNING] This function is not implemented yet")
-            pause()
-            
-        else:  # Invalid input handling
-            print("[ERROR] Invalid choice. Please try again.")
+            elif choice == "6":  # Subdomain Takeover
+                vi_subdomain_takeover()
 
+            elif choice == "7":  # DNS reverse
+                vii_rev_dns()
+
+            elif choice == "8":  # DNS recon #TODO: This function needs to be tested and refined for better performance.
+                viii_recon_dns()
+
+            elif choice == "9":  # OSINT Tool #TODO: NEEDS REFACTORING TO BRING MORE OBJECTIVITY TO THE CODE
+                ix_general_google_query() 
+
+            elif choice == "10":  # MiTM
+                print("[>>> WARNING! <<<] This feature is not fully tested. Proceed at your own risk. [>>> WARNING! <<<]")
+                pause()
+                x_mitm()
+
+            elif choice == "11":  # Portscan (bash sockets)
+                xi_portscan_bashsocket()
+
+            elif choice == "12":  # Useful commands for Linux network management
+                xii_useful_linux_commands()
+
+            elif choice == "13":  # Examples of the find command
+                xiii_find_examples()
+
+            elif choice == "14":  # Debian root password change memo
+                xiv_debian_reset_root_password()
+
+            elif choice == "15":  # RedHat root password change memo #!FIXME #TODO: NEEDS MAINTENANCE AND REFACTORING AFTER SAVING WRONG CODE AND NOT NOTICING IT
+                xv_redhat_reset_root_password()
+
+            elif choice == "16":  # Vim memo 
+                xvi_vim_memento()
+
+            elif choice == "17":  # Escape restricted bash #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
+                xvii_escape_rbash()
+
+            elif choice == "18":  # Windows Tip Reminders
+                print("[WARNING] This function is not implemented yet")
+                pause()
+
+            elif choice == "19":  # NMAP Network Scanner
+                print("[WARNING] This function is not implemented yet")
+                pause()
+
+            elif choice == "20":  # xxxxx
+                print("[WARNING] This function is not implemented yet")
+                pause()
+
+            elif choice == "21":  # xxiv_revshell_windows
+                print("[WARNING] This function is not implemented yet")
+                pause()
+
+            else:  # Invalid input handling
+                print("[ERROR] Invalid choice. Please try again.")
+    
+    except KeyboardInterrupt:
+        print("\nProgram interrupted. Exiting gracefully. Goodbye!")
 """
 Menu functions
 """
