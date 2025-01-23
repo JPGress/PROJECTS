@@ -354,6 +354,7 @@ def scan_port(host, port, timeout=0.5):
         pass
     return None
 
+#TODO: Need to fix the export_to_file function
 # Export the content to a text file.
 def export_to_file(content):
     """
