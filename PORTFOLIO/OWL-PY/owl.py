@@ -26,6 +26,7 @@ import dns.resolver  # For resolving DNS records.
 import webbrowser  # To open web pages in the browser.
 import time  # To handle time-related functions (e.g., delays, timestamps).
 import threading # For threading operations.
+import platform
 from datetime import datetime, timezone  # For working with dates and timezones.
 from concurrent.futures import ThreadPoolExecutor  # To perform tasks concurrently (multi-threading).
 from urllib.parse import quote  # For encoding URLs.
@@ -56,6 +57,7 @@ COMMON_PORTS = list(range(1, 1025)) + [  # Add the first 1,024 ports.
 AUXILIARY FUNCTIONS
 """
 
+# Function to pause the script execution
 def pause():
     # Pauses the script until the user presses Enter
     input("Press Enter to continue...")
@@ -198,6 +200,7 @@ def validate_url(url):
     """
     return url.startswith("http") and "." in url
 
+# Extract subdomains from a domain
 def reverse_lookup_worker(address_queue, results, timeout):
     """
     Worker function to perform reverse DNS lookups concurrently.
@@ -222,6 +225,7 @@ def reverse_lookup_worker(address_queue, results, timeout):
         finally:
             address_queue.task_done()
 
+# Perform DNS lookups in parallel
 def worker(queue, domain, output_file, results_lock, progress):
     """
     Worker function to process DNS lookups and update progress.
@@ -251,6 +255,7 @@ def worker(queue, domain, output_file, results_lock, progress):
                     print(f"Processed {progress['count']} subdomains...")
             queue.task_done()
 
+# Get information about the network interface
 def get_interface_and_network():
     """
     Identify the network interface and calculate the network range.
@@ -280,6 +285,7 @@ def get_interface_and_network():
         print(f"Error determining network interface or range: {e}")
         exit(1)
 
+# Enable packet forwarding in the system
 def enable_packet_routing():
     """
     Enable packet forwarding in the system.
@@ -292,6 +298,7 @@ def enable_packet_routing():
         print(f"Failed to enable packet routing: {e}")
         exit(1)
 
+# Setup the MITM environment
 def setup_mitm_environment(interface, network):
     """
     Set up the Man-in-the-Middle attack environment.
@@ -332,6 +339,7 @@ def setup_mitm_environment(interface, network):
         print(f"Error setting up MITM environment: {e}")
         exit(1)
 
+# Scan a network for open ports
 def scan_port(host, port, timeout=0.5):
     """
     Check if a specific port is open on a given host.
