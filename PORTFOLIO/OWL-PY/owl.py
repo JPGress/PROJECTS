@@ -665,10 +665,8 @@ def texto_main_menu():
         "rbash escaping techniques (function under test)",
         "Wireless Network Attacks",
         "Windows Tip Reminders",
-        "NMAP Network Scanner",
-        "xxxxx",
-        "xxiv_revshell_windows",
-        "xxv_rdp_windows"
+        "RDP Client",
+        ">>> MORE TO COME <<<"
     ]
 
     # Print each menu option with a numeric index
@@ -794,9 +792,8 @@ def main():
             elif choice == "19":  # Windows tips #TODO: NEED TO ADD MORE FUNCTIONS FOCUSED ON PENETRATION TESTING
                 xix_basic_windows_commands()
 
-            elif choice == "20":  # xxxxx
-                print("[WARNING] This function is not implemented yet")
-                pause()
+            elif choice == "20":  # RDP Client
+                xx_rdp_linux_client()
 
             elif choice == "21":  # xxiv_revshell_windows
                 print("[WARNING] This function is not implemented yet")
@@ -1993,6 +1990,44 @@ def xix_basic_windows_commands():
 
     # Call the submenu for user interaction
     submenu()
+
+# Function to check and run an RDP client on Linux using xfreerdp.
+def xx_rdp_linux_client():
+    """
+    Function to check and run an RDP client on Linux using xfreerdp.
+    """
+    print("Welcome to the Linux RDP Client")
+
+    # Prompt the user for the Windows host IP address
+    ip_host = input("Enter the Windows host IP address: ").strip()
+
+    # Prompt the user for the username
+    username = input("Enter the username: ").strip()
+
+    # Prompt the user for the password
+    password = input("Enter the password: ").strip()
+
+    # Command to run xfreerdp with user inputs
+    command = [
+        "xfreerdp",
+        f"/u:{username}",
+        f"/p:{password}",
+        f"/v:{ip_host}",  # Specify the target host
+        "/w:1366",         # Set screen width
+        "/h:768",          # Set screen height
+        "/smart-sizing",   # Enable smart-sizing for better scaling
+        "+auto-reconnect"  # Automatically reconnect on disconnect
+    ]
+
+    try:
+        # Run the RDP client in a subprocess
+        subprocess.run(command, check=True)
+    except FileNotFoundError:
+        print("Error: xfreerdp is not installed. Please install it and try again.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error: Failed to connect using xfreerdp. Details: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
