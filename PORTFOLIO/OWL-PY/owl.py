@@ -791,7 +791,7 @@ def main():
                 pause()
                 xviii_wifi_attack_workflow()
 
-            elif choice == "19":  # Windows tips
+            elif choice == "19":  # Windows tips #TODO: NEED TO ADD MORE FUNCTIONS FOCUSED ON PENETRATION TESTING
                 xix_basic_windows_commands()
 
             elif choice == "20":  # xxxxx
