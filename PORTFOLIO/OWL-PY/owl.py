@@ -898,6 +898,8 @@ def vii_rev_dns():
 def viii_recon_dns():
     """
     Perform DNS reconnaissance using multithreading for faster processing.
+    
+    TODO: This function needs to be tested and refined for better performance.
     """
     wordlist_path = "/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"
 
