@@ -654,9 +654,8 @@ def main():
         elif choice == "11":  # Portscan (bash sockets)
             xi_portscan_bashsocket()
             
-        elif choice == "12":  # Reserved for future functionality
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "12":  # Useful commands for Linux network management
+            xii_useful_linux_commands()
             
         elif choice == "13":  # Debian root password change memo
             print("[WARNING] This function is not implemented yet")
