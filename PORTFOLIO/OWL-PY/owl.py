@@ -457,6 +457,19 @@ def display_routes():
     else:
         print("Invalid selection.")
 
+# Execute a 'find' command and display the results.
+def execute_find_command(command):
+    """
+    Execute a 'find' command and display the results.
+    """
+    try:
+        print(f"\nExecuting: {command}\n")
+        subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing command: {e}")
+    except FileNotFoundError:
+        print("Command 'find' is not available on this system.")
+
 
 # Check if the required modules are installed
 """
@@ -1350,6 +1363,106 @@ def xii_useful_linux_commands():
         except ValueError:
             print("Invalid input. Please enter a number.")
 
+# Display examples of the 'find' command and allow the user to run custom searches.
+def xiii_find_examples():
+    """
+    Display examples of the 'find' command and allow the user to run custom searches.
+    """
+    while True:
+        # Display the header
+        os.system('clear')
+        print("\n>>>>>>>>>> LINUX COMMANDS - FIND & EXAMPLES <<<<<<<<<<\n")
+
+        # Display examples
+        examples = """
+1. List all files in a directory
+   Command: find .
+
+2. Search for files with maxdepth
+   Command: find /etc -maxdepth 1 -name "*.sh"
+
+3. Search for files with a specific name
+   Command: find ./test -type f -name "<file*>"
+
+4. Search for directories with a specific name
+   Command: find ./test -type d -name "<directory*>"
+
+5. Search for hidden files
+   Command: find ~ -type f -name ".*"
+
+6. Search for files with specific permissions
+   Command: find / -type f -perm 0740 -exec ls -la {} \\;
+
+7. Search for SUID files
+   Command: find / -perm -4000 -type f -exec ls -la {} \\;
+
+8. Search for files belonging to a specific user
+   Command: find . -user <username>
+
+9. Search for files belonging to a specific group
+   Command: find . -group <groupname>
+
+10. Search for files modified N days ago
+    Command: find / -mtime 5
+
+11. Search for files accessed N days ago
+    Command: find / -atime 5
+
+12. Search and execute a command on found files
+    Command: find / -name "*.pdf" -type f -exec ls -lah {} \\;
+
+13. Perform a custom search
+14. Back to Main Menu
+"""
+        print(examples)
+
+        # Get the user's choice
+        try:
+            choice = int(input("Select an example to run or create your own custom search (1-14): "))
+        except ValueError:
+            print("Invalid input. Please enter a number between 1 and 14.")
+            continue
+
+        # Map each choice to its corresponding command
+        commands = {
+            1: "find .",
+            2: 'find /etc -maxdepth 1 -name "*.sh"',
+            3: 'find ./test -type f -name "<file*>"',
+            4: 'find ./test -type d -name "<directory*>"',
+            5: 'find ~ -type f -name ".*"',
+            6: "find / -type f -perm 0740 -exec ls -la {} \\;",
+            7: "find / -perm -4000 -type f -exec ls -la {} \\;",
+            8: "find . -user <username>",
+            9: "find . -group <groupname>",
+            10: "find / -mtime 5",
+            11: "find / -atime 5",
+            12: 'find / -name "*.pdf" -type f -exec ls -lah {} \\;',
+        }
+
+        # Handle user's choice
+        if choice in commands:
+            if "<" in commands[choice]:  # Check if the command requires user input
+                print(f"Example: {commands[choice]}")
+                user_input = input("Customize the placeholders (e.g., replace '<file*>' with 'myfile*'): ").strip()
+                command = commands[choice].replace("<file*>", user_input).replace("<directory*>", user_input).replace("<username>", user_input).replace("<groupname>", user_input)
+            else:
+                command = commands[choice]
+
+            # Execute the command
+            execute_find_command(command)
+
+        elif choice == 13:  # Custom search
+            custom_command = input("Enter your custom 'find' command: ").strip()
+            execute_find_command(custom_command)
+
+        elif choice == 14:  # Back to Main Menu
+            print("Returning to Main Menu...")
+            return
+
+        else:
+            print("Invalid choice. Please select a valid option.")
+
+        input("\nPress ENTER to continue...")
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
