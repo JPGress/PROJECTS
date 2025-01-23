@@ -676,14 +676,13 @@ def main():
         elif choice == "14":  # Debian root password change memo
             xiv_debian_reset_root_password()
             
-        elif choice == "15":  # RedHat root password change memo
+        elif choice == "15":  # RedHat root password change memo #!FIXME #TODO: NEEDS MAINTENANCE AND REFACTORING AFTER SAVING WRONG CODE AND NOT NOTICING IT
             xv_redhat_reset_root_password()
             
-        elif choice == "16":  # rbash escaping techniques #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
-            print("[WARNING] This function is not implemented yet")
-            pause()
+        elif choice == "16":  # Vim memo 
+            xvi_vim_memento()
             
-        elif choice == "17":  # Wireless Network Attacks
+        elif choice == "17":  # Wireless Network Attacks #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
             print("[WARNING] This function is not implemented yet")
             pause()
             
@@ -1538,6 +1537,59 @@ def xv_redhat_reset_root_password():
         # Allow the user to return to the main menu
         input("Press ENTER to go back to the main menu...")
         return  # Exit this function to go back to the main menu
+
+# Display a reminder for basic Vim usage, including text insertion, saving, exiting, and common commands.
+def xvi_vim_memento():
+    """
+    Display a reminder for basic Vim usage, including text insertion, saving, exiting, and common commands.
+    """
+    while True:
+        # Clear the screen
+        print("\033c", end="")  # ANSI escape code to clear the screen
+
+        # Header for the Vim usage reminder
+        print("\033[32m============= VIM USAGE REMINDER =============\033[0m\n")
+
+        # **Text Insertion**
+        print("\033[33mText Insertion:\033[0m")
+        print("Press 'i' to enter insertion mode.")
+
+        # **Save and Exit**
+        print("\n\033[33mSave and Exit:\033[0m")
+        print("Press 'Esc' to exit insertion mode, then type ':wq' to save and exit.")
+
+        # **Exit Without Saving**
+        print("\n\033[33mExit Without Saving:\033[0m")
+        print("Press 'Esc' to exit insertion mode, then type ':q!' to exit without saving.")
+
+        # **Text Navigation**
+        print("\n\033[33mText Navigation:\033[0m")
+        print("Use the arrow keys or 'h', 'j', 'k', and 'l' to move the cursor.")
+
+        # **Delete Text**
+        print("\n\033[33mDelete Text:\033[0m")
+        print("Press 'x' to delete the character under the cursor.")
+
+        # **Undo and Redo**
+        print("\n\033[33mUndo and Redo:\033[0m")
+        print("Press 'u' to undo and 'Ctrl + r' to redo.")
+
+        # **Search and Replace**
+        print("\n\033[33mSearch and Replace:\033[0m")
+        print("Type '/' to start a search. To replace, use ':s/word/new_word/g'.")
+
+        # **Help**
+        print("\n\033[33mHelp:\033[0m")
+        print("Type ':help' to access Vim's help documentation.")
+
+        # Footer for the Vim usage reminder
+        print("\n\033[32m===================================================\033[0m\n")
+
+        # Prompt to continue or go back to the main menu
+        choice = input("\033[90mPress ENTER to continue or 'b' to go back to the main menu:\033[0m ").strip().lower()
+        if choice == "b":
+            print("Returning to the main menu...")
+            return  # Exit this function to go back to the main menu
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
