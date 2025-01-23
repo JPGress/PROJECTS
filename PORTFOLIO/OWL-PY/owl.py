@@ -354,6 +354,109 @@ def scan_port(host, port, timeout=0.5):
         pass
     return None
 
+# Export the content to a text file.
+def export_to_file(content):
+    """
+    Export the content to a text file.
+    """
+    file_name = "linux_commands_help.txt"
+    with open(file_name, "w") as f:
+        f.write(content)
+    print(f"\nContent exported to {file_name}")
+
+# Execute a shell command and display the output.
+def execute_command(command):
+    """
+    Execute a shell command and display the output.
+    """
+    try:
+        print(f"\nExecuting: {command}\n")
+        subprocess.run(command.split(), check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing command: {e}")
+    except FileNotFoundError:
+        print(f"Command not found: {command}")
+
+# List the ARP table.
+def list_arp_table():
+    """
+    List the ARP table.
+    """
+    print("\n## List ARP Table\n")
+    print("Command: arp -a")
+    if input("Press 'b' to go back or Enter to execute the command: ").lower() == 'b':
+        return
+    execute_command("arp -a")
+
+# Display configured IPs.
+def display_ips():
+    """
+    Display configured IPs.
+    """
+    print("\n## Display Configured IPs\n")
+    print("Commands:\n1. ifconfig -a (Net-tools)\n2. ip addr (IP route)")
+    choice = input("Select command to execute (1 for ifconfig, 2 for ip addr, b to go back): ").lower()
+    if choice == "b":
+        return
+    elif choice == "1":
+        execute_command("ifconfig -a")
+    elif choice == "2":
+        execute_command("ip addr")
+    else:
+        print("Invalid selection.")
+
+# Enable or disable a network interface.
+def enable_disable_interface():
+    """
+    Enable or disable a network interface.
+    """
+    print("\n## Enable/Disable a Network Interface\n")
+    choice = input("Press 'b' to go back or Enter to continue: ").lower()
+    if choice == 'b':
+        return
+
+    interface = input("Enter the interface name (e.g., eth0): ").strip()
+    action = input("Enter 'up' to enable or 'down' to disable: ").strip()
+    print(f"\nCommand: ip link set {interface} {action}")
+    execute_command(f"ip link set {interface} {action}")
+
+# Display active network connections.
+def display_active_connections():
+    """
+    Display active network connections.
+    """
+    print("\n## Display Active Connections\n")
+    print("Commands:\n1. netstat (Net-tools)\n2. ss (IP route)")
+    choice = input("Select command to execute (1 for netstat, 2 for ss, b to go back): ").lower()
+    if choice == "b":
+        return
+    elif choice == "1":
+        execute_command("netstat")
+    elif choice == "2":
+        extra = input("Add arguments (e.g., -lntp) or press Enter to skip: ").strip()
+        command = f"ss {extra}" if extra else "ss"
+        execute_command(command)
+    else:
+        print("Invalid selection.")
+
+# Display routes.
+def display_routes():
+    """
+    Display routes.
+    """
+    print("\n## Display Routes\n")
+    print("Commands:\n1. route (Net-tools)\n2. ip route (IP route)")
+    choice = input("Select command to execute (1 for route, 2 for ip route, b to go back): ").lower()
+    if choice == "b":
+        return
+    elif choice == "1":
+        execute_command("route")
+    elif choice == "2":
+        execute_command("ip route")
+    else:
+        print("Invalid selection.")
+
+
 # Check if the required modules are installed
 """
 #def check_requirements(skip_selenium=False):
@@ -1199,6 +1302,54 @@ def xi_portscan_bashsocket():
     print(f"Scan completed in {scan_duration:.2f} seconds.")
     input("Press Enter to continue...")
     main()
+
+# Main function for displaying useful Linux commands and allowing interaction.
+def xii_useful_linux_commands():
+    """
+    Main function for displaying useful Linux commands and allowing interaction.
+    """
+    if platform.system() != "Linux":
+        print("This script is designed to run on Linux systems. Exiting.")
+        return
+
+    while True:
+        # Display the main menu
+        commands_description = """
+>>>>>>>>>> LINUX COMMANDS <<<<<<<<<<
+
+1. List ARP Table
+2. Display Configured IPs
+3. Enable/Disable a Network Interface
+4. Display Active Connections
+5. Display Routes
+6. Export Commands to File
+7. Back to Main Menu
+"""
+
+        print(commands_description)
+
+        try:
+            choice = int(input("Select an option (1-7): "))
+            if choice == 1:
+                list_arp_table()
+            elif choice == 2:
+                display_ips()
+            elif choice == 3:
+                enable_disable_interface()
+            elif choice == 4:
+                display_active_connections()
+            elif choice == 5:
+                display_routes()
+            elif choice == 6:
+                export_to_file(commands_description)
+            elif choice == 7:
+                print("Returning to Main Menu...")
+                break
+            else:
+                print("Invalid choice. Please select a valid option.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
