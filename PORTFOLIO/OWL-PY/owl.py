@@ -522,8 +522,9 @@ def main():
             ix_general_google_query()
             
         elif choice == "10":  # MiTM
-            print("[WARNING] This function is not implemented yet")
+            print("[>>> WARNING! <<<] This feature is not fully tested. Proceed at your own risk. [>>> WARNING! <<<]")
             pause()
+            x_mitm()
             
         elif choice == "11":  # Reserved for future functionality
             print("[WARNING] This function is not implemented yet")
@@ -1099,6 +1100,33 @@ def ix_general_google_query():
     print("============ End of Query ===========")
 
     # Return to the main menu
+    main()
+
+def x_mitm():
+    """
+    Main function for executing a Man-in-the-Middle attack.
+    """
+    # Step 1: Get interface and network range
+    try:
+        interface, network = get_interface_and_network()
+    except ValueError as e:
+        print(e)
+        exit(1)
+
+    # Step 2: Display initial message
+    print("============= 0.0wL =============")
+    print(f"ATTACK INTERFACE: {interface}")
+    print(f"ATTACK NETWORK: {network}")
+    print("=================================")
+
+    # Step 3: Enable packet routing
+    enable_packet_routing()
+
+    # Step 4: Set up the MITM environment
+    setup_mitm_environment(interface, network)
+
+    # Step 5: End the script and return to the main menu
+    input("Press Enter to continue...")
     main()
 
 # Run the main function when the script is executed directly
