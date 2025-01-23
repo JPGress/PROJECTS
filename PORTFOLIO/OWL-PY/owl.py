@@ -1586,7 +1586,7 @@ def xvi_vim_memento():
         print("\n\033[32m===================================================\033[0m\n")
 
         # Prompt to continue or go back to the main menu
-        choice = input("\033[90mPress ENTER to continue or 'b' to go back to the main menu:\033[0m ").strip().lower()
+        choice = input("\033[90mPress 'b' to go back to the main menu:\033[0m ").strip().lower()
         if choice == "b":
             print("Returning to the main menu...")
             return  # Exit this function to go back to the main menu
