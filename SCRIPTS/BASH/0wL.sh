@@ -1042,7 +1042,7 @@ function xiv_debian_memento_troca_senha_root(){
   main_menu;
 }
 # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no redhat
-function xv_redhat_memento_troca_senha_root(){ #!FIXME
+function xv_redhat_memento_troca_senha_root(){
   # limpa a tela
   clear
 
