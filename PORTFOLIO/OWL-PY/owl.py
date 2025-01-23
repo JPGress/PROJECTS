@@ -791,9 +791,8 @@ def main():
                 pause()
                 xviii_wifi_attack_workflow()
 
-            elif choice == "19":  # NMAP Network Scanner
-                print("[WARNING] This function is not implemented yet")
-                pause()
+            elif choice == "19":  # Windows tips
+                xix_basic_windows_commands()
 
             elif choice == "20":  # xxxxx
                 print("[WARNING] This function is not implemented yet")
@@ -1871,6 +1870,129 @@ def xviii_wifi_attack_workflow():
         input("\nPress ENTER to return to the main menu...")
     except KeyboardInterrupt:
         print("\n[INFO] Process interrupted by user. Returning to the main menu.")
+
+# Function to display basic Windows commands
+def xix_basic_windows_commands():
+    """
+    Main function to display basic Windows commands grouped by categories.
+    Each group is handled by a sub-function for modularity.
+    """
+    
+    def commands_basics():
+        """Displays basic commands like `help` and `cls`."""
+        print("############################## BASIC COMMANDS ##############################")
+        print("help - Shows available commands.")
+        print("help <command> OR <command> /? - Displays help for a specific command.")
+        print("cls - Clears the terminal screen.")
+        print()
+
+    def dir_cmd():
+        """Displays commands for listing directory contents."""
+        print("################### DIR #######################")
+        print("dir - Lists the files in the current directory.")
+        print("dir /a - Includes hidden files in the listing.")
+        print()
+
+    def gamb_dir_to_find():
+        """Displays a workaround for searching files using `dir`."""
+        print("############### FIND WORKAROUND #################")
+        print("dir /s /a /b *pass* == *cred* == *vnc* == *unatt* == *.config* - Searches for files matching specific patterns starting from the current directory.")
+        print("Note: '==' works as 'OR' in the search criteria.")
+        print()
+
+    def cd_cmd():
+        """Displays commands for navigating directories."""
+        print("################### CD #######################")
+        print("cd <directory> - Changes to the specified directory.")
+        print("cd .. - Moves up one directory level.")
+        print("cd - Displays the current directory (similar to `pwd` in Linux).")
+        print("md <directory> - Creates a new directory.")
+        print()
+
+    def rd_cmd():
+        """Displays commands for removing directories."""
+        print("################### RD #######################")
+        print("rd <directory> - Deletes a directory.")
+        print("rd /s - Deletes a directory and its contents recursively.")
+        print("rd /q - Deletes a directory quietly without confirmation.")
+        print("ren <old_name> <new_name> - Renames a file or directory.")
+        print()
+
+    def xcopy_cmd():
+        """Displays commands for copying files and directories."""
+        print("################### XCOPY #######################")
+        print("xcopy <source> <destination> - Copies files/directories without subdirectories.")
+        print("xcopy /e <source> <destination> - Includes subdirectories, even if they are empty.")
+        print("xcopy /s <source> <destination> - Includes subdirectories, but excludes empty ones.")
+        print("del <file> - Deletes a file or directory.")
+        print("move <source> <destination> - Moves a file/directory to another location.")
+        print()
+
+    def whoami_cmd():
+        """Displays commands for identifying the current user."""
+        print("################### WHOAMI #######################")
+        print("whoami - Shows the current username and domain.")
+        print("whoami /priv - Lists the privileges of the user.")
+        print()
+
+    def tree_cmd():
+        """Displays commands for visualizing directory structures."""
+        print("################### TREE #######################")
+        print("tree - Lists the current directory and its subdirectories.")
+        print("tree <directory> - Lists the specified directory and its subdirectories.")
+        print("tree /f - Includes files in the directory structure listing.")
+        print()
+
+    def shutdown_cmd():
+        """Displays commands for shutting down or restarting the system."""
+        print("################### SHUTDOWN #######################")
+        print("shutdown /s - Shuts down the system.")
+        print("shutdown /l - Logs off the current user.")
+        print("shutdown /r - Restarts the system.")
+        print("shutdown /f - Forces a shutdown without warning users.")
+        print("shutdown /c \"comment\" - Displays a warning message to users before shutting down.")
+        print()
+
+    def submenu():
+        """Displays a submenu for selecting specific command groups."""
+        while True:
+            print("\n========= Windows Command Basics =========")
+            print("1. Basic Commands")
+            print("2. Directory Management (dir)")
+            print("3. Navigate Directories (cd)")
+            print("4. Remove Directories (rd)")
+            print("5. Copy Files (xcopy)")
+            print("6. User Information (whoami)")
+            print("7. Directory Structures (tree)")
+            print("8. Shutdown Commands")
+            print("0. Back to Main Menu")
+
+            choice = input("Select an option: ").strip()
+
+            if choice == "1":
+                commands_basics()
+            elif choice == "2":
+                dir_cmd()
+            elif choice == "3":
+                cd_cmd()
+            elif choice == "4":
+                rd_cmd()
+            elif choice == "5":
+                xcopy_cmd()
+            elif choice == "6":
+                whoami_cmd()
+            elif choice == "7":
+                tree_cmd()
+            elif choice == "8":
+                shutdown_cmd()
+            elif choice == "0":
+                print("Returning to the main menu...")
+                break
+            else:
+                print("Invalid option. Please try again.")
+
+    # Call the submenu for user interaction
+    submenu()
 
 # Run the main function when the script is executed directly
 if __name__ == "__main__":
