@@ -235,331 +235,387 @@
     }
 
 ######################## FUNÇÕES DO MENU ########################
-# Function: Script to perform a port scan on a network using netcat
-function i_portscan() {
-    # i_portscan - Script to perform a port scan on a network using netcat
-        #
-        # Description:
-        # This script performs the following operations:
-        # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
-        # 2. Dynamically loads a user-defined number of top ports (e.g., 20, 100, 1000) from Nmap's services file, if available.
-        # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
-        # 4. Prints results for each host and open port found.
-        # 5. Saves the results in two file formats:
-        #    - Plain text (`portscan_results.txt`) for human-readable output.
-        #    - CSV (`portscan_results.csv`) for structured data analysis.
-        #
-        # Dependencies:
-        # - netcat (nc): To perform the port scanning.
-        # - ipcalc: To validate and parse CIDR-based network masks.
-        # - awk: To process data from Nmap's services file.
-        #
-        # Author: R3v4N (w/GPT)
-        # Created on: 2025-01-23
-        # Last Updated: 2025-01-24
-        # Version: 1.2
-        #
-        # Version history:
-        # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
-        # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
-        #                     Integrated dynamic port loading from Nmap's services file.
-        # - 1.2 (2025-01-23): Added user input to define the number of top ports to scan.
-        #                     Improved flexibility and user control over scan depth.
-        #
-        # Notes:
-        # - Ensure the required dependencies are installed before running the script.
-        # - If `ipcalc` is not installed, the script will attempt to install it automatically.
-        # - Users can dynamically select the number of top ports to scan.
-        # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
-        # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
-        #
-        # Example usage:
-        # - Input:
-        #   - Number of ports: 100
-        #   - CIDR: "192.168.1.0/24"
-        # - Output:
-        #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
-        #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
-        #   - CSV File: "192.168.1.1,80,Open"
+    # Function: Script to perform a port scan on a network using netcat
+    function i_portscan() {
+        # i_portscan - Script to perform a port scan on a network using netcat
+            #
+            # Description:
+            # This script performs the following operations:
+            # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
+            # 2. Dynamically loads a user-defined number of top ports (e.g., 20, 100, 1000) from Nmap's services file, if available.
+            # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
+            # 4. Prints results for each host and open port found.
+            # 5. Saves the results in two file formats:
+            #    - Plain text (`portscan_results.txt`) for human-readable output.
+            #    - CSV (`portscan_results.csv`) for structured data analysis.
+            #
+            # Dependencies:
+            # - netcat (nc): To perform the port scanning.
+            # - ipcalc: To validate and parse CIDR-based network masks.
+            # - awk: To process data from Nmap's services file.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-23
+            # Last Updated: 2025-01-24
+            # Version: 1.2
+            #
+            # Version history:
+            # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
+            # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
+            #                     Integrated dynamic port loading from Nmap's services file.
+            # - 1.2 (2025-01-23): Added user input to define the number of top ports to scan.
+            #                     Improved flexibility and user control over scan depth.
+            #
+            # Notes:
+            # - Ensure the required dependencies are installed before running the script.
+            # - If `ipcalc` is not installed, the script will attempt to install it automatically.
+            # - Users can dynamically select the number of top ports to scan.
+            # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
+            # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
+            #
+            # Example usage:
+            # - Input:
+            #   - Number of ports: 100
+            #   - CIDR: "192.168.1.0/24"
+            # - Output:
+            #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
+            #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
+            #   - CSV File: "192.168.1.1,80,Open"
 
-    clear
-    echo -e "${MAGENTA}1 - Portscan using netcat ${RESET}"
-    echo -e "${GRAY}+======================================================================+${RESET}"
-    echo -e "${GRAY}This port scan checks common open ports on all hosts in the network."
-    echo -e "${GRAY}+======================================================================+${RESET}"
+        clear
+        echo -e "${MAGENTA}1 - Portscan using netcat ${RESET}"
+        echo -e "${GRAY}+======================================================================+${RESET}"
+        echo -e "${GRAY}This port scan checks common open ports on all hosts in the network."
+        echo -e "${GRAY}+======================================================================+${RESET}"
 
-    # Ask the user how many top ports they want to scan
-    echo -ne "${CYAN}Enter the number of top ports to scan (e.g., 20, 100, 1000): ${RESET}"
-    read -r TOP_PORTS
+        # Ask the user how many top ports they want to scan
+        echo -ne "${CYAN}Enter the number of top ports to scan (e.g., 20, 100, 1000): ${RESET}"
+        read -r TOP_PORTS
 
-    # Validate the user's input (ensure it's a positive number)
-    if ! [[ "$TOP_PORTS" =~ ^[0-9]+$ ]] || [[ "$TOP_PORTS" -le 0 ]]; then
-        echo -e "${RED}Invalid input! Please enter a positive number.${RESET}"
-        main_menu
-        return
-    fi
+        # Validate the user's input (ensure it's a positive number)
+        if ! [[ "$TOP_PORTS" =~ ^[0-9]+$ ]] || [[ "$TOP_PORTS" -le 0 ]]; then
+            echo -e "${RED}Invalid input! Please enter a positive number.${RESET}"
+            main_menu
+            return
+        fi
 
-    # Load ports dynamically from Nmap or use a fallback list
-    local nmap_services="/usr/share/nmap/nmap-services" # Path to Nmap's services file
-    local fallback_ports="80,23,443,21,22,25,3389,110,445,139,143,53,135,3306,8080,1723,111,995,993,5900"
+        # Load ports dynamically from Nmap or use a fallback list
+        local nmap_services="/usr/share/nmap/nmap-services" # Path to Nmap's services file
+        local fallback_ports="80,23,443,21,22,25,3389,110,445,139,143,53,135,3306,8080,1723,111,995,993,5900"
 
-    if [[ -f "$nmap_services" ]]; then
-        # Extract the top N ports based on the user's choice
-        PORT_LIST=$(awk '!/^#/ {print $2}' "$nmap_services" | grep -Eo '^[0-9]+' | sort -n | uniq | head -n "$TOP_PORTS" | paste -sd ',')
+        if [[ -f "$nmap_services" ]]; then
+            # Extract the top N ports based on the user's choice
+            PORT_LIST=$(awk '!/^#/ {print $2}' "$nmap_services" | grep -Eo '^[0-9]+' | sort -n | uniq | head -n "$TOP_PORTS" | paste -sd ',')
 
-        if [[ -n "$PORT_LIST" ]]; then
-            echo -e "${GREEN}Loaded the TOP $TOP_PORTS ports from Nmap's services file: $nmap_services${RESET}"
+            if [[ -n "$PORT_LIST" ]]; then
+                echo -e "${GREEN}Loaded the TOP $TOP_PORTS ports from Nmap's services file: $nmap_services${RESET}"
+            else
+                echo -e "${YELLOW}Warning: Failed to extract ports from Nmap's services file. Falling back to predefined ports.${RESET}"
+                PORT_LIST="$fallback_ports"
+            fi
         else
-            echo -e "${YELLOW}Warning: Failed to extract ports from Nmap's services file. Falling back to predefined ports.${RESET}"
+            echo -e "${YELLOW}Warning: Nmap services file not found at $nmap_services. Falling back to predefined ports.${RESET}"
             PORT_LIST="$fallback_ports"
         fi
-    else
-        echo -e "${YELLOW}Warning: Nmap services file not found at $nmap_services. Falling back to predefined ports.${RESET}"
-        PORT_LIST="$fallback_ports"
-    fi
 
-    # Handle Ctrl+C interruptions gracefully
-    trap 'echo -e "\nScript interrupted by user."; main_menu; exit 1' SIGINT
+        # Handle Ctrl+C interruptions gracefully
+        trap 'echo -e "\nScript interrupted by user."; main_menu; exit 1' SIGINT
 
-    # Ask user to enter the IP range in CIDR notation
-    echo -ne "${CYAN}Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): ${RESET}"
-    read -r NETWORK_MASK
+        # Ask user to enter the IP range in CIDR notation
+        echo -ne "${CYAN}Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): ${RESET}"
+        read -r NETWORK_MASK
 
-    # Validate the network mask
-    if ! ipcalc -n -b -m "$NETWORK_MASK" >/dev/null 2>&1; then
-        echo "Invalid network mask."
+        # Validate the network mask
+        if ! ipcalc -n -b -m "$NETWORK_MASK" >/dev/null 2>&1; then
+            echo "Invalid network mask."
+            main_menu
+            return
+        fi
+
+        # Extract the network prefix from the mask
+        NETWORK_PREFIX=$(ipcalc -n -b "$NETWORK_MASK" | awk '/Network/ {print $2}' | awk -F. '{print $1"."$2"."$3}')
+
+        # Start scanning each host in the network for the specified ports
+        echo -e "${CYAN}Scanning network: $NETWORK_MASK ${RESET}"
+        for HOST in $(seq 1 254); do
+            IP="$NETWORK_PREFIX.$HOST"
+            for PORT in $(echo "$PORT_LIST" | tr ',' ' '); do
+                # Check if the port is open on the host
+                nc -z -w 1 "$IP" "$PORT" 2>/dev/null
+                if [ $? -eq 0 ]; then
+                    echo -e "${GREEN}Host: $IP - Open Port: $PORT ${RESET}"
+                fi
+            done
+        done
+
+        # Completion message
+        echo -e "${GREEN}Scan completed for $NETWORK_MASK using the TOP $TOP_PORTS ports.${RESET}"
+        echo -e "${GRAY}Press ENTER to continue...${RESET}"
+        read -r
         main_menu
-        return
-    fi
+    }
 
-    # Extract the network prefix from the mask
-    NETWORK_PREFIX=$(ipcalc -n -b "$NETWORK_MASK" | awk '/Network/ {print $2}' | awk -F. '{print $1"."$2"."$3}')
+    # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
+    function ii_parsing_html() {
+        # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
+            #
+            # Description:
+            # This script performs the following operations:
+            # 1. Extracts subdomains from an HTML page.
+            # 2. Retrieves IP addresses associated with each subdomain.
+            # 3. Fetches WHOIS information for each domain.
+            # 4. Generates a report with the results.
+            #
+            # Dependencies:
+            # - curl: To make HTTP requests.
+            # - dig: To retrieve IP addresses of subdomains.
+            # - whois: To get WHOIS information for domains.
+            # - nslookup: For DNS lookups.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2024-01-15
+            # Last Updated: 2024-01-24
+            # Version: 1.1
+            #
+            # Version history:
+            # - 1.0 (2024-01-15): Initial version with basic subdomain and WHOIS functionality.
+            # - 1.1 (2024-01-24): Added dependency checks and updated timestamp format.
+            #
+            # Example usage:
+            # - Input: https://example.com
+            # - Output: Subdomains, IP addresses, WHOIS information for each domain.
+            #
+            # Notes:
+            # - Ensure the dependencies are installed before running the script.
+            # - The report is saved in a file named "result_<URL>_<date>.txt".
+            #
 
-    # Start scanning each host in the network for the specified ports
-    echo -e "${CYAN}Scanning network: $NETWORK_MASK ${RESET}"
-    for HOST in $(seq 1 254); do
-        IP="$NETWORK_PREFIX.$HOST"
-        for PORT in $(echo "$PORT_LIST" | tr ',' ' '); do
-            # Check if the port is open on the host
-            nc -z -w 1 "$IP" "$PORT" 2>/dev/null
-            if [ $? -eq 0 ]; then
-                echo -e "${GREEN}Host: $IP - Open Port: $PORT ${RESET}"
+        # Function to check if dependencies are installed
+        check_dependencies() {
+            local dependencies=("curl" "whois" "nslookup" "dig")
+            for dep in "${dependencies[@]}"; do
+                if ! command -v "$dep" &>/dev/null; then
+                    echo -e "${RED}Error: Dependency '$dep' is not installed.${RESET}"
+                    echo "Please install '$dep' before running this script."
+                    exit 1
+                fi
+            done
+        }
+
+        # Call the dependency check function
+        check_dependencies
+
+        # Prompt the user to input the desired website URL
+        echo -n "Enter the URL of the website to analyze (e.g.: businesscorp.com.br): "
+        read -r SITE
+
+        # Store the current date and time in the specified format (day-hour-minutes-month-year)
+        timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
+        output_file="result_$SITE'_$timestamp.txt"
+
+        # Function to print text in color
+        print_color() {
+            local color=$1
+            local text=$2
+            echo -e "\e[0;${color}m${text}\e[0m"
+        }
+
+        # Function to extract subdomains from an HTML page
+        extract_subdomains() {
+            local site=$1
+            curl -s "$site" | grep -Eo '(http|https)://[^/"]+' | awk -F[/:] '{print $4}' | sort -u
+        }
+
+        # Function to get the IP address of a subdomain
+        get_ip_address() {
+            local subdomain=$1
+            local ip_address
+            ip_address=$(host "$subdomain" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
+            echo "$ip_address:$subdomain"
+        }
+
+        # Function to get WHOIS information for a domain
+        get_whois_info() {
+            local domain=$1
+            whois "$domain" | grep -vE "^\s*(%|\*|;|$|>>>|NOTICE|TERMS|by|to)" | grep -E ':|No match|^$'
+        }
+
+        # Function to get DNS lookup information for a domain
+        get_dns_info() {
+            local domain=$1
+            nslookup "$domain" 2>/dev/null | grep "Address" | awk '{print $2}' | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g'
+        }
+
+        # Add the timestamp to the beginning of the output file
+        echo -e "Report generated on: $timestamp\n" > "$output_file"
+
+        # Analyze the provided site
+        print_color 33 "Analyzing subdomains for: $SITE"
+        subdomains=($(extract_subdomains "$SITE"))
+
+        # Check if any subdomains were found
+        if [ ${#subdomains[@]} -eq 0 ]; then
+            print_color 31 "No subdomains found for: $SITE"
+            echo "No subdomains found for: $SITE" >> "$output_file"
+        else
+            print_color 32 "Subdomains found:"
+            for subdomain in "${subdomains[@]}"; do
+                print_color 36 "$subdomain"
+
+                # Get IP address for the subdomain
+                ip_result=$(get_ip_address "$subdomain")
+                echo "$ip_result" >> "$output_file"
+
+                # Add WHOIS information
+                print_color 34 "WHOIS information for $subdomain"
+                get_whois_info "$subdomain" >> "$output_file"
+
+                # Add DNS lookup information
+                print_color 34 "DNS Lookup information for $subdomain"
+                get_dns_info "$subdomain" >> "$output_file"
+
+                echo -e "\n" >> "$output_file"
+            done
+        fi
+
+        # Completion message
+        print_color 32 "Analysis complete. Results saved to: $output_file"
+        echo -e "${GRAY}Press ENTER to continue${RESET}"
+        read -r 2>/dev/null
+        main_menu
+    }
+
+    # Function: Automates Google hacking queries for reconnaissance
+    function iii_google_hacking() {
+        # iii_google_hacking - Automates Google hacking queries for reconnaissance
+            #
+            # Description:
+            # This script automates Google hacking techniques to gather information about a target.
+            # It performs the following operations:
+            # 1. Conducts general searches for the target using Google.
+            # 2. Searches for specific file types (e.g., PDF, DOCX) containing the target's name.
+            # 3. Searches within specific websites (e.g., LinkedIn, Pastebin) for target-related data.
+            # 4. Verifies the user's IP address for anonymity before performing queries.
+            #
+            # Dependencies:
+            # - Firefox or a compatible browser (default: Firefox).
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2024-01-15
+            # Last Updated: 2024-01-24
+            # Version: 1.1
+            #
+            # Version history:
+            # - 1.0 (2024-01-15): Initial version with basic Google hacking queries.
+            # - 1.1 (2024-01-24): Refactored for modularity, added input validation, improved user prompts, and added error handling for missing browser.
+            #
+            # Example usage:
+            # - Input: "Example Target"
+            # - Output: Automated Google searches for file types, websites, and general queries.
+            #
+            # Notes:
+            # - Ensure Firefox or the browser specified in the `SEARCH` variable is installed.
+            # - Designed for educational purposes only; respect applicable laws and ethics.
+            #
+
+
+        # Default browser for search
+        SEARCH="firefox"
+
+        # Function to ensure the browser is installed
+        function check_browser() {
+            if ! command -v "$SEARCH" >/dev/null 2>&1; then
+                echo -e "${RED}Error: The browser '$SEARCH' is not installed. Please install it or update the 'SEARCH' variable.${RESET}"
+                return 1
             fi
+        }
+
+        # Function to prompt the user for the target name
+        function google_hacking_menu() {
+            echo -n "Enter the target name for the search: "
+            read -r TARGET
+
+            # Validate input
+            while [[ -z "$TARGET" ]]; do
+                echo "Target name cannot be empty. Please try again."
+                echo -n "Enter the target name for the search: "
+                read -r TARGET
+            done
+        }
+
+        # Function for general searches
+        function generalSearch() {
+            echo "Verifying your IP address..."
+            $SEARCH "https://dnsleaktest.com" & # Opens a page to verify IP
+            sleep 3
+
+            echo "Searching on WEBMII server for information..."
+            $SEARCH "https://webmii.com/people?n=$TARGET" 2>/dev/null
+            waitingUser
+
+            echo "Performing a full Google search for the target..."
+            $SEARCH "https://www.google.com/search?q=intext:$TARGET" 2>/dev/null
+            waitingUser
+        }
+
+        # Function for searches within specific websites
+        function siteSearch() {
+            local site="$1"
+            local domain="$2"
+
+            echo "Searching on $site..."
+            $SEARCH "https://www.google.com/search?q=inurl:$domain+intext:$TARGET" 2>/dev/null
+            waitingUser
+        }
+
+        # Function for file type searches
+        function FileSearch() {
+            local type="$1"
+            local extension="$2"
+
+            echo "Searching for files of type: $type..."
+            $SEARCH "https://www.google.com/search?q=filetype:$extension+intext:$TARGET" 2>/dev/null
+            waitingUser
+        }
+
+        # Function to pause and wait for user input
+        function waitingUser() {
+            echo "Press ENTER to continue..."
+            read -r
+        }
+
+        # Check if the browser is installed
+        check_browser || return 1
+
+        # Prompt for the target name
+        google_hacking_menu
+
+        # Perform general searches
+        generalSearch
+
+        # List of file types and their extensions for targeted searches
+        file_types=("PDF" "PPT" "DOC" "DOCX" "XLS" "XLSX" "ODS" "ODT" "TXT" "PHP" "XML" "JSON" "PNG" "SQLS" "SQL")
+        extensions=("pdf" "ppt" "doc" "docx" "xls" "xlsx" "ods" "odt" "txt" "php" "xml" "json" "png" "sqls" "sql")
+
+        # Perform file type searches
+        for ((i = 0; i < ${#file_types[@]}; i++)); do
+            FileSearch "${file_types[i]}" "${extensions[i]}"
         done
-    done
 
-    # Completion message
-    echo -e "${GREEN}Scan completed for $NETWORK_MASK using the TOP $TOP_PORTS ports.${RESET}"
-    echo -e "${GRAY}Press ENTER to continue...${RESET}"
-    read -r
-    main_menu
-}
+        # List of sites and their corresponding domains for targeted searches
+        sites=("Government" "Pastebin" "Trello" "GitHub" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "YouTube" "Medium" "Stack Overflow" "Quora" "Wikipedia")
+        domains=(".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tiktok.com" "youtube.com" "medium.com" "stackoverflow.com" "quora.com" "wikipedia.org")
 
-# Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
-function ii_parsing_html() {
-    # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
-        #
-        # Description:
-        # This script performs the following operations:
-        # 1. Extracts subdomains from an HTML page.
-        # 2. Retrieves IP addresses associated with each subdomain.
-        # 3. Fetches WHOIS information for each domain.
-        # 4. Generates a report with the results.
-        #
-        # Dependencies:
-        # - curl: To make HTTP requests.
-        # - dig: To retrieve IP addresses of subdomains.
-        # - whois: To get WHOIS information for domains.
-        # - nslookup: For DNS lookups.
-        #
-        # Author: R3v4N (w/GPT)
-        # Created on: 2024-01-15
-        # Last Updated: 2024-01-24
-        # Version: 1.1
-        #
-        # Version history:
-        # - 1.0 (2024-01-15): Initial version with basic subdomain and WHOIS functionality.
-        # - 1.1 (2024-01-24): Added dependency checks and updated timestamp format.
-        #
-        # Example usage:
-        # - Input: https://example.com
-        # - Output: Subdomains, IP addresses, WHOIS information for each domain.
-        #
-        # Notes:
-        # - Ensure the dependencies are installed before running the script.
-        # - The report is saved in a file named "result_<URL>_<date>.txt".
-        #
-
-    # Function to check if dependencies are installed
-    check_dependencies() {
-        local dependencies=("curl" "whois" "nslookup" "dig")
-        for dep in "${dependencies[@]}"; do
-            if ! command -v "$dep" &>/dev/null; then
-                echo -e "${RED}Error: Dependency '$dep' is not installed.${RESET}"
-                echo "Please install '$dep' before running this script."
-                exit 1
-            fi
+        # Perform searches on specific sites
+        for ((i = 0; i < ${#sites[@]}; i++)); do
+            siteSearch "${sites[i]}" "${domains[i]}"
         done
+
+        echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
+        read -r 2>/dev/null
+        main_menu
     }
 
-    # Call the dependency check function
-    check_dependencies
-
-    # Prompt the user to input the desired website URL
-    echo -n "Enter the URL of the website to analyze (e.g.: businesscorp.com.br): "
-    read -r SITE
-
-    # Store the current date and time in the specified format (day-hour-minutes-month-year)
-    timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
-    output_file="result_$SITE'_$timestamp.txt"
-
-    # Function to print text in color
-    print_color() {
-        local color=$1
-        local text=$2
-        echo -e "\e[0;${color}m${text}\e[0m"
-    }
-
-    # Function to extract subdomains from an HTML page
-    extract_subdomains() {
-        local site=$1
-        curl -s "$site" | grep -Eo '(http|https)://[^/"]+' | awk -F[/:] '{print $4}' | sort -u
-    }
-
-    # Function to get the IP address of a subdomain
-    get_ip_address() {
-        local subdomain=$1
-        local ip_address
-        ip_address=$(host "$subdomain" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
-        echo "$ip_address:$subdomain"
-    }
-
-    # Function to get WHOIS information for a domain
-    get_whois_info() {
-        local domain=$1
-        whois "$domain" | grep -vE "^\s*(%|\*|;|$|>>>|NOTICE|TERMS|by|to)" | grep -E ':|No match|^$'
-    }
-
-    # Function to get DNS lookup information for a domain
-    get_dns_info() {
-        local domain=$1
-        nslookup "$domain" 2>/dev/null | grep "Address" | awk '{print $2}' | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g'
-    }
-
-    # Add the timestamp to the beginning of the output file
-    echo -e "Report generated on: $timestamp\n" > "$output_file"
-
-    # Analyze the provided site
-    print_color 33 "Analyzing subdomains for: $SITE"
-    subdomains=($(extract_subdomains "$SITE"))
-
-    # Check if any subdomains were found
-    if [ ${#subdomains[@]} -eq 0 ]; then
-        print_color 31 "No subdomains found for: $SITE"
-        echo "No subdomains found for: $SITE" >> "$output_file"
-    else
-        print_color 32 "Subdomains found:"
-        for subdomain in "${subdomains[@]}"; do
-            print_color 36 "$subdomain"
-
-            # Get IP address for the subdomain
-            ip_result=$(get_ip_address "$subdomain")
-            echo "$ip_result" >> "$output_file"
-
-            # Add WHOIS information
-            print_color 34 "WHOIS information for $subdomain"
-            get_whois_info "$subdomain" >> "$output_file"
-
-            # Add DNS lookup information
-            print_color 34 "DNS Lookup information for $subdomain"
-            get_dns_info "$subdomain" >> "$output_file"
-
-            echo -e "\n" >> "$output_file"
-        done
-    fi
-
-    # Completion message
-    print_color 32 "Analysis complete. Results saved to: $output_file"
-    echo -e "${GRAY}Press ENTER to continue${RESET}"
-    read -r 2>/dev/null
-    main_menu
-}
-
-# Define a função iii_google_hacking
-function iii_google_hacking(){  
-    SEARCH="firefox"
-
-    # Define a função menu_google_hacking para solicitar ao usuário o nome do alvo a ser pesquisado
-    function menu_google_hacking(){
-        echo "Digite o nome do alvo a ser pesquisado:"
-        read -r ALVO
-    }
-
-    #ALVO_TRATADO="\"$ALVO\""
-
-    # Define a função pesquisaGeral para realizar pesquisas gerais utilizando o navegador especificado
-    function pesquisaGeral() {
-        echo "Verificando IP"
-        $SEARCH "https://dnsleaktest.com" & # Abre uma página para verificar o IP
-        sleep 3
-        echo "Pesquisando no WEBMII server"
-        $SEARCH "https://webmii.com/people?n=$ALVO" 2> /dev/null # Pesquisa no WEBMII server
-        esperarEnter
-        echo "Pesquisando em todo Google"
-        $SEARCH "https://www.google.com/search?q=intext:$ALVO" 2> /dev/null # Pesquisa no Google
-        esperarEnter
-    }
-
-    # Define a função pesquisarSite para realizar pesquisa em um site específico utilizando o navegador especificado
-    function pesquisarSite() {
-        local site="$1"
-        local dominio="$2"
-        echo "Pesquisando em $site"
-        $SEARCH "https://www.google.com/search?q=inurl:$dominio+intext:$ALVO" 2> /dev/null # Pesquisa em um site específico
-        esperarEnter
-    }
-
-    # Define a função pesquisaArquivo para realizar pesquisa por tipo de arquivo utilizando o navegador especificado
-    function pesquisaArquivo() {
-        local tipo="$1"
-        local extensao="$2"
-        echo "Pesquisando arquivo tipo: $tipo"
-        $SEARCH "https://www.google.com/search?q=filetype:$extensao+intext:$ALVO" 2> /dev/null # Pesquisa por tipo de arquivo
-        esperarEnter
-    }
-
-    # Define a função esperarEnter para aguardar o usuário pressionar Enter para continuar
-    function esperarEnter() {
-        read -r "Pressione Enter para continuar..."
-    }
-
-    # Chama a função menu_google_hacking para solicitar o nome do alvo
-    menu_google_hacking
-    # Realiza a pesquisa geral
-    pesquisaGeral
-    
-    # Define uma lista de tipos de arquivo e suas extensões correspondentes
-    tipos=("PDF" "ppt" "Doc" "Docx" "xls" "xlsx" "ods" "odt" "TXT" "PHP" "XML" "JSON" "PNG" "SQLS" "SQL")
-    extensoes=("pdf" "ppt" "doc" "docx" "xls" "xlsx" "ods" "odt" "txt" "php" "xml" "json" "png" "sqls" "sql")
-    
-    # Realiza a pesquisa para cada tipo de arquivo na lista
-    for ((i=0; i<${#tipos[@]}; i++)); do
-        pesquisaArquivo "${tipos[i]}" "${extensoes[i]}"
-    done
-    
-    # Define uma lista de sites para pesquisa e seus domínios correspondentes
-    sites=( "Governo" "Pastebin" "Trello" "Github" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "youtube" "Medium" "Stack Overflow" "Quora" "Wikipedia")
-    dominios=( ".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tikTok.com" "youtube.com" "medium.com" "stackoverflow.com" "quora.com" "Wikipedia.org")
-    
-    # Realiza a pesquisa para cada site na lista
-    for ((i=0; i<${#sites[@]}; i++)); do
-        pesquisarSite "${sites[i]}" "${dominios[i]}"
-    done
-
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    main_menu; # Retorna ao menu principal
-}
 # Define a função iv_analise_metadados
 function iv_analise_metadados(){
     # Comando de pesquisa para analisar metadados
@@ -742,7 +798,7 @@ function ix_consulta_geral_google(){
     LISTA=./amanda2csv.csv
     
     # Define a função para aguardar a entrada do usuário
-    function esperarEnter() {
+    function waitingUser() {
         read -r "Pressione Enter para continuar..."
     }
     
@@ -762,7 +818,7 @@ function ix_consulta_geral_google(){
             # Realiza a pesquisa no Google usando lynx e filtra os resultados
             $LYNX_SEARCH "https://www.google.com/search?q=intext:$NOME+intext:$CPF" | grep -i '\.pdf' | cut -d '=' -f2 | grep -v 'x-raw-image' | sed 's/...$//' | grep -E -i "(HTTPS|HTTP)"
             
-            esperarEnter # Aguarda o usuário pressionar Enter para continuar com a próxima pesquisa
+            waitingUser # Aguarda o usuário pressionar Enter para continuar com a próxima pesquisa
         done < "$LISTA" # Redireciona o arquivo de lista de consultas para a entrada do loop
         echo "============ fim da consulta ===========" # Indica o fim da consulta
     }
