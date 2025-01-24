@@ -522,7 +522,7 @@
             #
         
         # Default browser for search
-        SEARCH="proxychains4 firefox"
+        SEARCH="firefox"
 
         # Function to ensure the browser is installed
         function check_browser() {
@@ -555,19 +555,19 @@
             echo "Verifying your IP address..."
             local url="https://dnsleaktest.com"
             echo "Verifying IP: $url" >> "$LOG_FILE"
-            $SEARCH "$url" & # Opens a page to verify IP
+            proxychains4 $SEARCH "$url" & # Opens a page to verify IP
             sleep 3
 
             echo "Searching on WEBMII server for information..."
             local webmii_url="https://webmii.com/people?n=$TARGET"
             echo "WEBMII search: $webmii_url" >> "$LOG_FILE"
-            $SEARCH "$webmii_url" 2>/dev/null
+            proxychains4 $SEARCH "$webmii_url" 2>/dev/null
             waitingUser
 
             echo "Performing a full Google search for the target..."
             local google_url="https://www.google.com/search?q=intext:$TARGET"
             echo "General Google search: $google_url" >> "$LOG_FILE"
-            $SEARCH "$google_url" 2>/dev/null
+            proxychains4 $SEARCH "$google_url" 2>/dev/null
             waitingUser
         }
 
@@ -579,7 +579,7 @@
             echo "Searching on $site..."
             local url="https://www.google.com/search?q=inurl:$domain+intext:$TARGET"
             echo "Site search [$site]: $url" >> "$LOG_FILE"
-            $SEARCH "$url" 2>/dev/null
+            proxychains4 $SEARCH "$url" 2>/dev/null
             waitingUser
         }
 
@@ -591,7 +591,7 @@
             echo "Searching for files of type: $type..."
             local url="https://www.google.com/search?q=filetype:$extension+intext:$TARGET"
             echo "File search [$type]: $url" >> "$LOG_FILE"
-            $SEARCH "$url" 2>/dev/null
+            proxychains4 $SEARCH "$url" 2>/dev/null
             waitingUser
         }
 
