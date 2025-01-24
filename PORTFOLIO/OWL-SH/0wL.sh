@@ -829,7 +829,7 @@ function iv_metadata_analysis() {
     # Function to analyze metadata of downloaded files
     function analyze_metadata() {
         FOLDER="${SITE}_${TIMESTAMP}"
-        echo "Analyzing metadata in files from folder: $FOLDER"
+        echo -e "${MAGENTA} Analyzing metadata in files from folder: $FOLDER ${RESET}"
         cd "$FOLDER" || exit
         exiftool ./*
         cd - || exit
