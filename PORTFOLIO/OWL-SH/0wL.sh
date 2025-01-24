@@ -155,6 +155,22 @@
         return 1 # Input is invalid
     }
 
+    # Function to restart the Tor service for IP rotation
+    function restart_tor() {
+        echo ""
+        echo -e "${MAGENTA} Restarting Tor to rotate IP.${RESET}"
+        echo -e "${GRAY} Please wait...${RESET}"
+        if sudo systemctl restart tor; then
+            echo -e "${GREEN} =====================================================${RESET}"
+            echo -e "${GREEN} Tor restarted successfully. New IP circuit activated!${RESET}"
+            echo ""
+            sleep 4  # Allow time for the new circuit to establish
+        else
+            echo -e "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
+            exit 1
+        fi
+    }
+
     # Function: Display the main menu
     function display_main_menu() {
         clear; # Clears the terminal screen
@@ -669,7 +685,7 @@
     }   
 
 function iv_metadata_analysis() {
-    SEARCH="proxychains4 -q lynx -dump -hiddenlinks=merge -force_html"
+    SEARCH="lynx -dump -hiddenlinks=merge -force_html"
     
     # Function to prompt the user for required input
     function metadata_analysis_menu() {
@@ -677,39 +693,24 @@ function iv_metadata_analysis() {
         ascii_banner_art;
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
         subtitle;
-        echo -n " Enter the domain or extension to search (e.g., .gov.br): "
+        echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
         read -r SITE
-        echo -n " Enter the file extension to search for (e.g., .pdf): "
+        echo -n " Enter the file extension to search for (e.g., pdf): "
         read -r FILE
-        echo -n " [Optional] Enter a keyword to refine the search (e.g., vaccine): "
+        echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
         read -r KEYWORD
-    }
-
-    # Function to restart the Tor service for IP rotation
-    function restart_tor() {
-        echo ""
-        echo -e "${MAGENTA} Restarting Tor to rotate IP.${RESET}"
-        echo -e "${GRAY} Please wait...${RESET}"
-        if sudo systemctl restart tor; then
-            echo -e "${GREEN} =====================================================${RESET}"
-            echo -e "${GREEN} Tor restarted successfully. New IP circuit activated!${RESET}"
-            echo ""
-            sleep 4  # Allow time for the new circuit to establish
-        else
-            echo -e "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
-            exit 1
-        fi
     }
 
     # Function to perform the search based on user input
     function perform_search() {
         
-        restart_tor;
+        #restart_tor;
         
         TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
         FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
 
-        echo "Searching for $FILE files on $SITE..."
+        echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
+        echo -e ""
 
         $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
             | grep -Eo 'https?://[^ ]+\.'"$FILE" \
@@ -718,8 +719,8 @@ function iv_metadata_analysis() {
         if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
             echo "Search successful. Results saved to $FILTERED_RESULTS_FILE"
         else
-            echo "No results found for the specified search criteria."
-            echo "Raw search results saved to raw_results_${TIMESTAMP}.txt"
+            echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+            echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
         fi
     }
 
@@ -755,10 +756,11 @@ function iv_metadata_analysis() {
         download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
         analyze_metadata
     else
-        echo "No files found for the specified search criteria."
+        echo ""
+        echo -e "${RED} No files found for the specified search criteria.${RESET}"
     fi
 
-    echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
+    echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
     read -r 2>/dev/null
     main_menu
 }
