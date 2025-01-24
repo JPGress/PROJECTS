@@ -25,6 +25,7 @@
 ######################## SUPPORT FUNCTIONS ########################
     # Function: Enable Proxychains
     function enable_proxychains() {
+        clear; # Clear terminal screen
         # Check if proxychains is installed
         if ! command -v proxychains &> /dev/null; then
             echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
@@ -485,37 +486,8 @@
         main_menu
     }
 
-    # Function: Automates Google hacking queries for reconnaissance
     function iii_google_hacking() {
     # iii_google_hacking - Automates Google hacking queries for reconnaissance
-    #
-    # Description:
-    # This script automates Google hacking techniques to gather information about a target.
-    # 1. Conducts general searches for the target using Google.
-    # 2. Searches for specific file types (e.g., PDF, DOCX) containing the target's name.
-    # 3. Searches within specific websites (e.g., LinkedIn, Pastebin) for target-related data.
-    # 4. Verifies the user's IP address for anonymity before performing queries.
-    # 5. Logs all search URLs and details to a file for reference and audit.
-    #
-    # Dependencies:
-    # - Firefox or a compatible browser (default: Firefox).
-    # - proxychains4: To route queries through proxies for anonymity.
-    #
-    # Author: R3v4N (w/GPT)
-    # Created on: 2024-01-15
-    # Last Updated: 2024-01-25
-    # Version: 1.4
-    #
-    # Version history:
-    # - 1.0 (2024-01-15): Initial version with basic Google hacking queries.
-    # - 1.1 (2024-01-24): Refactored for modularity, added input validation, improved user prompts, and added error handling for missing browser.
-    # - 1.2 (2024-01-24): Introduced logging for all searches to a timestamped file.
-    # - 1.3 (2024-01-25): Integrated proxy rotation for anonymity and processed dorks to ensure proper formatting.
-    # - 1.4 (2024-01-25): Refactored repetitive `proxychains4 $SEARCH` calls into a reusable function.
-    #
-    # Example usage:
-    # - Input: "Fatima de Almeida Lima"
-    # - Output: Automated Google searches with anonymized queries using different proxies and detailed logs.
 
     # Default browser for search
     SEARCH="firefox"
@@ -562,13 +534,26 @@
         local url=$1
         echo "Executing query: $url"
         echo "$url" >> "$LOG_FILE"  # Log the query
-        proxychains4 $SEARCH "$url" 2>/dev/null
-        sleep 3  # Optional delay
+        proxychains4 $SEARCH "$url" 2>/dev/null &  # Run in the background
+        sleep 1  # Optional delay between queries
+    }
+
+    # Function to check the current IP address
+    function check_ip() {
+        echo "Checking your current IP address..."
+        local ip=$(curl -s https://api.ipify.org)
+        if [[ -z "$ip" ]]; then
+            echo "Failed to retrieve IP address. Please check your connection or proxy settings."
+            echo "Failed to retrieve IP address." >> "$LOG_FILE"
+        else
+            echo "Your current IP address is: $ip"
+            echo "Current IP address: $ip" >> "$LOG_FILE"
+        fi
     }
 
     # Function for general searches
     function generalSearch() {
-        perform_query "https://dnsleaktest.com"  # Verify IP address
+        check_ip  # Check and log the IP address
         perform_query "https://webmii.com/people?n=$PROCESSED_TARGET"  # Search on WEBMII
         perform_query "https://www.google.com/search?q=intext:$PROCESSED_TARGET"  # General Google search
     }
@@ -602,7 +587,9 @@
 
     # Perform file type searches
     for ((i = 0; i < ${#file_types[@]}; i++)); do
+        echo "Processing file type: ${file_types[i]} with extension: ${extensions[i]}" >> "$LOG_FILE"
         FileSearch "${file_types[i]}" "${extensions[i]}"
+        echo "Finished processing file type: ${file_types[i]}" >> "$LOG_FILE"
     done
 
     # List of sites and their corresponding domains for targeted searches
@@ -611,7 +598,9 @@
 
     # Perform searches on specific sites
     for ((i = 0; i < ${#sites[@]}; i++)); do
+        echo "Processing site: ${sites[i]} with domain: ${domains[i]}" >> "$LOG_FILE"
         siteSearch "${sites[i]}" "${domains[i]}"
+        echo "Finished processing site: ${sites[i]}" >> "$LOG_FILE"
     done
 
     echo -e "${GRAY}All searches logged in: $LOG_FILE${RESET}"
@@ -619,6 +608,8 @@
     read -r 2>/dev/null
     main_menu
 }
+
+
 
 
 
