@@ -411,7 +411,7 @@
 
         # Store the current date and time in the specified format (day-hour-minutes-month-year)
         timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
-        output_file="result_$SITE'_$timestamp.txt"
+        output_file="result_${SITE}_${timestamp}.txt"
 
         # Function to print text in color
         print_color() {
@@ -496,6 +496,7 @@
             # 2. Searches for specific file types (e.g., PDF, DOCX) containing the target's name.
             # 3. Searches within specific websites (e.g., LinkedIn, Pastebin) for target-related data.
             # 4. Verifies the user's IP address for anonymity before performing queries.
+            # 5. Logs all search URLs and details to a file for reference and audit.
             #
             # Dependencies:
             # - Firefox or a compatible browser (default: Firefox).
@@ -503,24 +504,25 @@
             # Author: R3v4N (w/GPT)
             # Created on: 2024-01-15
             # Last Updated: 2024-01-24
-            # Version: 1.1
+            # Version: 1.2
             #
             # Version history:
             # - 1.0 (2024-01-15): Initial version with basic Google hacking queries.
             # - 1.1 (2024-01-24): Refactored for modularity, added input validation, improved user prompts, and added error handling for missing browser.
+            # - 1.2 (2024-01-24): Introduced logging for all searches to a timestamped file.
             #
             # Example usage:
             # - Input: "Example Target"
-            # - Output: Automated Google searches for file types, websites, and general queries.
+            # - Output: Automated Google searches for file types, websites, general queries, and a detailed log.
             #
             # Notes:
             # - Ensure Firefox or the browser specified in the `SEARCH` variable is installed.
+            # - Logs are saved as "<TARGET>_<timestamp>.log" in the current directory.
             # - Designed for educational purposes only; respect applicable laws and ethics.
             #
-
-
+        
         # Default browser for search
-        SEARCH="firefox"
+        SEARCH="proxychains4 firefox"
 
         # Function to ensure the browser is installed
         function check_browser() {
@@ -541,20 +543,31 @@
                 echo -n "Enter the target name for the search: "
                 read -r TARGET
             done
+
+            # Create a timestamped log file for the target
+            TIMESTAMP=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]')
+            LOG_FILE="${TARGET}_${TIMESTAMP}.log"
+            echo -e "Log for target: $TARGET\nGenerated on: $(date)\n" > "$LOG_FILE"
         }
 
         # Function for general searches
         function generalSearch() {
             echo "Verifying your IP address..."
-            $SEARCH "https://dnsleaktest.com" & # Opens a page to verify IP
+            local url="https://dnsleaktest.com"
+            echo "Verifying IP: $url" >> "$LOG_FILE"
+            $SEARCH "$url" & # Opens a page to verify IP
             sleep 3
 
             echo "Searching on WEBMII server for information..."
-            $SEARCH "https://webmii.com/people?n=$TARGET" 2>/dev/null
+            local webmii_url="https://webmii.com/people?n=$TARGET"
+            echo "WEBMII search: $webmii_url" >> "$LOG_FILE"
+            $SEARCH "$webmii_url" 2>/dev/null
             waitingUser
 
             echo "Performing a full Google search for the target..."
-            $SEARCH "https://www.google.com/search?q=intext:$TARGET" 2>/dev/null
+            local google_url="https://www.google.com/search?q=intext:$TARGET"
+            echo "General Google search: $google_url" >> "$LOG_FILE"
+            $SEARCH "$google_url" 2>/dev/null
             waitingUser
         }
 
@@ -564,7 +577,9 @@
             local domain="$2"
 
             echo "Searching on $site..."
-            $SEARCH "https://www.google.com/search?q=inurl:$domain+intext:$TARGET" 2>/dev/null
+            local url="https://www.google.com/search?q=inurl:$domain+intext:$TARGET"
+            echo "Site search [$site]: $url" >> "$LOG_FILE"
+            $SEARCH "$url" 2>/dev/null
             waitingUser
         }
 
@@ -574,7 +589,9 @@
             local extension="$2"
 
             echo "Searching for files of type: $type..."
-            $SEARCH "https://www.google.com/search?q=filetype:$extension+intext:$TARGET" 2>/dev/null
+            local url="https://www.google.com/search?q=filetype:$extension+intext:$TARGET"
+            echo "File search [$type]: $url" >> "$LOG_FILE"
+            $SEARCH "$url" 2>/dev/null
             waitingUser
         }
 
@@ -603,18 +620,20 @@
         done
 
         # List of sites and their corresponding domains for targeted searches
-        sites=("Government" "Pastebin" "Trello" "GitHub" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "YouTube" "Medium" "Stack Overflow" "Quora" "Wikipedia")
-        domains=(".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tiktok.com" "youtube.com" "medium.com" "stackoverflow.com" "quora.com" "wikipedia.org")
+        sites=("Government" "Pastebin" "Trello" "GitHub" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "YouTube" "Medium" "Stack Overflow" "Quora"   "Wikipedia")
+        domains=(".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tiktok.com" "youtube.com"  "medium.com" "stackoverflow.com" "quora.com" "wikipedia.org")
 
         # Perform searches on specific sites
         for ((i = 0; i < ${#sites[@]}; i++)); do
             siteSearch "${sites[i]}" "${domains[i]}"
         done
 
+        echo -e "${GRAY}All searches logged in: $LOG_FILE${RESET}"
         echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
         read -r 2>/dev/null
         main_menu
     }
+
 
 # Define a função iv_analise_metadados
 function iv_analise_metadados(){
