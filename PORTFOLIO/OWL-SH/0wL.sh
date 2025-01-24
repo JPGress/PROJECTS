@@ -149,7 +149,7 @@
         # Display numbered menu options
         echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
         echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
-        echo -e "${MAGENTA} 3 - Google Hacking ${RESET}" 
+        echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
         echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
         echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
@@ -487,153 +487,139 @@
 
     # Function: Automates Google hacking queries for reconnaissance
     function iii_google_hacking() {
-        # iii_google_hacking - Automates Google hacking queries for reconnaissance
-            #
-            # Description:
-            # This script automates Google hacking techniques to gather information about a target.
-            # It performs the following operations:
-            # 1. Conducts general searches for the target using Google.
-            # 2. Searches for specific file types (e.g., PDF, DOCX) containing the target's name.
-            # 3. Searches within specific websites (e.g., LinkedIn, Pastebin) for target-related data.
-            # 4. Verifies the user's IP address for anonymity before performing queries.
-            # 5. Logs all search URLs and details to a file for reference and audit.
-            #
-            # Dependencies:
-            # - Firefox or a compatible browser (default: Firefox).
-            #
-            # Author: R3v4N (w/GPT)
-            # Created on: 2024-01-15
-            # Last Updated: 2024-01-24
-            # Version: 1.2
-            #
-            # Version history:
-            # - 1.0 (2024-01-15): Initial version with basic Google hacking queries.
-            # - 1.1 (2024-01-24): Refactored for modularity, added input validation, improved user prompts, and added error handling for missing browser.
-            # - 1.2 (2024-01-24): Introduced logging for all searches to a timestamped file.
-            #
-            # Example usage:
-            # - Input: "Example Target"
-            # - Output: Automated Google searches for file types, websites, general queries, and a detailed log.
-            #
-            # Notes:
-            # - Ensure Firefox or the browser specified in the `SEARCH` variable is installed.
-            # - Logs are saved as "<TARGET>_<timestamp>.log" in the current directory.
-            # - Designed for educational purposes only; respect applicable laws and ethics.
-            #
-        
-        # Default browser for search
-        SEARCH="firefox"
+    # iii_google_hacking - Automates Google hacking queries for reconnaissance
+    #
+    # Description:
+    # This script automates Google hacking techniques to gather information about a target.
+    # 1. Conducts general searches for the target using Google.
+    # 2. Searches for specific file types (e.g., PDF, DOCX) containing the target's name.
+    # 3. Searches within specific websites (e.g., LinkedIn, Pastebin) for target-related data.
+    # 4. Verifies the user's IP address for anonymity before performing queries.
+    # 5. Logs all search URLs and details to a file for reference and audit.
+    #
+    # Dependencies:
+    # - Firefox or a compatible browser (default: Firefox).
+    # - proxychains4: To route queries through proxies for anonymity.
+    #
+    # Author: R3v4N (w/GPT)
+    # Created on: 2024-01-15
+    # Last Updated: 2024-01-25
+    # Version: 1.4
+    #
+    # Version history:
+    # - 1.0 (2024-01-15): Initial version with basic Google hacking queries.
+    # - 1.1 (2024-01-24): Refactored for modularity, added input validation, improved user prompts, and added error handling for missing browser.
+    # - 1.2 (2024-01-24): Introduced logging for all searches to a timestamped file.
+    # - 1.3 (2024-01-25): Integrated proxy rotation for anonymity and processed dorks to ensure proper formatting.
+    # - 1.4 (2024-01-25): Refactored repetitive `proxychains4 $SEARCH` calls into a reusable function.
+    #
+    # Example usage:
+    # - Input: "Fatima de Almeida Lima"
+    # - Output: Automated Google searches with anonymized queries using different proxies and detailed logs.
 
-        # Function to ensure the browser is installed
-        function check_browser() {
-            if ! command -v "$SEARCH" >/dev/null 2>&1; then
-                echo -e "${RED}Error: The browser '$SEARCH' is not installed. Please install it or update the 'SEARCH' variable.${RESET}"
-                return 1
-            fi
-        }
+    # Default browser for search
+    SEARCH="firefox"
 
-        # Function to prompt the user for the target name
-        function google_hacking_menu() {
+    # Function to ensure the browser is installed
+    function check_browser() {
+        if ! command -v "$SEARCH" >/dev/null 2>&1; then
+            echo -e "${RED}Error: The browser '$SEARCH' is not installed. Please install it or update the 'SEARCH' variable.${RESET}"
+            return 1
+        fi
+        if ! command -v "proxychains4" >/dev/null 2>&1; then
+            echo -e "${RED}Error: 'proxychains4' is not installed. Please install it to enable proxy rotation.${RESET}"
+            return 1
+        fi
+    }
+
+    # Function to prompt the user for the target name
+    function google_hacking_menu() {
+        clear
+        echo -e "${RED}Google Hacking OSINT for People Reconnaissance${RESET}"
+        echo -e "${YELLOW}+=============================================+${RESET}"
+        echo -e "${CYAN}For better results, put the target in quotes (e.g., \"Fatima de Almeida Lima\").${RESET}"
+        echo -n "Enter the target name for the search: "
+        read -r TARGET
+
+        # Validate input
+        while [[ -z "$TARGET" ]]; do
+            echo "Target name cannot be empty. Please try again."
             echo -n "Enter the target name for the search: "
             read -r TARGET
-
-            # Validate input
-            while [[ -z "$TARGET" ]]; do
-                echo "Target name cannot be empty. Please try again."
-                echo -n "Enter the target name for the search: "
-                read -r TARGET
-            done
-
-            # Create a timestamped log file for the target
-            TIMESTAMP=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]')
-            LOG_FILE="${TARGET}_${TIMESTAMP}.log"
-            echo -e "Log for target: $TARGET\nGenerated on: $(date)\n" > "$LOG_FILE"
-        }
-
-        # Function for general searches
-        function generalSearch() {
-            echo "Verifying your IP address..."
-            local url="https://dnsleaktest.com"
-            echo "Verifying IP: $url" >> "$LOG_FILE"
-            proxychains4 $SEARCH "$url" & # Opens a page to verify IP
-            sleep 3
-
-            echo "Searching on WEBMII server for information..."
-            local webmii_url="https://webmii.com/people?n=$TARGET"
-            echo "WEBMII search: $webmii_url" >> "$LOG_FILE"
-            proxychains4 $SEARCH "$webmii_url" 2>/dev/null
-            #waitingUser
-
-            echo "Performing a full Google search for the target..."
-            local google_url="https://www.google.com/search?q=intext:$TARGET"
-            echo "General Google search: $google_url" >> "$LOG_FILE"
-            proxychains4 $SEARCH "$google_url" 2>/dev/null
-            #waitingUser
-        }
-
-        # Function for searches within specific websites
-        function siteSearch() {
-            local site="$1"
-            local domain="$2"
-
-            echo "Searching on $site..."
-            local url="https://www.google.com/search?q=inurl:$domain+intext:$TARGET"
-            echo "Site search [$site]: $url" >> "$LOG_FILE"
-            proxychains4 $SEARCH "$url" 2>/dev/null
-            #waitingUser
-        }
-
-        # Function for file type searches
-        function FileSearch() {
-            local type="$1"
-            local extension="$2"
-
-            echo "Searching for files of type: $type..."
-            local url="https://www.google.com/search?q=filetype:$extension+intext:$TARGET"
-            echo "File search [$type]: $url" >> "$LOG_FILE"
-            proxychains4 $SEARCH "$url" 2>/dev/null
-            #waitingUser
-        }
-
-        # Function to pause and wait for user input
-        function waitingUser() {
-            echo "Press ENTER to continue..."
-            read -r
-        }
-
-        # Check if the browser is installed
-        check_browser || return 1
-
-        # Prompt for the target name
-        google_hacking_menu
-
-        # Perform general searches
-        generalSearch
-
-        # List of file types and their extensions for targeted searches
-        file_types=("PDF" "PPT" "DOC" "DOCX" "XLS" "XLSX" "ODS" "ODT" "TXT" "PHP" "XML" "JSON" "PNG" "SQLS" "SQL")
-        extensions=("pdf" "ppt" "doc" "docx" "xls" "xlsx" "ods" "odt" "txt" "php" "xml" "json" "png" "sqls" "sql")
-
-        # Perform file type searches
-        for ((i = 0; i < ${#file_types[@]}; i++)); do
-            FileSearch "${file_types[i]}" "${extensions[i]}"
-            sleep 1
         done
 
-        # List of sites and their corresponding domains for targeted searches
-        sites=("Government" "Pastebin" "Trello" "GitHub" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "YouTube" "Medium" "Stack Overflow" "Quora"   "Wikipedia")
-        domains=(".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tiktok.com" "youtube.com"  "medium.com" "stackoverflow.com" "quora.com" "wikipedia.org")
+        # Process target as a proper dork (quoted and URL encoded)
+        PROCESSED_TARGET=$(echo "\"$TARGET\"" | sed 's/ /%20/g')
 
-        # Perform searches on specific sites
-        for ((i = 0; i < ${#sites[@]}; i++)); do
-            siteSearch "${sites[i]}" "${domains[i]}"
-        done
-
-        echo -e "${GRAY}All searches logged in: $LOG_FILE${RESET}"
-        echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
-        read -r 2>/dev/null
-        main_menu
+        # Create a timestamped log file for the target
+        TIMESTAMP=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]')
+        LOG_FILE="${TARGET}_${TIMESTAMP}.log"
+        echo -e "Log for target: $TARGET\nGenerated on: $(date)\n" > "$LOG_FILE"
     }
+
+    # Function to execute a search query through proxychains
+    function perform_query() {
+        local url=$1
+        echo "Executing query: $url"
+        echo "$url" >> "$LOG_FILE"  # Log the query
+        proxychains4 $SEARCH "$url" 2>/dev/null
+        sleep 3  # Optional delay
+    }
+
+    # Function for general searches
+    function generalSearch() {
+        perform_query "https://dnsleaktest.com"  # Verify IP address
+        perform_query "https://webmii.com/people?n=$PROCESSED_TARGET"  # Search on WEBMII
+        perform_query "https://www.google.com/search?q=intext:$PROCESSED_TARGET"  # General Google search
+    }
+
+    # Function for searches within specific websites
+    function siteSearch() {
+        local site="$1"
+        local domain="$2"
+        perform_query "https://www.google.com/search?q=inurl:$domain+intext:$PROCESSED_TARGET"
+    }
+
+    # Function for file type searches
+    function FileSearch() {
+        local type="$1"
+        local extension="$2"
+        perform_query "https://www.google.com/search?q=filetype:$extension+intext:$PROCESSED_TARGET"
+    }
+
+    # Check if the browser and proxychains4 are installed
+    check_browser || return 1
+
+    # Prompt for the target name
+    google_hacking_menu
+
+    # Perform general searches
+    generalSearch
+
+    # List of file types and their extensions for targeted searches
+    file_types=("PDF" "PPT" "DOC" "DOCX" "XLS" "XLSX" "ODS" "ODT" "TXT" "PHP" "XML" "JSON" "PNG" "SQLS" "SQL")
+    extensions=("pdf" "ppt" "doc" "docx" "xls" "xlsx" "ods" "odt" "txt" "php" "xml" "json" "png" "sqls" "sql")
+
+    # Perform file type searches
+    for ((i = 0; i < ${#file_types[@]}; i++)); do
+        FileSearch "${file_types[i]}" "${extensions[i]}"
+    done
+
+    # List of sites and their corresponding domains for targeted searches
+    sites=("Government" "Pastebin" "Trello" "GitHub" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "YouTube" "Medium" "Stack Overflow" "Quora" "Wikipedia")
+    domains=(".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tiktok.com" "youtube.com" "medium.com" "stackoverflow.com" "quora.com" "wikipedia.org")
+
+    # Perform searches on specific sites
+    for ((i = 0; i < ${#sites[@]}; i++)); do
+        siteSearch "${sites[i]}" "${domains[i]}"
+    done
+
+    echo -e "${GRAY}All searches logged in: $LOG_FILE${RESET}"
+    echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
+    read -r 2>/dev/null
+    main_menu
+}
+
 
 
 # Define a função iv_analise_metadados
