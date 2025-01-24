@@ -688,13 +688,12 @@ function iv_metadata_analysis() {
     # Function to restart the Tor service for IP rotation
     function restart_tor() {
         echo ""
-        echo -e "${MAGENTA}Restarting Tor to rotate IP.${RESET}"
+        echo -e "${MAGENTA} Restarting Tor to rotate IP.${RESET}"
         echo -e "${GRAY} Please wait...${RESET}"
         if sudo systemctl restart tor; then
             echo -e "${GREEN} =====================================================${RESET}"
             echo -e "${GREEN} Tor restarted successfully. New IP circuit activated!${RESET}"
-            echo -e "${GREEN} =====================================================${RESET}"
-            sleep 3  # Allow time for the new circuit to establish
+            sleep 4  # Allow time for the new circuit to establish
         else
             echo -e "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
             exit 1
@@ -710,7 +709,6 @@ function iv_metadata_analysis() {
         FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
 
         echo "Searching for $FILE files on $SITE..."
-        restart_tor;  # Rotate IP before performing the query
 
         $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
             | grep -Eo 'https?://[^ ]+\.'"$FILE" \
