@@ -703,22 +703,40 @@ function iv_metadata_analysis() {
 
     # Function to perform the search based on user input
     function perform_search() {
-        
-        TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-        FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+        if [ -z "$KEYWORD" ]; then
+            TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
 
-        echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
-        echo -e ""
+            echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
+            echo -e ""
 
-        $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
-            | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-            | sed 's/&.*//' > "$FILTERED_RESULTS_FILE"
+            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
+                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                | sed 's/&.*//' > "$FILTERED_RESULTS_FILE" #!fixme
 
-        if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-            echo "Search successful. Results saved to $FILTERED_RESULTS_FILE"
+            if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
+                echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+            else
+                echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+                echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+            fi
         else
-            echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-            echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+            TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+
+            echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
+            echo -e ""
+
+            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
+                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                | sed 's/&.*//' > "$FILTERED_RESULTS_FILE"
+
+            if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
+                echo "Search successful. Results saved to $FILTERED_RESULTS_FILE"
+            else
+                echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+                echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+            fi
         fi
     }
 
