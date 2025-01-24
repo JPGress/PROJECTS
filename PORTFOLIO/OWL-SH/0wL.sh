@@ -68,7 +68,7 @@
     }
 
     function subtitle() {
-        echo -e "${RED}+====================================================================================+${RESET}"
+        echo -e "${GRAY}+====================================================================================+${RESET}"
     }
 
     # Function: Disabled
@@ -675,8 +675,8 @@ function iv_metadata_analysis() {
     function metadata_analysis_menu() {
         clear;
         ascii_banner_art;
-        echo -e "${MAGENTA} Metadata Analysis from the Internet${RESET}"
-        echo -e "${MAGENTA}+===================================+${RESET}"
+        echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
+        subtitle;
         echo -n "Enter the domain or extension to search (e.g., .gov.br): "
         read -r SITE
         echo -n "Enter the file extension to search for (e.g., .pdf): "
