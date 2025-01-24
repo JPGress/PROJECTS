@@ -122,9 +122,9 @@
         main_menu
     }
 
-    # Function: 5-second countdown
+    # Function: 3-second countdown
     function countdown() {
-        local seconds=5 # Number of seconds for the countdown
+        local seconds=3 # Number of seconds for the countdown
 
         # Countdown loop
         while [ $seconds -gt 0 ]; do
@@ -679,24 +679,30 @@ function iv_metadata_analysis() {
 
     # Function to restart the Tor service for IP rotation
     function restart_tor() {
-        echo "${MAGENTA}Restarting Tor to rotate IP.${RESET}"
-        echo "${GRAY} Please wait...${RESET}"
+        echo ""
+        echo -e "${MAGENTA}Restarting Tor to rotate IP.${RESET}"
+        echo -e "${GRAY} Please wait...${RESET}"
         if sudo systemctl restart tor; then
-            echo "${GREEN}Tor restarted successfully. New IP circuit activated.${RESET}"
+            echo -e "${GREEN} =====================================================${RESET}"
+            echo -e "${GREEN} Tor restarted successfully. New IP circuit activated!${RESET}"
+            echo -e "${GREEN} =====================================================${RESET}"
             sleep 3  # Allow time for the new circuit to establish
         else
-            echo "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
+            echo -e "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
             exit 1
         fi
     }
 
     # Function to perform the search based on user input
     function perform_search() {
+        
+        restart_tor;
+        
         TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
         FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
 
         echo "Searching for $FILE files on $SITE..."
-        restart_tor  # Rotate IP before performing the query
+        restart_tor;  # Rotate IP before performing the query
 
         $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
             | grep -Eo 'https?://[^ ]+\.'"$FILE" \
