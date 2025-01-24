@@ -679,12 +679,13 @@ function iv_metadata_analysis() {
 
     # Function to restart the Tor service for IP rotation
     function restart_tor() {
-        echo "Restarting Tor to rotate IP..."
+        echo "${MAGENTA}Restarting Tor to rotate IP.${RESET}"
+        echo "${GRAY} Please wait...${RESET}"
         if sudo systemctl restart tor; then
-            echo "Tor restarted successfully. New IP circuit activated."
+            echo "${GREEN}Tor restarted successfully. New IP circuit activated.${RESET}"
             sleep 3  # Allow time for the new circuit to establish
         else
-            echo "Failed to restart Tor. Check your Tor configuration or service status."
+            echo "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
             exit 1
         fi
     }
