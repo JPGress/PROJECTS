@@ -102,9 +102,10 @@
 
 ######################## FUNÇÕES MAIN ########################
 # Define a função texto_main_menu
-function texto_main_menu(){
-    clear # Limpa a tela do terminal
-    # Exibe o cabeçalho do menu com o nome do script e do autor
+function display_main_menu() {
+    clear # Clears the terminal screen
+
+    # Display the menu header with the script name and author
     echo -e ""
     echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
     echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
@@ -113,44 +114,48 @@ function texto_main_menu(){
     echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
     echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
     echo -e "${RED}                                                                                       ${RESET}"
-    echo -e "${RED} sh-v 0.9.1                                                                              ${RESET}"   
+    echo -e "${RED} sh-v 0.9.1                                                                            ${RESET}"   
     echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
-    echo -e "${GRAY}+                          Feito por Gress a.k.a R3v4N||0wL                          +${RESET}"
+    echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
     echo -e "${GRAY}+====================================================================================+${RESET}"
-    # Exibe as opções do menu numeradas e descritas
+
+    # Display numbered menu options
     echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
     echo -e "${GRAY}${BG_BLACK} 2 - Parsing HTML ${RESET}" 
     echo -e "${GRAY}${BG_BLACK} 3 - Google Hacking ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 4 - Analise de metadados ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 5 - DNS ZT ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 6 - SubDomain TKOver ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 7 - DNS reverse ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 8 - DNS recon ${RESET}"
+    echo -e "${GRAY}${BG_BLACK} 4 - Metadata Analysis ${RESET}" 
+    echo -e "${GRAY}${BG_BLACK} 5 - DNS Zone Transfer ${RESET}" 
+    echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
+    echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
+    echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
     echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
-    echo -e "${MAGENTA} 10 - MiTM"
-    echo -e "${GRAY}${BG_BLACK} 11 - Portscan (bash sockets) ${RESET}"
-    echo -e "${MAGENTA} 12 - Comandos uteis na gerência de redes"
-    echo -e "${MAGENTA} 13 - Exemplos do comando find"
-    echo -e "${MAGENTA} 14 - Memento de troca de senha do root no Debian"
-    echo -e "${GRAY}${BG_BLACK} 15 - Memento de troca de senha do root no Red Hat${RESET}"
-    echo -e "${MAGENTA} 16 - Memento de uso do vim"
-    echo -e "${GRAY}${BG_BLACK} 17 - Tecnicas de escape de rbash (funcao em teste) ${RESET}"
-    echo -e "${MAGENTA} 18 - Ataques a Redes Sem Fio"
-    echo -e "${MAGENTA} 19 - Memento de dicas p/ Windows"
-    echo -e "${GRAY}${BG_BLACK} 20 - Cria scripts em .bat ou .ps1 ${RESET}"
-    echo -e "${MAGENTA} 21 - Muda para o script do Sgt Domingues de Scanning"
-    echo -e "${MAGENTA} 22 - NMAP Net Scan ${RESET}"
-    echo -e "${GRAY}${BG_BLACK} 23 - xxxxx ${RESET}"
-    echo -e "${GRAY}${BG_BLACK} 24 - xxiv_revshell_windows ${RESET}"
-    echo -e "${GRAY}${BG_BLACK} 25 - xxv_rdp_windows ${RESET}"
-    # Exibe instrução para sair do menu
+    echo -e "${MAGENTA} 10 - MiTM (Man-in-the-Middle)"
+    echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
+    echo -e "${MAGENTA} 12 - Useful Commands for Network Management"
+    echo -e "${MAGENTA} 13 - Examples of the 'find' Command"
+    echo -e "${MAGENTA} 14 - Root Password Reset Guide (Debian)"
+    echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
+    echo -e "${MAGENTA} 16 - Quick Guide to Using Vim"
+    echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
+    echo -e "${MAGENTA} 18 - Wireless Network Attacks"
+    echo -e "${MAGENTA} 19 - Windows Tips"
+    echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
+    echo -e "${MAGENTA} 21 - Switch to Sgt Domingues' Scanning Script"
+    echo -e "${MAGENTA} 22 - NMAP Network Scan ${RESET}"
+    echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
+    echo -e "${GRAY}${BG_BLACK} 24 - Reverse Shell for Windows ${RESET}"
+    echo -e "${GRAY}${BG_BLACK} 25 - RDP for Windows ${RESET}"
+
+    # Display instructions to exit the menu
     echo -e "${GRAY}+==============================================+${RESET}"
-    echo -e " ${WHITE}Digite 0(zero) para sair${RESET}"
+    echo -e " ${WHITE}Enter 0 (zero) to exit${RESET}"
     echo -e "${GRAY}+==============================================+${RESET}"
-    # Solicita ao usuário que digite o número da opção desejada
-    echo -ne "${CYAN} Digite o nr da opc: ${RESET}"
-    read -r OPCAO_MENU # Lê a entrada do usuário e armazena na variável OPCAO_MENU
+
+    # Prompt the user to select a menu option
+    echo -ne "${CYAN} Enter the option number: ${RESET}"
+    read -r MENU_OPTION # Read user input and store it in the MENU_OPTION variable
 }
+
 # Define a função main_menu
 function main_menu(){
     texto_main_menu;  # Chama a função texto_main_menu para exibir o menu
