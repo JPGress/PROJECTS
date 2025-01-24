@@ -103,11 +103,10 @@
     # Function: 5-second countdown
     function countdown() {
         local seconds=5 # Number of seconds for the countdown
-        echo -e "${CYAN}Starting in...${RESET}"
 
         # Countdown loop
         while [ $seconds -gt 0 ]; do
-            echo -ne "${YELLOW} $seconds \r${RESET}" # Display the countdown and overwrite the same line
+            echo -ne "${RED}Starting in: $seconds \r${RESET}" # Display the countdown and overwrite the same line
             sleep 1 # Wait for 1 second
             ((seconds--)) # Decrease the countdown value
         done
