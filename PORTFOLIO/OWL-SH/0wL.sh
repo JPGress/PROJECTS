@@ -664,64 +664,114 @@
         main_menu
     }   
 
+    # Function: Searches and analyzes metadata in files on specific websites
+    function iv_metadata_analysis() {
+        # iv_metadata_analysis - Searches and analyzes metadata in files on specific websites
+            #
+            # Description:
+            # This script performs the following operations:
+            # 1. Searches Google for files (e.g., PDFs) on specific websites or domains.
+            # 2. Optionally filters results by keywords within the file contents.
+            # 3. Downloads the files found from the search results.
+            # 4. Extracts metadata from the downloaded files using `exiftool`.
+            #
+            # Dependencies:
+            # - lynx: To perform Google searches.
+            # - wget: To download files.
+            # - exiftool: To extract and analyze metadata.
+            # - proxychains4: To anonymize search and download traffic.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2024-01-25
+            # Last Updated: 2025-01-25
+            # Version: 1.0
+            #
+            # Notes:
+            # - Ensure all dependencies are installed.
+            # - Results and downloaded files are saved in timestamped folders for organization.
+            # - Script uses proxychains for anonymized traffic; ensure your proxies are correctly configured.
+            #
 
-# Define a função iv_analise_metadados
-function iv_analise_metadados(){
-    # Comando de pesquisa para analisar metadados
-    SEARCH="lynx -dump -hiddenlinks=merge -force_html"
+        # Search command with Lynx
+        SEARCH="proxychains4 lynx -dump -hiddenlinks=merge -force_html"
 
-    # Define a função menu_analise_metadados para solicitar ao usuário as informações necessárias
-    function menu_analise_metadados(){
-        echo -n "Digite a extensao da URL onde desejar buscar (Ex:.gov.br): "
-        read -r SITE
-        echo -n "Digite a extensao do arquivo que desejar buscar (Ex:.pdf): "
-        read -r FILE
-        echo -n "[opcional] Digite alguma palavra chave para ajudar na busca.(Ex:vacina): "
-        read -r KEYWORD
-    }
-
-    # Verifica se a palavra-chave está vazia e define a função de pesquisa de acordo
-    if [ -z "$KEYWORD" ]; then
-        function search(){
-            echo "Procurando arquivos $FILE nas URLs com $SITE"
-            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" | grep -i '\.pdf' | cut -d '=' -f2 | grep -v 'x-raw-image' | sed 's/...$//' > "$(date +%d%H%M%b%Y)-UTC_${SITE}_${FILE}_filtered.txt"
-            download "$(date +%d%H%M%b%Y)-UTC_${SITE}_${FILE}_filtered.txt"
+        # Function to prompt the user for required input
+        function metadata_analysis_menu() {
+            echo -n "Enter the domain or extension to search (e.g., .gov.br): "
+            read -r SITE
+            echo -n "Enter the file extension to search for (e.g., .pdf): "
+            read -r FILE
+            echo -n "[Optional] Enter a keyword to refine the search (e.g., vaccine): "
+            read -r KEYWORD
         }
-    else
-        function search(){
-            echo "Procurando arquivos $FILE nas URLs com $SITE e contendo $KEYWORD no corpo"
-            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" | grep -i '\.pdf' | cut -d '=' -f2 | grep -v 'x-raw-image' | sed 's/...$//' > "$(date +%d%H%M%b%Y)-UTC_${SITE}_${KEYWORD}_${FILE}_filtered.txt"
-            download "$(date +%d%H%M%b%Y)-UTC_${SITE}_${KEYWORD}_${FILE}_filtered.txt"
+
+        # Function to perform the search based on user input
+        function perform_search() {
+            TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
+            if [[ -z "$KEYWORD" ]]; then
+                echo "Searching for $FILE files on $SITE..."
+                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
+                    | grep -Ei "\.$FILE" \
+                    | cut -d '=' -f2 \
+                    | grep -v 'x-raw-image' \
+                    | sed 's/...$//' > "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            else
+                echo "Searching for $FILE files on $SITE with keyword $KEYWORD..."
+                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
+                    | grep -Ei "\.$FILE" \
+                    | cut -d '=' -f2 \
+                    | grep -v 'x-raw-image' \
+                    | sed 's/...$//' > "${TIMESTAMP}_${SITE}_${KEYWORD}_${FILE}_filtered.txt"
+            fi
         }
-    fi 
 
-    # Define a função download para baixar os arquivos encontrados
-    function download(){
-        FILE="$1"
-        FOLDER="${SITE}_$(date +%d%H%M%b%Y)-UTC"
-        mkdir -p "$FOLDER"
-        while IFS= read -r LINE; do
-            wget -P "$FOLDER" "$LINE"
-        done < "$FILE"
-        rm -rfv ./*_filtered.txt
-        readMetadate
-    }
+        # Function to download files from the search results
+        function download_files() {
+            FILE_LIST="$1"
+            FOLDER="${SITE}_${TIMESTAMP}"
+            mkdir -p "$FOLDER"
 
-    # Define a função readMetadate para ler os metadados dos arquivos baixados
-    function readMetadate(){
-        "cd $FOLDER"
-        exiftool ./*
-    }
+            while IFS= read -r URL; do
+                echo "Downloading $URL..."
+                proxychains4 wget -P "$FOLDER" "$URL"
+            done < "$FILE_LIST"
 
-    # Chama a função menu_analise_metadados para solicitar as informações necessárias ao usuário
-    menu_analise_metadados
-    # Realiza a pesquisa
-    search
+            rm -f "$FILE_LIST"  # Clean up the temporary results file
+        }
 
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    main_menu; # Retorna ao menu principal
-}
+        # Function to analyze metadata of downloaded files
+        function analyze_metadata() {
+            FOLDER="${SITE}_${TIMESTAMP}"
+            echo "Analyzing metadata in files from folder: $FOLDER"
+            cd "$FOLDER" || exit
+            exiftool ./*
+            cd - || exit
+        }
+
+        # Start the process
+        metadata_analysis_menu
+        perform_search
+
+        # Determine the filtered results file based on whether a keyword was used
+        if [[ -z "$KEYWORD" ]]; then
+            RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+        else
+            RESULTS_FILE="${TIMESTAMP}_${SITE}_${KEYWORD}_${FILE}_filtered.txt"
+        fi
+
+        # Check if any results were found
+        if [[ -s "$RESULTS_FILE" ]]; then
+            download_files "$RESULTS_FILE"
+            analyze_metadata
+        else
+            echo "No files found for the specified search criteria."
+        fi
+
+        echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
+        read -r 2>/dev/null
+        main_menu  # Return to the main menu
+    }   
+
 # Define a função v_dns_zt para realizar uma transferência de zona DNS
 function v_dns_zt(){
     echo "DNS Zone Transfer"
