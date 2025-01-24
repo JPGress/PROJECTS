@@ -26,18 +26,8 @@
     # Function: Enable Proxychains
     function enable_proxychains() {
         clear; # Clear terminal screen
-        # Display the menu header with the script name and author
-        echo -e ""
-        echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
-        echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
-        echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
-        echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
-        echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
-        echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
-        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
-        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
-        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
-        echo -e "${GRAY}+====================================================================================+${RESET}"
+        ascii_banner_art; # Call ASCII banner art
+        
         # Check if proxychains is installed
         if ! command -v proxychains &> /dev/null; then
             echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
@@ -76,6 +66,7 @@
         echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
         echo -e "${GRAY}+====================================================================================+${RESET}"
     }
+
     # Function: Disabled
     function disabled() {
         echo ""
@@ -162,20 +153,8 @@
 
     # Function: Display the main menu
     function display_main_menu() {
-        clear # Clears the terminal screen
-
-        # Display the menu header with the script name and author
-        echo -e ""
-        echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
-        echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
-        echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
-        echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
-        echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
-        echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
-        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
-        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
-        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
-        echo -e "${GRAY}+====================================================================================+${RESET}"
+        clear; # Clears the terminal screen
+        ascii_banner_art; # Call ASCII banner art
 
         # Display numbered menu options
         echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
