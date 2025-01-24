@@ -239,50 +239,49 @@ function main_menu() {
 # Function: Script to perform a port scan on a network using netcat
 function i_portscan() {
     # i_portscan - Script to perform a port scan on a network using netcat
-    #
-    # Description:
-    # This script performs the following operations:
-    # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
-    # 2. Dynamically loads a user-defined number of top ports (e.g., 20, 100, 1000) from Nmap's services file, if available.
-    # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
-    # 4. Prints results for each host and open port found.
-    # 5. Saves the results in two file formats:
-    #    - Plain text (`portscan_results.txt`) for human-readable output.
-    #    - CSV (`portscan_results.csv`) for structured data analysis.
-    #
-    # Dependencies:
-    # - netcat (nc): To perform the port scanning.
-    # - ipcalc: To validate and parse CIDR-based network masks.
-    # - awk: To process data from Nmap's services file.
-    #
-    # Author: R3v4N (w/GPT)
-    # Created on: 2025-01-23
-    # Last Updated: 2025-01-24
-    # Version: 1.2
-    #
-    # Version history:
-    # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
-    # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
-    #                     Integrated dynamic port loading from Nmap's services file.
-    # - 1.2 (2025-01-23): Added user input to define the number of top ports to scan.
-    #                     Improved flexibility and user control over scan depth.
-    #
-    # Notes:
-    # - Ensure the required dependencies are installed before running the script.
-    # - If `ipcalc` is not installed, the script will attempt to install it automatically.
-    # - Users can dynamically select the number of top ports to scan.
-    # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
-    # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
-    #
-    # Example usage:
-    # - Input:
-    #   - Number of ports: 100
-    #   - CIDR: "192.168.1.0/24"
-    # - Output:
-    #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
-    #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
-    #   - CSV File: "192.168.1.1,80,Open"
-
+        #
+        # Description:
+        # This script performs the following operations:
+        # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
+        # 2. Dynamically loads a user-defined number of top ports (e.g., 20, 100, 1000) from Nmap's services file, if available.
+        # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
+        # 4. Prints results for each host and open port found.
+        # 5. Saves the results in two file formats:
+        #    - Plain text (`portscan_results.txt`) for human-readable output.
+        #    - CSV (`portscan_results.csv`) for structured data analysis.
+        #
+        # Dependencies:
+        # - netcat (nc): To perform the port scanning.
+        # - ipcalc: To validate and parse CIDR-based network masks.
+        # - awk: To process data from Nmap's services file.
+        #
+        # Author: R3v4N (w/GPT)
+        # Created on: 2025-01-23
+        # Last Updated: 2025-01-24
+        # Version: 1.2
+        #
+        # Version history:
+        # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
+        # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
+        #                     Integrated dynamic port loading from Nmap's services file.
+        # - 1.2 (2025-01-23): Added user input to define the number of top ports to scan.
+        #                     Improved flexibility and user control over scan depth.
+        #
+        # Notes:
+        # - Ensure the required dependencies are installed before running the script.
+        # - If `ipcalc` is not installed, the script will attempt to install it automatically.
+        # - Users can dynamically select the number of top ports to scan.
+        # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
+        # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
+        #
+        # Example usage:
+        # - Input:
+        #   - Number of ports: 100
+        #   - CIDR: "192.168.1.0/24"
+        # - Output:
+        #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
+        #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
+        #   - CSV File: "192.168.1.1,80,Open"
 
     clear
     echo -e "${MAGENTA}1 - Portscan using netcat ${RESET}"
@@ -357,122 +356,120 @@ function i_portscan() {
     main_menu
 }
 
-# Define a função ii_parsing_html
-function ii_parsing_html(){
-    
-    # parsing_html - Script para analisar subdomínios e informações WHOIS de um site ou lista de sites.
-    #
-    # Descrição:
-    # Este script realiza as seguintes operações:
-    # 1. Extrai subdomínios de uma página HTML.
-    # 2. Obtém os endereços IP associados a cada subdomínio.
-    # 3. Obtém informações WHOIS para cada domínio.
-    # 4. Gera um relatório com os resultados.
-    #
-    # Dependências:
-    # - curl: Para fazer solicitações HTTP.
-    # - dig: Para obter endereços IP de subdomínios.
-    # - whois: Para obter informações WHOIS de domínios.
-    # - nslookup:
-    #
-    # Autor: R3v4N (w/GPT)
-    # Data de Criação: 2024-15-01
-    # Última Atualização: 2024-15-01
-    # Versão: 1
-    #
-    # Notas:
-    # - Certifique-se de ter as dependências instaladas antes de executar o script.
-    # - O relatório é salvo em um arquivo com o formato "resultado_<site ou lista>.txt".
-    #
-    
-    # Solicita ao usuário que digite (ou cole) a url do site desejado
-    echo "Digite (ou cole) a url do site desejado"
+# Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
+function ii_parsing_html() {
+    # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
+        #
+        # Description:
+        # This script performs the following operations:
+        # 1. Extracts subdomains from an HTML page.
+        # 2. Retrieves IP addresses associated with each subdomain.
+        # 3. Fetches WHOIS information for each domain.
+        # 4. Generates a report with the results.
+        #
+        # Dependencies:
+        # - curl: To make HTTP requests.
+        # - dig: To retrieve IP addresses of subdomains.
+        # - whois: To get WHOIS information for domains.
+        # - nslookup: For DNS lookups.
+        #
+        # Author: R3v4N (w/GPT)
+        # Created on: 2024-01-15
+        # Last Updated: 2024-01-15
+        # Version: 1.0
+        #
+        # Version history:
+        # - 1.0 (2024-01-15): Initial version with basic subdomain and WHOIS functionality.
+        #
+        # Example usage:
+        # - Input: https://example.com
+        # - Output: Subdomains, IP addresses, WHOIS information for each domain.
+        #
+        # Notes:
+        # - Ensure the dependencies are installed before running the script.
+        # - The report is saved in a file named "result_<date>.txt".
+        #
+
+    # Prompt the user to input the desired website URL
+    echo "Enter the URL of the website to analyze:"
     read -r SITE
-    # Armazena a data e hora atual e o nome do arquivo de saída
-    data_hora=$(date +"%Y-%m-%d %H:%M:%S")
-    saida="resultado_$data_hora.txt"
-    
-    # Função para imprimir em cores
+
+    # Store the current date and time and define the output file name
+    timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+    output_file="result_$timestamp.txt"
+
+    # Function to print text in color
     print_color() {
-        cor=$1
-        texto=$2
-        echo -e "\e[0;${cor}m${texto}\e[0m"
+        color=$1
+        text=$2
+        echo -e "\e[0;${color}m${text}\e[0m"
     }
-    
-    # Função para extrair subdomínios de uma página HTML
-    extrair_subdominios() {
-        site=$1
-        # Usa curl para obter o conteúdo HTML, grep para extrair URLs, awk para obter o subdomínio e sort para remover duplicatas
+
+    # Function to extract subdomains from an HTML page
+    extract_subdomains() {
+        local site=$1
         curl -s "$site" | grep -Eo '(http|https)://[^/"]+' | awk -F[/:] '{print $4}' | sort -u
     }
-    
-    # Função para obter os endereços IP de um subdomínio
-    obter_endereco_ip() {
-        subdominio=$1
-        # Usa host para obter o endereço IP e grep para extrair o primeiro IP encontrado
-        endereco_ip=$(host "$subdominio" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
-        echo "$endereco_ip:$subdominio"
+
+    # Function to get the IP address of a subdomain
+    get_ip_address() {
+        local subdomain=$1
+        local ip_address
+        ip_address=$(host "$subdomain" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
+        echo "$ip_address:$subdomain"
     }
-    
-    # Função para obter informações do WHOIS para um domínio
-    obter_info_whois() {
-        dominio=$1
-        # Usa whois para obter informações WHOIS e grep para filtrar linhas indesejadas
-        whois "$dominio" | grep -vE "^\s*(%|\*|;|$|>>>|NOTICE|TERMS|by|to)" | grep -E ':|No match|^$'
+
+    # Function to get WHOIS information for a domain
+    get_whois_info() {
+        local domain=$1
+        whois "$domain" | grep -vE "^\s*(%|\*|;|$|>>>|NOTICE|TERMS|by|to)" | grep -E ':|No match|^$'
     }
-    
-    # Função para obter informações do DNS para um domínio
-    obter_info_dns() {
-        dominio=$1
-        # Usa nslookup para obter informações DNS e awk para extrair endereços IP
-        nslookup "$dominio" 2>/dev/null | grep "Address" | awk '{print $2}' | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g'
+
+    # Function to get DNS lookup information for a domain
+    get_dns_info() {
+        local domain=$1
+        nslookup "$domain" 2>/dev/null | grep "Address" | awk '{print $2}' | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g'
     }
-    
-    # Verifica se a entrada é um arquivo ou um site
-    #if [ -f "$entrada" ]; then
-    #        sites=("$(cat "$entrada")")
-    #    else
-    #        sites=("$entrada")
-    #fi
-    
-    # Adiciona a data e hora no início do arquivo de saída
-    echo -e "Relatório gerado em: $data_hora\n" > "$saida"
-    
-    # Loop principal para cada site
-    for site in "${sites[@]}"; do
-        print_color 33 "Analisando subdomínios para: $SITE"
-        
-        subdominios=("$(extrair_subdominios "$SITE")")
-        
-        # Verifica se há subdomínios
-        if [ ${#subdominios[@]} -eq 0 ]; then
-            print_color 31 "Nenhum subdomínio encontrado para: $SITE"
-            echo "Nenhum subdomínio encontrado para: $SITE" >> "$saida"
-        else
-            print_color 32 "Subdomínios encontrados"
-            for subdominio in "${subdominios[@]}"; do
-                print_color 36 "$subdominio"
-                resultado=$(obter_endereco_ip "$subdominio")
-                echo "$resultado" >> "$saida"
-                
-                # Adiciona informações do WHOIS
-                print_color 34 "Informações WHOIS para $subdominio"
-                obter_info_whois "$subdominio" >> "$saida"
-                
-                # Adiciona informações do DNS Lookup
-                print_color 34 "Informações DNS Lookup para $subdominio"
-                obter_info_dns "$subdominio" >> "$saida"
-                
-                echo -e "\n" >> "$saida"
-            done
-        fi
-    done
-    
-    print_color 32 "Análise concluída. Resultados salvos em: $saida"
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    main_menu;
+
+    # Add the timestamp to the beginning of the output file
+    echo -e "Report generated on: $timestamp\n" > "$output_file"
+
+    # Analyze the provided site
+    print_color 33 "Analyzing subdomains for: $SITE"
+    subdomains=($(extract_subdomains "$SITE"))
+
+    # Check if any subdomains were found
+    if [ ${#subdomains[@]} -eq 0 ]; then
+        print_color 31 "No subdomains found for: $SITE"
+        echo "No subdomains found for: $SITE" >> "$output_file"
+    else
+        print_color 32 "Subdomains found:"
+        for subdomain in "${subdomains[@]}"; do
+            print_color 36 "$subdomain"
+
+            # Get IP address for the subdomain
+            ip_result=$(get_ip_address "$subdomain")
+            echo "$ip_result" >> "$output_file"
+
+            # Add WHOIS information
+            print_color 34 "WHOIS information for $subdomain"
+            get_whois_info "$subdomain" >> "$output_file"
+
+            # Add DNS lookup information
+            print_color 34 "DNS Lookup information for $subdomain"
+            get_dns_info "$subdomain" >> "$output_file"
+
+            echo -e "\n" >> "$output_file"
+        done
+    fi
+
+    # Completion message
+    print_color 32 "Analysis complete. Results saved to: $output_file"
+    echo -e "${GRAY}Press ENTER to continue${RESET}"
+    read -r 2>/dev/null
+    main_menu
 }
+
 # Define a função iii_google_hacking
 function iii_google_hacking(){  
     SEARCH="firefox"
