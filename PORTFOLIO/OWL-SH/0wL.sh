@@ -188,12 +188,17 @@
 function main_menu() {
     display_main_menu # Display the menu
 
+    # Define valid menu options dynamically
+    valid_options=()
+    for i in {0..25}; do
+        if [[ "$i" -ne 23 ]]; then
+            valid_options+=("$i")
+        fi
+    done
+
     # Prompt user for input
     echo -ne "${CYAN} Enter the option number: ${RESET}"
     read -r MENU_OPTION # Read user input
-
-    # Define valid menu options
-    local valid_options=(0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 24 25)
 
     # Validate the user input
     if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
@@ -211,24 +216,24 @@ function main_menu() {
         4) iv_metadata_analysis ;; # Analyze metadata from the Internet
         5) v_dns_zone_transfer ;; # Perform DNS Zone Transfer
         6) vi_subdomain_takeover ;; # Perform Subdomain Takeover
-        7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns
+        7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns ;;
         8) viii_dns_recon ;; # DNS Reconnaissance
-        9) disabled ;; # DISABLED - REQUIRES REFACTORING -> ix_google_general_query
+        9) disabled ;; # DISABLED - REQUIRES REFACTORING -> ix_google_general_query ;;
         10) x_mitm ;; # MiTM (Man-in-the-Middle)
-        11) disabled ;; # DISABLED FOR MAINTENANCE -> xi_portscan_bashsocket
+        11) disabled ;; # DISABLED FOR MAINTENANCE -> xi_portscan_bashsocket ;;
         12) xii_network_management_commands ;; # Useful network management commands
         13) xiii_find_command_examples ;; # Examples of the 'find' command
         14) xiv_debian_root_password_reset ;; # Root password reset guide for Debian
-        15) disabled ;; # DISABLED FOR MAINTENANCE -> xv_redhat_root_password_reset
+        15) disabled ;; # DISABLED FOR MAINTENANCE -> xv_redhat_root_password_reset ;;
         16) xvi_vim_quick_guide ;; # Quick guide to using Vim
-        17) disabled ;; # DISABLED FOR MAINTENANCE -> xvii_rbash_escape_techniques
+        17) disabled ;; # DISABLED FOR MAINTENANCE -> xvii_rbash_escape_techniques ;;
         18) xviii_wifi_attacks ;; # Wireless network attacks
         19) xix_windows_basic_commands ;; # Basic Windows commands
-        20) disabled ;; # DISABLED FOR MAINTENANCE -> xx_create_windows_script
-        21) xxi_sgt_domingues_scanning_script ;; # Switch to Sgt Domingues' scanning script
+        20) disabled ;; # DISABLED FOR MAINTENANCE -> xx_create_windows_script ;; #! TODO: DELETE
+        21) xxi_sgt_domingues_scanning_script ;; # Switch to Sgt Domingues' scanning script ;; #! TODO: DELETE
         22) xxii_nmap_network_discovery ;; # NMAP network scan
-        24) disabled ;; # DISABLED FOR MAINTENANCE -> xxiv_windows_revshell
-        25) disabled ;; # DISABLED FOR MAINTENANCE -> xxv_windows_rdp
+        24) disabled ;; # DISABLED FOR MAINTENANCE -> xxiv_windows_revshell ;;
+        25) disabled ;; # DISABLED FOR MAINTENANCE -> xxv_windows_rdp ;;
         *) invalid_option ;; # Fallback case (should never happen with validation)
     esac
 }
