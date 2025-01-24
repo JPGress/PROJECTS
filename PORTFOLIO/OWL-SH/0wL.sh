@@ -26,6 +26,18 @@
     # Function: Enable Proxychains
     function enable_proxychains() {
         clear; # Clear terminal screen
+        # Display the menu header with the script name and author
+        echo -e ""
+        echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
+        echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
+        echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
+        echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
+        echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
+        echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
+        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
+        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
+        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
+        echo -e "${GRAY}+====================================================================================+${RESET}"
         # Check if proxychains is installed
         if ! command -v proxychains &> /dev/null; then
             echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
@@ -39,7 +51,7 @@
         fi
 
         # Test proxychains by attempting a simple network request
-        echo -e "${GRAY} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
+        echo -e "${MAGENTA} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
         if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
             echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
             countdown; # Wait for 5 seconds before continuing
@@ -89,7 +101,8 @@
 
     # Function: Exit script (on zero input)
     function exit_script() {
-        echo -e "${GRAY} Press ENTER to continue ${RESET}"
+        clear; # Clear terminal screen
+        echo -e "${RED} Press ENTER to continue ${RESET}"
         read -r 2> /dev/null
         exit 0
     }
@@ -486,6 +499,7 @@
         main_menu
     }
 
+    # Function: Script to automate Google hacking queries for reconnaissance
     function iii_google_hacking() {
         # iii_google_hacking - Automates Google hacking queries for reconnaissance
             #
@@ -534,128 +548,125 @@
         # - Designed for educational purposes only; respect applicable laws and ethics.
 
 
-    # Default browser for search
-    SEARCH="firefox"
+        # Default browser for search
+        SEARCH="firefox"
 
-    # Function to ensure the browser is installed
-    function check_browser() {
-        if ! command -v "$SEARCH" >/dev/null 2>&1; then
-            echo -e "${RED}Error: The browser '$SEARCH' is not installed. Please install it or update the 'SEARCH' variable.${RESET}"
-            return 1
-        fi
-        if ! command -v "proxychains4" >/dev/null 2>&1; then
-            echo -e "${RED}Error: 'proxychains4' is not installed. Please install it to enable proxy rotation.${RESET}"
-            return 1
-        fi
-    }
+        # Function to ensure the browser is installed
+        function check_browser() {
+            if ! command -v "$SEARCH" >/dev/null 2>&1; then
+                echo -e "${RED}Error: The browser '$SEARCH' is not installed. Please install it or update the 'SEARCH' variable.${RESET}"
+                return 1
+            fi
+            if ! command -v "proxychains4" >/dev/null 2>&1; then
+                echo -e "${RED}Error: 'proxychains4' is not installed. Please install it to enable proxy rotation.${RESET}"
+                return 1
+            fi
+        }
 
-    # Function to prompt the user for the target name
-    function google_hacking_menu() {
-        clear
-        echo -e "${RED}Google Hacking OSINT for People Reconnaissance${RESET}"
-        echo -e "${YELLOW}+=============================================+${RESET}"
-        echo -e "${CYAN}For better results, put the target in quotes (e.g., \"Fatima de Almeida Lima\").${RESET}"
-        echo -n "Enter the target name for the search: "
-        read -r TARGET
-
-        # Validate input
-        while [[ -z "$TARGET" ]]; do
-            echo "Target name cannot be empty. Please try again."
+        # Function to prompt the user for the target name
+        function google_hacking_menu() {
+            clear
+            echo -e "${RED}Google Hacking OSINT for People Reconnaissance${RESET}"
+            echo -e "${YELLOW}+=============================================+${RESET}"
+            echo -e "${CYAN}For better results, put the target in quotes (e.g., \"Fatima de Almeida Lima\").${RESET}"
             echo -n "Enter the target name for the search: "
             read -r TARGET
+
+            # Validate input
+            while [[ -z "$TARGET" ]]; do
+                echo "Target name cannot be empty. Please try again."
+                echo -n "Enter the target name for the search: "
+                read -r TARGET
+            done
+
+            # Process target as a proper dork (quoted and URL encoded)
+            PROCESSED_TARGET=$(echo "\"$TARGET\"" | sed 's/ /%20/g')
+
+            # Create a timestamped log file for the target
+            TIMESTAMP=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]')
+            LOG_FILE="${TARGET}_${TIMESTAMP}.log"
+            echo -e "Log for target: $TARGET\nGenerated on: $(date)\n" > "$LOG_FILE"
+        }
+
+        # Function to execute a search query through proxychains
+        function perform_query() {
+            local url=$1
+            echo "Executing query: $url"
+            echo "$url" >> "$LOG_FILE"  # Log the query
+            proxychains4 $SEARCH "$url" 2>/dev/null &  # Run in the background
+            sleep 1  # Optional delay between queries
+        }
+
+        # Function to check the current IP address
+        function check_ip() {
+            echo "Checking your current IP address..."
+            local ip=$(curl -s https://api.ipify.org)
+            if [[ -z "$ip" ]]; then
+                echo "Failed to retrieve IP address. Please check your connection or proxy settings."
+                echo "Failed to retrieve IP address." >> "$LOG_FILE"
+            else
+                echo "Your current IP address is: $ip"
+                echo "Current IP address: $ip" >> "$LOG_FILE"
+            fi
+        }
+
+        # Function for general searches
+        function generalSearch() {
+            check_ip  # Check and log the IP address
+            perform_query "https://webmii.com/people?n=$PROCESSED_TARGET"  # Search on WEBMII
+            perform_query "https://www.google.com/search?q=intext:$PROCESSED_TARGET"  # General Google search
+        }
+
+        # Function for searches within specific websites
+        function siteSearch() {
+            local site="$1"
+            local domain="$2"
+            perform_query "https://www.google.com/search?q=inurl:$domain+intext:$PROCESSED_TARGET"
+        }
+
+        # Function for file type searches
+        function FileSearch() {
+            local type="$1"
+            local extension="$2"
+            perform_query "https://www.google.com/search?q=filetype:$extension+intext:$PROCESSED_TARGET"
+        }
+
+        # Check if the browser and proxychains4 are installed
+        check_browser || return 1
+
+        # Prompt for the target name
+        google_hacking_menu
+
+        # Perform general searches
+        generalSearch
+
+        # List of file types and their extensions for targeted searches
+        file_types=("PDF" "PPT" "DOC" "DOCX" "XLS" "XLSX" "ODS" "ODT" "TXT" "PHP" "XML" "JSON" "PNG" "SQLS" "SQL")
+        extensions=("pdf" "ppt" "doc" "docx" "xls" "xlsx" "ods" "odt" "txt" "php" "xml" "json" "png" "sqls" "sql")
+
+        # Perform file type searches
+        for ((i = 0; i < ${#file_types[@]}; i++)); do
+            echo "Processing file type: ${file_types[i]} with extension: ${extensions[i]}" >> "$LOG_FILE"
+            FileSearch "${file_types[i]}" "${extensions[i]}"
+            echo "Finished processing file type: ${file_types[i]}" >> "$LOG_FILE"
         done
 
-        # Process target as a proper dork (quoted and URL encoded)
-        PROCESSED_TARGET=$(echo "\"$TARGET\"" | sed 's/ /%20/g')
+        # List of sites and their corresponding domains for targeted searches
+        sites=("Government" "Pastebin" "Trello" "GitHub" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "YouTube" "Medium" "Stack Overflow" "Quora" "Wikipedia")
+        domains=(".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tiktok.com" "youtube.com" "medium.com" "stackoverflow.com" "quora.com" "wikipedia.org")
 
-        # Create a timestamped log file for the target
-        TIMESTAMP=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]')
-        LOG_FILE="${TARGET}_${TIMESTAMP}.log"
-        echo -e "Log for target: $TARGET\nGenerated on: $(date)\n" > "$LOG_FILE"
-    }
+        # Perform searches on specific sites
+        for ((i = 0; i < ${#sites[@]}; i++)); do
+            echo "Processing site: ${sites[i]} with domain: ${domains[i]}" >> "$LOG_FILE"
+            siteSearch "${sites[i]}" "${domains[i]}"
+            echo "Finished processing site: ${sites[i]}" >> "$LOG_FILE"
+        done
 
-    # Function to execute a search query through proxychains
-    function perform_query() {
-        local url=$1
-        echo "Executing query: $url"
-        echo "$url" >> "$LOG_FILE"  # Log the query
-        proxychains4 $SEARCH "$url" 2>/dev/null &  # Run in the background
-        sleep 1  # Optional delay between queries
-    }
-
-    # Function to check the current IP address
-    function check_ip() {
-        echo "Checking your current IP address..."
-        local ip=$(curl -s https://api.ipify.org)
-        if [[ -z "$ip" ]]; then
-            echo "Failed to retrieve IP address. Please check your connection or proxy settings."
-            echo "Failed to retrieve IP address." >> "$LOG_FILE"
-        else
-            echo "Your current IP address is: $ip"
-            echo "Current IP address: $ip" >> "$LOG_FILE"
-        fi
-    }
-
-    # Function for general searches
-    function generalSearch() {
-        check_ip  # Check and log the IP address
-        perform_query "https://webmii.com/people?n=$PROCESSED_TARGET"  # Search on WEBMII
-        perform_query "https://www.google.com/search?q=intext:$PROCESSED_TARGET"  # General Google search
-    }
-
-    # Function for searches within specific websites
-    function siteSearch() {
-        local site="$1"
-        local domain="$2"
-        perform_query "https://www.google.com/search?q=inurl:$domain+intext:$PROCESSED_TARGET"
-    }
-
-    # Function for file type searches
-    function FileSearch() {
-        local type="$1"
-        local extension="$2"
-        perform_query "https://www.google.com/search?q=filetype:$extension+intext:$PROCESSED_TARGET"
-    }
-
-    # Check if the browser and proxychains4 are installed
-    check_browser || return 1
-
-    # Prompt for the target name
-    google_hacking_menu
-
-    # Perform general searches
-    generalSearch
-
-    # List of file types and their extensions for targeted searches
-    file_types=("PDF" "PPT" "DOC" "DOCX" "XLS" "XLSX" "ODS" "ODT" "TXT" "PHP" "XML" "JSON" "PNG" "SQLS" "SQL")
-    extensions=("pdf" "ppt" "doc" "docx" "xls" "xlsx" "ods" "odt" "txt" "php" "xml" "json" "png" "sqls" "sql")
-
-    # Perform file type searches
-    for ((i = 0; i < ${#file_types[@]}; i++)); do
-        echo "Processing file type: ${file_types[i]} with extension: ${extensions[i]}" >> "$LOG_FILE"
-        FileSearch "${file_types[i]}" "${extensions[i]}"
-        echo "Finished processing file type: ${file_types[i]}" >> "$LOG_FILE"
-    done
-
-    # List of sites and their corresponding domains for targeted searches
-    sites=("Government" "Pastebin" "Trello" "GitHub" "LinkedIn" "Facebook" "Twitter" "Instagram" "TikTok" "YouTube" "Medium" "Stack Overflow" "Quora" "Wikipedia")
-    domains=(".gov.br" "pastebin.com" "trello.com" "github.com" "linkedin.com" "facebook.com" "twitter.com" "instagram.com" "tiktok.com" "youtube.com" "medium.com" "stackoverflow.com" "quora.com" "wikipedia.org")
-
-    # Perform searches on specific sites
-    for ((i = 0; i < ${#sites[@]}; i++)); do
-        echo "Processing site: ${sites[i]} with domain: ${domains[i]}" >> "$LOG_FILE"
-        siteSearch "${sites[i]}" "${domains[i]}"
-        echo "Finished processing site: ${sites[i]}" >> "$LOG_FILE"
-    done
-
-    echo -e "${GRAY}All searches logged in: $LOG_FILE${RESET}"
-    echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
-    read -r 2>/dev/null
-    main_menu
-}
-
-
-
+        echo -e "${GRAY}All searches logged in: $LOG_FILE${RESET}"
+        echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
+        read -r 2>/dev/null
+        main_menu
+    }   
 
 
 # Define a função iv_analise_metadados
