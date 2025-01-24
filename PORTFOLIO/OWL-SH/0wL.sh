@@ -102,8 +102,22 @@
     # Function: Exit script (on zero input)
     function exit_script() {
         clear; # Clear terminal screen
+        # Display the menu header with the script name and author
+        echo -e ""
+        echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
+        echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
+        echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
+        echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
+        echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
+        echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
+        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
+        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
+        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
+        echo -e "${GRAY}+====================================================================================+${RESET}"
+        echo -e "${RED} >>> Exiting the script. Bye! ${RESET}"
         echo -e "${RED} Press ENTER to continue ${RESET}"
         read -r 2> /dev/null
+        clear; # Clear terminal screen
         exit 0
     }
 
@@ -120,7 +134,7 @@
 
         # Countdown loop
         while [ $seconds -gt 0 ]; do
-            echo -ne "${RED}Starting in: $seconds \r${RESET}" # Display the countdown and overwrite the same line
+            echo -ne "${GRAY} Starting in: $seconds \r${RESET}" # Display the countdown and overwrite the same line
             sleep 1 # Wait for 1 second
             ((seconds--)) # Decrease the countdown value
         done
