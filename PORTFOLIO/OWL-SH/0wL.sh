@@ -683,6 +683,99 @@
         read -r 2>/dev/null
         main_menu
     }   
+function iv_metadata_analysis_2() {
+    # Define a pool of User-Agent strings
+    USER_AGENTS=(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
+        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 12_6_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
+        "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Mobile Safari/537.36"
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Mobile/15E148 Safari/604.1"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"
+    )
+
+    # Search command with Lynx and dynamic User-Agent
+    function get_search_command() {
+        # Randomly select a User-Agent from the pool
+        RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
+        echo "proxychains4 lynx -useragent='$RANDOM_USER_AGENT' -dump -hiddenlinks=merge -force_html"
+    }
+
+    # Function to prompt the user for required input
+    function metadata_analysis_menu() {
+        echo -n "Enter the domain or extension to search (e.g., .gov.br): "
+        read -r SITE
+        echo -n "Enter the file extension to search for (e.g., .pdf): "
+        read -r FILE
+        echo -n "[Optional] Enter a keyword to refine the search (e.g., vaccine): "
+        read -r KEYWORD
+    }
+
+    # Function to perform the search based on user input
+    function perform_search() {
+        TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
+        FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+        SEARCH=$(get_search_command)
+
+        echo "Using User-Agent: $SEARCH"
+        echo "Searching for $FILE files on $SITE..."
+        if [[ -z "$KEYWORD" ]]; then
+            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
+                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                | sed 's/&.*//' > "$FILTERED_RESULTS_FILE"
+        else
+            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
+                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                | sed 's/&.*//' > "$FILTERED_RESULTS_FILE"
+        fi
+
+        if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
+            echo "Search successful. Results saved to $FILTERED_RESULTS_FILE"
+        else
+            echo "No files found for the specified search criteria."
+        fi
+    }
+
+    # Function to download files from the search results
+    function download_files() {
+        FILE_LIST="$1"
+        FOLDER="${SITE}_${TIMESTAMP}"
+        mkdir -p "$FOLDER"
+
+        while IFS= read -r URL; do
+            echo "Downloading $URL..."
+            proxychains4 wget -P "$FOLDER" "$URL"
+        done < "$FILE_LIST"
+
+        rm -f "$FILE_LIST"  # Clean up the temporary results file
+    }
+
+    # Function to analyze metadata of downloaded files
+    function analyze_metadata() {
+        FOLDER="${SITE}_${TIMESTAMP}"
+        echo "Analyzing metadata in files from folder: $FOLDER"
+        cd "$FOLDER" || exit
+        exiftool ./*
+        cd - || exit
+    }
+
+    # Start the process
+    metadata_analysis_menu
+    perform_search
+
+    if [[ -s "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt" ]]; then
+        download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+        analyze_metadata
+    else
+        echo "No files found for the specified search criteria."
+    fi
+
+    echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
+    read -r 2>/dev/null
+    main_menu
+}
+
 
 function iv_metadata_analysis() {
     SEARCH="lynx -dump -hiddenlinks=merge -force_html"
@@ -703,8 +796,6 @@ function iv_metadata_analysis() {
 
     # Function to perform the search based on user input
     function perform_search() {
-        
-        #restart_tor;
         
         TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
         FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
