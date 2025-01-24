@@ -712,7 +712,7 @@ function iv_metadata_analysis() {
 
             $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
                 | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                | sed 's/&.*//' > "$FILTERED_RESULTS_FILE" #!fixme
+                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE" #!fixme
 
             if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
                 echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
@@ -729,7 +729,7 @@ function iv_metadata_analysis() {
 
             $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
                 | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                | sed 's/&.*//' > "$FILTERED_RESULTS_FILE"
+                | cut -d '=' -f2''  > "$FILTERED_RESULTS_FILE"
 
             if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
                 echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
