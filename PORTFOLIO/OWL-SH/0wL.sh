@@ -488,50 +488,50 @@
 
     function iii_google_hacking() {
         # iii_google_hacking - Automates Google hacking queries for reconnaissance
-    #
-    # Description:
-    # This script automates Google hacking techniques to gather information about a target.
-    # It performs the following operations:
-    # 1. Conducts general searches for the target using Google.
-    # 2. Searches for specific file types (e.g., PDF, DOCX) containing the target's name.
-    # 3. Searches within specific websites (e.g., LinkedIn, Pastebin) for target-related data.
-    # 4. Verifies the user's IP address for anonymity before performing queries.
-    # 5. Logs all search URLs and details to a file for reference and auditing.
-    #
-    # Improvements in Version 1.5:
-    # - **Fixed Logical Issue**: Browser queries now run in the background to prevent blocking subsequent searches.
-    # - **Enhanced Logging**: Debug logs added to track query progress and identify any potential bottlenecks.
-    # - **Simplified IP Verification**: Replaced interactive browser-based IP check with a lightweight `curl` request.
-    # - **Improved Stability**: Introduced better flow control and error handling for proxy execution.
-    #
-    # Dependencies:
-    # - Firefox or a compatible browser (default: Firefox).
-    # - proxychains4: To route queries through proxies for anonymity.
-    # - curl: For lightweight IP verification.
-    #
-    # Author: R3v4N (w/GPT)
-    # Created on: 2024-01-15
-    # Last Updated: 2025-01-25
-    # Version: 1.5
-    #
-    # Version history:
-    # - 1.0 (2024-01-15): Initial version with basic Google hacking queries.
-    # - 1.1 (2024-01-24): Refactored for modularity, added input validation, improved user prompts, and added error handling.
-    # - 1.2 (2024-01-24): Introduced logging for all searches to a timestamped file.
-    # - 1.3 (2024-01-25): Integrated proxy rotation for anonymity and processed dorks for proper formatting.
-    # - 1.4 (2024-01-25): Refactored repetitive `proxychains4 $SEARCH` calls into a reusable function.
-    # - 1.5 (2025-01-25): Resolved blocking issue with browser queries, enhanced logging, and improved flow control.
-    #
-    # Example usage:
-    # - Input: "Fatima de Almeida Lima"
-    # - Output:
-    #   - General Google queries, file type searches, and specific website searches performed anonymously.
-    #   - Log file saved as "<TARGET>_<timestamp>.log".
-    #
-    # Notes:
-    # - Ensure Firefox or the browser specified in the `SEARCH` variable is installed.
-    # - Logs are saved as "<TARGET>_<timestamp>.log" in the current directory.
-    # - Designed for educational purposes only; respect applicable laws and ethics.
+            #
+            # Description:
+            # This script automates Google hacking techniques to gather information about a target.
+            # It performs the following operations:
+            # 1. Conducts general searches for the target using Google.
+            # 2. Searches for specific file types (e.g., PDF, DOCX) containing the target's name.
+            # 3. Searches within specific websites (e.g., LinkedIn, Pastebin) for target-related data.
+            # 4. Verifies the user's IP address for anonymity before performing queries.
+            # 5. Logs all search URLs and details to a file for reference and auditing.
+            #
+            # Improvements in Version 1.5:
+            # - **Fixed Logical Issue**: Browser queries now run in the background to prevent blocking subsequent searches.
+            # - **Enhanced Logging**: Debug logs added to track query progress and identify any potential bottlenecks.
+            # - **Simplified IP Verification**: Replaced interactive browser-based IP check with a lightweight `curl` request.
+            # - **Improved Stability**: Introduced better flow control and error handling for proxy execution.
+            #
+            # Dependencies:
+            # - Firefox or a compatible browser (default: Firefox).
+            # - proxychains4: To route queries through proxies for anonymity.
+            # - curl: For lightweight IP verification.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2024-01-15
+            # Last Updated: 2025-01-25
+            # Version: 1.5
+            #
+            # Version history:
+            # - 1.0 (2024-01-15): Initial version with basic Google hacking queries.
+            # - 1.1 (2024-01-24): Refactored for modularity, added input validation, improved user prompts, and added error handling.
+            # - 1.2 (2024-01-24): Introduced logging for all searches to a timestamped file.
+            # - 1.3 (2024-01-25): Integrated proxy rotation for anonymity and processed dorks for proper formatting.
+            # - 1.4 (2024-01-25): Refactored repetitive `proxychains4 $SEARCH` calls into a reusable function.
+            # - 1.5 (2025-01-25): Resolved blocking issue with browser queries, enhanced logging, and improved flow control.
+            #
+            # Example usage:
+            # - Input: "Fatima de Almeida Lima"
+            # - Output:
+            #   - General Google queries, file type searches, and specific website searches performed anonymously.
+            #   - Log file saved as "<TARGET>_<timestamp>.log".
+            #
+            # Notes:
+            # - Ensure Firefox or the browser specified in the `SEARCH` variable is installed.
+            # - Logs are saved as "<TARGET>_<timestamp>.log" in the current directory.
+        # - Designed for educational purposes only; respect applicable laws and ethics.
 
 
     # Default browser for search
