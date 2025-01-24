@@ -4,23 +4,23 @@
 
 ######################## VARIABLES ########################
 
-# Color definitions
-BLACK="\e[30m"
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BLUE="\e[34m"
-MAGENTA="\e[35m"
-CYAN="\e[36m"
-WHITE="\e[37m"
-GRAY="\e[90m"
+    # Color definitions
+    BLACK="\e[30m"
+    RED="\e[31m"
+    GREEN="\e[32m"
+    YELLOW="\e[33m"
+    BLUE="\e[34m"
+    MAGENTA="\e[35m"
+    CYAN="\e[36m"
+    WHITE="\e[37m"
+    GRAY="\e[90m"
 
-# Background color definitions
-BG_BLACK="\e[40m"
-BG_RED="\e[41m"
+    # Background color definitions
+    BG_BLACK="\e[40m"
+    BG_RED="\e[41m"
 
-# Reset terminal color
-RESET="\e[0m"
+    # Reset terminal color
+    RESET="\e[0m"
 
 ######################## SUPPORT FUNCTIONS ########################
 
