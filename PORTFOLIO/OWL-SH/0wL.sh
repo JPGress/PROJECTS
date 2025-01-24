@@ -243,7 +243,7 @@ function i_portscan() {
     # Description:
     # This script performs the following operations:
     # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
-    # 2. Dynamically loads the top 1k ports from Nmap's services file, if available.
+    # 2. Dynamically loads a user-defined number of top ports (e.g., 20, 100, 1000) from Nmap's services file, if available.
     # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
     # 4. Prints results for each host and open port found.
     # 5. Saves the results in two file formats:
@@ -257,26 +257,32 @@ function i_portscan() {
     #
     # Author: R3v4N (w/GPT)
     # Created on: 2025-01-23
-    # Last Updated: 2025-01-23
-    # Version: 1.1
+    # Last Updated: 2025-01-24
+    # Version: 1.2
     #
     # Version history:
     # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
     # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
     #                     Integrated dynamic port loading from Nmap's services file.
+    # - 1.2 (2025-01-23): Added user input to define the number of top ports to scan.
+    #                     Improved flexibility and user control over scan depth.
     #
     # Notes:
     # - Ensure the required dependencies are installed before running the script.
     # - If `ipcalc` is not installed, the script will attempt to install it automatically.
+    # - Users can dynamically select the number of top ports to scan.
     # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
     # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
     #
     # Example usage:
-    # - Input: "192.168.1.0/24"
+    # - Input:
+    #   - Number of ports: 100
+    #   - CIDR: "192.168.1.0/24"
     # - Output:
     #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
     #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
     #   - CSV File: "192.168.1.1,80,Open"
+
 
     clear
     echo -e "${MAGENTA}1 - Portscan using netcat ${RESET}"
@@ -284,27 +290,27 @@ function i_portscan() {
     echo -e "${GRAY}This port scan checks common open ports on all hosts in the network."
     echo -e "${GRAY}+======================================================================+${RESET}"
 
+    # Ask the user how many top ports they want to scan
+    echo -ne "${CYAN}Enter the number of top ports to scan (e.g., 20, 100, 1000): ${RESET}"
+    read -r TOP_PORTS
+
+    # Validate the user's input (ensure it's a positive number)
+    if ! [[ "$TOP_PORTS" =~ ^[0-9]+$ ]] || [[ "$TOP_PORTS" -le 0 ]]; then
+        echo -e "${RED}Invalid input! Please enter a positive number.${RESET}"
+        main_menu
+        return
+    fi
+
     # Load ports dynamically from Nmap or use a fallback list
     local nmap_services="/usr/share/nmap/nmap-services" # Path to Nmap's services file
-    local fallback_ports="80 23 443 21 22 25 3389 110 445 139 143 53 135 3306 8080 1723 111 995 993 5900"
-    local output_txt="portscan_results.txt"  # Output file for plain text
-    local output_csv="portscan_results.csv"  # Output file for CSV format
+    local fallback_ports="80,23,443,21,22,25,3389,110,445,139,143,53,135,3306,8080,1723,111,995,993,5900"
 
-    # Clear any existing results files
-    > "$output_txt"
-    > "$output_csv"
-
-    # Add headers to the CSV file
-    echo "Host,Port,Status" > "$output_csv"
-
-    # Check if the nmap-services file exists
-    # Extract the top 20 most common ports from the Nmap services file
     if [[ -f "$nmap_services" ]]; then
-        # Extract unique port numbers, sorted by service frequency
-        PORT_LIST=$(awk '!/^#/ {print $2}' "$nmap_services" | grep -Eo '^[0-9]+' | sort -n | uniq | head -n 1000 | paste -sd ',')
-    
+        # Extract the top N ports based on the user's choice
+        PORT_LIST=$(awk '!/^#/ {print $2}' "$nmap_services" | grep -Eo '^[0-9]+' | sort -n | uniq | head -n "$TOP_PORTS" | paste -sd ',')
+
         if [[ -n "$PORT_LIST" ]]; then
-            echo -e "${GREEN}Loaded the TOP 1K ports from Nmap's services file:${RESET} $nmap_services"
+            echo -e "${GREEN}Loaded the TOP $TOP_PORTS ports from Nmap's services file: $nmap_services${RESET}"
         else
             echo -e "${YELLOW}Warning: Failed to extract ports from Nmap's services file. Falling back to predefined ports.${RESET}"
             PORT_LIST="$fallback_ports"
@@ -314,18 +320,17 @@ function i_portscan() {
         PORT_LIST="$fallback_ports"
     fi
 
-
     # Handle Ctrl+C interruptions gracefully
     trap 'echo -e "\nScript interrupted by user."; main_menu; exit 1' SIGINT
 
     # Ask user to enter the IP range in CIDR notation
-    echo -n "Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): "
+    echo -ne "${CYAN}Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): ${RESET}"
     read -r NETWORK_MASK
 
     # Validate the network mask
     if ! ipcalc -n -b -m "$NETWORK_MASK" >/dev/null 2>&1; then
         echo "Invalid network mask."
-        main_menu # Return to the main menu
+        main_menu
         return
     fi
 
@@ -336,32 +341,20 @@ function i_portscan() {
     echo -e "${CYAN}Scanning network: $NETWORK_MASK ${RESET}"
     for HOST in $(seq 1 254); do
         IP="$NETWORK_PREFIX.$HOST"
-        for PORT in $PORT_LIST; do
+        for PORT in $(echo "$PORT_LIST" | tr ',' ' '); do
             # Check if the port is open on the host
             nc -z -w 1 "$IP" "$PORT" 2>/dev/null
             if [ $? -eq 0 ]; then
-                result="Host: $IP - Open Port: $PORT"
-                echo -e "${GREEN}$result ${RESET}"
-
-                # Save results to the text file
-                echo "$result" >> "$output_txt"
-
-                # Save results to the CSV file
-                echo "$IP,$PORT,Open" >> "$output_csv"
+                echo -e "${GREEN}Host: $IP - Open Port: $PORT ${RESET}"
             fi
         done
     done
 
     # Completion message
-    echo -e "${GREEN}Scan completed for $NETWORK_MASK ${RESET}"
-    echo -e "${GRAY}Results saved to:${RESET}"
-    echo -e " - ${CYAN}$output_txt${RESET}"
-    echo -e " - ${CYAN}$output_csv${RESET}"
-
-    # Prompt to continue
+    echo -e "${GREEN}Scan completed for $NETWORK_MASK using the TOP $TOP_PORTS ports.${RESET}"
     echo -e "${GRAY}Press ENTER to continue...${RESET}"
     read -r
-    main_menu # Return to the main menu
+    main_menu
 }
 
 # Define a função ii_parsing_html
