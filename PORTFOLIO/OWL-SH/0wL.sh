@@ -100,121 +100,126 @@
         main_menu
     }
 
-######################## FUNÇÕES MAIN ########################
-# Define a função display_main_menu
-function display_main_menu() {
-    clear # Clears the terminal screen
+    # Function: Validate user input for the main menu
+    function validate_input() {
+        local input="$1" # The input to validate
+        local valid_options=("$@") # All valid options passed as arguments (from the second argument onward)
 
-    # Display the menu header with the script name and author
-    echo -e ""
-    echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
-    echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
-    echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
-    echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
-    echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
-    echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
-    echo -e "${RED}                                                                                       ${RESET}"
-    echo -e "${RED} sh-v 0.9.1                                                                            ${RESET}"   
-    echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
-    echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
-    echo -e "${GRAY}+====================================================================================+${RESET}"
+        # Check if the input is in the list of valid options
+        for option in "${valid_options[@]:1}"; do
+            if [[ "$input" == "$option" ]]; then
+                return 0 # Input is valid
+            fi
+        done
 
-    # Display numbered menu options
-    echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 2 - Parsing HTML ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 3 - Google Hacking ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 4 - Metadata Analysis ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 5 - DNS Zone Transfer ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
-    echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
-    echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
-    echo -e "${MAGENTA} 10 - MiTM (Man-in-the-Middle)"
-    echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
-    echo -e "${MAGENTA} 12 - Useful Commands for Network Management"
-    echo -e "${MAGENTA} 13 - Examples of the 'find' Command"
-    echo -e "${MAGENTA} 14 - Root Password Reset Guide (Debian)"
-    echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
-    echo -e "${MAGENTA} 16 - Quick Guide to Using Vim"
-    echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
-    echo -e "${MAGENTA} 18 - Wireless Network Attacks"
-    echo -e "${MAGENTA} 19 - Windows Tips"
-    echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
-    echo -e "${MAGENTA} 21 - Switch to Sgt Domingues' Scanning Script"
-    echo -e "${MAGENTA} 22 - NMAP Network Scan ${RESET}"
-    echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
-    echo -e "${GRAY}${BG_BLACK} 24 - Reverse Shell for Windows ${RESET}"
-    echo -e "${GRAY}${BG_BLACK} 25 - RDP for Windows ${RESET}"
+        # If we reach here, the input is invalid
+        echo -e "${RED} >>> Invalid option: $input. Please choose a valid menu option. <<< ${RESET}"
+        return 1 # Input is invalid
+    }
+    # Function: Display the main menu
+    function display_main_menu() {
+        clear # Clears the terminal screen
 
-    # Display instructions to exit the menu
-    echo -e "${GRAY}+==============================================+${RESET}"
-    echo -e " ${WHITE}Enter 0 (zero) to exit${RESET}"
-    echo -e "${GRAY}+==============================================+${RESET}"
+        # Display the menu header with the script name and author
+        echo -e ""
+        echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
+        echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
+        echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
+        echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
+        echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
+        echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
+        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
+        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
+        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
+        echo -e "${GRAY}+====================================================================================+${RESET}"
 
-    # Prompt the user to select a menu option
+        # Display numbered menu options
+        echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 2 - Parsing HTML ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 3 - Google Hacking ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 4 - Metadata Analysis ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 5 - DNS Zone Transfer ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
+        echo -e "${MAGENTA} 10 - MiTM (Man-in-the-Middle)"
+        echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
+        echo -e "${MAGENTA} 12 - Useful Commands for Network Management"
+        echo -e "${MAGENTA} 13 - Examples of the 'find' Command"
+        echo -e "${MAGENTA} 14 - Root Password Reset Guide (Debian)"
+        echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
+        echo -e "${MAGENTA} 16 - Quick Guide to Using Vim"
+        echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
+        echo -e "${MAGENTA} 18 - Wireless Network Attacks"
+        echo -e "${MAGENTA} 19 - Windows Tips"
+        echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
+        echo -e "${MAGENTA} 21 - Switch to Sgt Domingues' Scanning Script"
+        echo -e "${MAGENTA} 22 - NMAP Network Scan ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 24 - Reverse Shell for Windows ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 25 - RDP for Windows ${RESET}"
+
+        # Display instructions to exit the menu
+        echo -e "${GRAY}+==============================================+${RESET}"
+        echo -e " ${WHITE}Enter 0 (zero) to exit${RESET}"
+        echo -e "${GRAY}+==============================================+${RESET}"
+
+        # Prompt the user to select a menu option
+        echo -ne "${CYAN} Enter the option number: ${RESET}"
+        read -r MENU_OPTION # Read user input and store it in the MENU_OPTION variable
+    }
+
+######################## MAIN MENU ########################
+# Function: Main menu
+function main_menu() {
+    display_main_menu # Display the menu
+
+    # Prompt user for input
     echo -ne "${CYAN} Enter the option number: ${RESET}"
-    read -r MENU_OPTION # Read user input and store it in the MENU_OPTION variable
-}
+    read -r MENU_OPTION # Read user input
 
-# Define a função main_menu
-function main_menu(){
-    display_main_menu;  # Chama a função display_main_menu para exibir o menu
+    # Define valid menu options
+    local valid_options=(0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 24 25)
+
+    # Validate the user input
+    if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
+        invalid_option # Call the invalid_option function if input is invalid
+        main_menu # Restart the menu
+        return
+    fi
+
+    # If valid, proceed to handle the selected option
     case $MENU_OPTION in
-        0) zero_sai_script; 
-            ;; # Sai do script
-        1) i_portscan; 
-            ;; # Portscan
-        2) ii_parsing_html;
-            ;; # Parsing HTML
-        3) iii_google_hacking;
-            ;; # Google Hacking
-        4) iv_analise_metadados;
-            ;; # Analise de Metadados Direto da Internet
-        5) v_dns_zt;
-            ;; # DNS Zone Transfer
-        6) vi_Subdomain_takeover;
-            ;; # Subdomain takeover
-        7) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> vii_rev_dns #XXX
-            ;;
-        8) viii_recon_dns;
-            ;; # DNS recon
-        9) desabilitado; #! NECESSITA REFATORAÇÃO PARA TRAZER MAIS OBJETIVIDADE AO CÓDIGO -> ix_consulta_geral_google
-            ;; #TODO ADC COMENTÁRIO
-        10) x_mitm; #! #TODO: REALIZAR TESTES PARA VERIFICAR SE REALMENTE ESTÁ FUNCIONAL
-            ;; # MiTM (gciber)
-        11) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> xi_portscan_bashsocket; #TODO: REALIZAR TESTES PARA VERIFICAR SE REALMENTE ESTÁ FUNCIONAL
-            ;; # portscan usando bashsocket
-        12) xii_comandos_uteis_linux;
-            ;; # Comandos úteis na gerência de redes
-        13) xiii_exemplos_find;
-            ;; # Comando find e seus exemplos
-        14) xiv_debian_memento_troca_senha_root;
-            ;; # Memento de troca de senha do root no debian
-        15) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> xv_redhat_memento_troca_senha_root; #TODO: NECESSITA DE MANUTENÇÃO E REFATORAÇÃO APÓS SALVAR O CÓDIGO ERRADO E NÃO HAVER PERCEBIDO
-            ;; # Memento de troca de senha do root no redhat
-        16) xvi_vim_memento;
-            ;; # Memento de uso do VIM
-        17) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> xvii_tec_esc_rbash; #TODO: NECESSITA DE MANUTENÇÃO E REFATORAÇÃO PARA FICAR FUNCIONAL
-            ;; # Técnicas de escape de Shell restrito usando o VIM
-        18) xviii_wifi_atk;
-            ;; # Ataque a Redes Sem Fio
-        19) xix_cmd_basicos_windows; #* #TODO ADC COMENTÁRIO DESCREVENDO A FUNÇÃO
-            ;; 
-        20) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> xx_cria_script_windows; #TODO: NECESSITA DE REFATORAÇÃO E MELHORIAS PARA ADC FUNÇÕES DE REVSHELL #TODO ADC COMENTÁRIO DESCREVENDO A FUNÇÃO
-            ;; 
-        21) xxi_script_sgt_domingues; #* #TODO ADC COMENTÁRIO DESCREVENDO A FUNÇÃO
-            ;; 
-        22) xxii_nmap_descoberta_de_rede; #* #TODO ADC COMENTÁRIO DESCREVENDO A FUNÇÃO
-            ;;
-        24) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> xxiv_revshell_windows; #* #TODO ADC COMENTÁRIO DESCREVENDO A FUNÇÃO
-            ;;
-        25) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> xxv_rdp_windows; #* #TODO ADC COMENTÁRIO DESCREVENDO A FUNÇÃO
-            ;;
-        *) invalid_option;
-            ;; # Informa que a opcao foi invalida 
+        0) exit_script ;; # Exit the script
+        1) i_portscan ;; # Perform a port scan
+        2) ii_parsing_html ;; # Parse HTML
+        3) iii_google_hacking ;; # Perform Google Hacking
+        4) iv_metadata_analysis ;; # Analyze metadata from the Internet
+        5) v_dns_zone_transfer ;; # Perform DNS Zone Transfer
+        6) vi_subdomain_takeover ;; # Perform Subdomain Takeover
+        7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns
+        8) viii_dns_recon ;; # DNS Reconnaissance
+        9) disabled ;; # DISABLED - REQUIRES REFACTORING -> ix_google_general_query
+        10) x_mitm ;; # MiTM (Man-in-the-Middle)
+        11) disabled ;; # DISABLED FOR MAINTENANCE -> xi_portscan_bashsocket
+        12) xii_network_management_commands ;; # Useful network management commands
+        13) xiii_find_command_examples ;; # Examples of the 'find' command
+        14) xiv_debian_root_password_reset ;; # Root password reset guide for Debian
+        15) disabled ;; # DISABLED FOR MAINTENANCE -> xv_redhat_root_password_reset
+        16) xvi_vim_quick_guide ;; # Quick guide to using Vim
+        17) disabled ;; # DISABLED FOR MAINTENANCE -> xvii_rbash_escape_techniques
+        18) xviii_wifi_attacks ;; # Wireless network attacks
+        19) xix_windows_basic_commands ;; # Basic Windows commands
+        20) disabled ;; # DISABLED FOR MAINTENANCE -> xx_create_windows_script
+        21) xxi_sgt_domingues_scanning_script ;; # Switch to Sgt Domingues' scanning script
+        22) xxii_nmap_network_discovery ;; # NMAP network scan
+        24) disabled ;; # DISABLED FOR MAINTENANCE -> xxiv_windows_revshell
+        25) disabled ;; # DISABLED FOR MAINTENANCE -> xxv_windows_rdp
+        *) invalid_option ;; # Fallback case (should never happen with validation)
     esac
 }
-#============================================================
+
 
 ######################## FUNÇÕES DO MENU ########################
 # Define a função i_portscan
