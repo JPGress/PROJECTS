@@ -62,6 +62,20 @@
         fi
     }
 
+    # Function: Display the menu header with the script name and author
+    function ascii_banner_art() {
+        echo -e ""
+        echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
+        echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
+        echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
+        echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
+        echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
+        echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
+        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
+        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
+        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
+        echo -e "${GRAY}+====================================================================================+${RESET}"
+    }
     # Function: Disabled
     function disabled() {
         echo ""
@@ -102,18 +116,7 @@
     # Function: Exit script (on zero input)
     function exit_script() {
         clear; # Clear terminal screen
-        # Display the menu header with the script name and author
-        echo -e ""
-        echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
-        echo -e "${RED}██╔═████╗   ██╔═████╗██║    ██║██║         ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝${RESET}"
-        echo -e "${RED}██║██╔██║   ██║██╔██║██║ █╗ ██║██║         ███████╗██║     ██████╔╝██║██████╔╝   ██║   ${RESET}"
-        echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
-        echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
-        echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
-        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
-        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
-        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
-        echo -e "${GRAY}+====================================================================================+${RESET}"
+        ascii_banner_art; # Call ASCII banner art
         echo -e "${RED} >>> Exiting the script. Bye! ${RESET}"
         echo -e "${RED} Press ENTER to continue ${RESET}"
         read -r 2> /dev/null
