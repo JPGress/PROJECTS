@@ -41,7 +41,7 @@
         echo -e "${GRAY} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
         if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
             echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
-            pause_script;
+            countdown; # Wait for 5 seconds before continuing
             export PROXYCHAINS=1
         else
             echo -e "${RED} >>> WARNING: Proxychains test failed. Please verify your proxychains configuration. <<< ${RESET}"
@@ -100,6 +100,19 @@
         main_menu
     }
 
+    # Function: 5-second countdown
+    function countdown() {
+        local seconds=5 # Number of seconds for the countdown
+        echo -e "${CYAN}Starting in...${RESET}"
+
+        # Countdown loop
+        while [ $seconds -gt 0 ]; do
+            echo -ne "${YELLOW} $seconds \r${RESET}" # Display the countdown and overwrite the same line
+            sleep 1 # Wait for 1 second
+            ((seconds--)) # Decrease the countdown value
+        done
+    }
+
     # Function: Validate user input for the main menu
     function validate_input() {
         local input="$1" # The input to validate
@@ -116,6 +129,7 @@
         echo -e "${RED} >>> Invalid option: $input. Please choose a valid menu option. <<< ${RESET}"
         return 1 # Input is invalid
     }
+
     # Function: Display the main menu
     function display_main_menu() {
         clear # Clears the terminal screen
@@ -166,8 +180,8 @@
         echo -e "${GRAY}+==============================================+${RESET}"
 
         # Prompt the user to select a menu option
-        echo -ne "${CYAN} Enter the option number: ${RESET}"
-        read -r MENU_OPTION # Read user input and store it in the MENU_OPTION variable
+        #echo -ne "${CYAN} Enter the option number: ${RESET}"
+        #read -r MENU_OPTION # Read user input and store it in the MENU_OPTION variable
     }
 
 ######################## MAIN MENU ########################
