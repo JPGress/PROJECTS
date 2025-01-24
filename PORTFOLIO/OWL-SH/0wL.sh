@@ -722,7 +722,7 @@ function iv_metadata_analysis() {
             fi
         else
             TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_${KEYWORD}_filtered.txt"
 
             echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
             echo -e ""
@@ -732,7 +732,7 @@ function iv_metadata_analysis() {
                 | sed 's/&.*//' > "$FILTERED_RESULTS_FILE"
 
             if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-                echo "Search successful. Results saved to $FILTERED_RESULTS_FILE"
+                echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
             else
                 echo -e "${RED} No results found for the specified search criteria. ${RESET}"
                 echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
