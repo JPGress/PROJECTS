@@ -23,85 +23,82 @@
     RESET="\e[0m"
 
 ######################## SUPPORT FUNCTIONS ########################
+    # Function: Enable Proxychains
+    function enable_proxychains() {
+        # Check if proxychains is installed
+        if ! command -v proxychains &> /dev/null; then
+            echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
+            exit 1
+        fi
 
-# Function: Enable Proxychains
-function enable_proxychains() {
-    # Check if proxychains is installed
-    if ! command -v proxychains &> /dev/null; then
-        echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
+        # Check if the proxychains configuration file exists
+        if [[ ! -f /etc/proxychains.conf ]]; then
+            echo -e "${RED} >>> ERROR: Proxychains configuration file not found. Make sure /etc/proxychains.conf exists. <<< ${RESET}"
+            exit 1
+        fi
+
+        # Test proxychains by attempting a simple network request
+        echo -e "${GRAY} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
+        if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
+            echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
+            pause_script;
+            export PROXYCHAINS=1
+        else
+            echo -e "${RED} >>> WARNING: Proxychains test failed. Please verify your proxychains configuration. <<< ${RESET}"
+            export PROXYCHAINS=0
+        fi
+    }
+
+    # Function: Disabled
+    function disabled() {
+        echo ""
+        echo -e "${RED} >>> FUNCTION DISABLED <<< ${RESET}"
+        echo ""
+        echo -e "${GRAY} Press ENTER to continue ${RESET}"
+        read -r
+        main_menu
+    }
+
+    # Function: Error message for non-root users
+    function error_not_root() {
+        clear
+        echo ""
+        echo -e "${BG_BLACK}${RED} >>> YOU MUST BE ROOT TO RUN THIS SCRIPT! <<< ${RESET}"
+        echo ""
         exit 1
-    fi
+    }
 
-    # Check if the proxychains configuration file exists
-    if [[ ! -f /etc/proxychains.conf ]]; then
-        echo -e "${RED} >>> ERROR: Proxychains configuration file not found. Make sure /etc/proxychains.conf exists. <<< ${RESET}"
+    # Function: Error message for invalid usage
+    function error_invalid_usage() {
+        clear
+        echo ""
+        echo -e "${BG_BLACK}${RED} >>> ERROR! <<< ${RESET}"
+        echo ""
+        echo -e "${BG_BLACK}${RED} Usage: $0 ${RESET}"
         exit 1
-    fi
+    }
 
-    # Test proxychains by attempting a simple network request
-    echo -e "${GRAY} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
-    if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
-        echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
-        pause_script;
-        export PROXYCHAINS=1
-    else
-        echo -e "${RED} >>> WARNING: Proxychains test failed. Please verify your proxychains configuration. <<< ${RESET}"
-        export PROXYCHAINS=0
-    fi
-}
+    # Function: Invalid option
+    function invalid_option() {
+        echo -e "${BG_RED}${BLACK} INVALID OPTION! ${RESET}${RED} Please run the script again and choose a valid option.${RESET}"
+        echo -e "${GRAY} Press ENTER to continue ${RESET}"
+        read -r
+        main_menu
+    }
 
+    # Function: Exit script (on zero input)
+    function exit_script() {
+        echo -e "${GRAY} Press ENTER to continue ${RESET}"
+        read -r 2> /dev/null
+        exit 0
+    }
 
-# Function: Disabled
-function disabled() {
-    echo ""
-    echo -e "${RED} >>> FUNCTION DISABLED <<< ${RESET}"
-    echo ""
-    echo -e "${GRAY} Press ENTER to continue ${RESET}"
-    read -r
-    main_menu
-}
-
-# Function: Error message for non-root users
-function error_not_root() {
-    clear
-    echo ""
-    echo -e "${BG_BLACK}${RED} >>> YOU MUST BE ROOT TO RUN THIS SCRIPT! <<< ${RESET}"
-    echo ""
-    exit 1
-}
-
-# Function: Error message for invalid usage
-function error_invalid_usage() {
-    clear
-    echo ""
-    echo -e "${BG_BLACK}${RED} >>> ERROR! <<< ${RESET}"
-    echo ""
-    echo -e "${BG_BLACK}${RED} Usage: $0 ${RESET}"
-    exit 1
-}
-
-# Function: Invalid option
-function invalid_option() {
-    echo -e "${BG_RED}${BLACK} INVALID OPTION! ${RESET}${RED} Please run the script again and choose a valid option.${RESET}"
-    echo -e "${GRAY} Press ENTER to continue ${RESET}"
-    read -r
-    main_menu
-}
-
-# Function: Exit script (on zero input)
-function exit_script() {
-    echo -e "${GRAY} Press ENTER to continue ${RESET}"
-    read -r 2> /dev/null
-    exit 0
-}
-
-# Function: Pause the script
-function pause_script() {
-    echo -e "${GRAY} Press ENTER to continue ${RESET}"
-    read -r 2> /dev/null
-    main_menu
-}
-
+    # Function: Pause the script
+    function pause_script() {
+        echo -e "${GRAY} Press ENTER to continue ${RESET}"
+        read -r 2> /dev/null
+        main_menu
+    }
 
 ######################## FUNÇÕES MAIN ########################
 # Define a função texto_main_menu
