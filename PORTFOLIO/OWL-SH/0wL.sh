@@ -712,7 +712,7 @@ function iv_metadata_analysis() {
 
             $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
                 | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE" #!fixme
+                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
 
             if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
                 echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
@@ -746,7 +746,7 @@ function iv_metadata_analysis() {
         FOLDER="${SITE}_${TIMESTAMP}"
         mkdir -p "$FOLDER"
         while IFS= read -r URL; do
-            wget -P "$FOLDER" "$URL"
+            wget --user-agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0" -P "$FOLDER" "$URL"
         done < "$FILE_LIST"
         rm -f "$FILE_LIST"  # Clean up the temporary results file
     }
