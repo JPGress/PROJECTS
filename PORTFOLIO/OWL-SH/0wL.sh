@@ -820,13 +820,9 @@ function iv_metadata_analysis() {
         FILE_LIST="$1"
         FOLDER="${SITE}_${TIMESTAMP}"
         mkdir -p "$FOLDER"
-
         while IFS= read -r URL; do
-            echo "Downloading $URL..."
-            restart_tor  # Rotate IP before each download
-            proxychains4 wget -P "$FOLDER" "$URL"
+            wget -P "$FOLDER" "$URL"
         done < "$FILE_LIST"
-
         rm -f "$FILE_LIST"  # Clean up the temporary results file
     }
 
