@@ -101,7 +101,7 @@
     }
 
 ######################## FUNÇÕES MAIN ########################
-# Define a função texto_main_menu
+# Define a função display_main_menu
 function display_main_menu() {
     clear # Clears the terminal screen
 
@@ -158,8 +158,8 @@ function display_main_menu() {
 
 # Define a função main_menu
 function main_menu(){
-    texto_main_menu;  # Chama a função texto_main_menu para exibir o menu
-    case $OPCAO_MENU in
+    display_main_menu;  # Chama a função display_main_menu para exibir o menu
+    case $MENU_OPTION in
         0) zero_sai_script; 
             ;; # Sai do script
         1) i_portscan; 
@@ -210,7 +210,7 @@ function main_menu(){
             ;;
         25) desabilitado; #! DESABILITADO PARA MANUTENÇÃO -> xxv_rdp_windows; #* #TODO ADC COMENTÁRIO DESCREVENDO A FUNÇÃO
             ;;
-        *) opcao_invalida;
+        *) invalid_option;
             ;; # Informa que a opcao foi invalida 
     esac
 }
