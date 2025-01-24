@@ -407,7 +407,7 @@ function ii_parsing_html() {
     check_dependencies
 
     # Prompt the user to input the desired website URL
-    echo "Enter the URL of the website to analyze:"
+    echo -n "Enter the URL of the website to analyze (e.g.: businesscorp.com.br): "
     read -r SITE
 
     # Store the current date and time in the specified format (day-hour-minutes-month-year)
