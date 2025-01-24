@@ -562,13 +562,13 @@
             local webmii_url="https://webmii.com/people?n=$TARGET"
             echo "WEBMII search: $webmii_url" >> "$LOG_FILE"
             proxychains4 $SEARCH "$webmii_url" 2>/dev/null
-            waitingUser
+            #waitingUser
 
             echo "Performing a full Google search for the target..."
             local google_url="https://www.google.com/search?q=intext:$TARGET"
             echo "General Google search: $google_url" >> "$LOG_FILE"
             proxychains4 $SEARCH "$google_url" 2>/dev/null
-            waitingUser
+            #waitingUser
         }
 
         # Function for searches within specific websites
@@ -580,7 +580,7 @@
             local url="https://www.google.com/search?q=inurl:$domain+intext:$TARGET"
             echo "Site search [$site]: $url" >> "$LOG_FILE"
             proxychains4 $SEARCH "$url" 2>/dev/null
-            waitingUser
+            #waitingUser
         }
 
         # Function for file type searches
@@ -592,7 +592,7 @@
             local url="https://www.google.com/search?q=filetype:$extension+intext:$TARGET"
             echo "File search [$type]: $url" >> "$LOG_FILE"
             proxychains4 $SEARCH "$url" 2>/dev/null
-            waitingUser
+            #waitingUser
         }
 
         # Function to pause and wait for user input
@@ -617,6 +617,7 @@
         # Perform file type searches
         for ((i = 0; i < ${#file_types[@]}; i++)); do
             FileSearch "${file_types[i]}" "${extensions[i]}"
+            sleep 1
         done
 
         # List of sites and their corresponding domains for targeted searches
