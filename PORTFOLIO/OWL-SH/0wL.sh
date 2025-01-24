@@ -236,71 +236,134 @@ function main_menu() {
 
 
 ######################## FUNÇÕES DO MENU ########################
-# Define a função i_portscan
-function i_portscan(){
-    clear;
-    echo -e "${MAGENTA} 1 - Portscan usando netcat"
+# Function: Script to perform a port scan on a network using netcat
+function i_portscan() {
+    # i_portscan - Script to perform a port scan on a network using netcat
+    #
+    # Description:
+    # This script performs the following operations:
+    # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
+    # 2. Dynamically loads the top 1k ports from Nmap's services file, if available.
+    # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
+    # 4. Prints results for each host and open port found.
+    # 5. Saves the results in two file formats:
+    #    - Plain text (`portscan_results.txt`) for human-readable output.
+    #    - CSV (`portscan_results.csv`) for structured data analysis.
+    #
+    # Dependencies:
+    # - netcat (nc): To perform the port scanning.
+    # - ipcalc: To validate and parse CIDR-based network masks.
+    # - awk: To process data from Nmap's services file.
+    #
+    # Author: R3v4N (w/GPT)
+    # Created on: 2025-01-23
+    # Last Updated: 2025-01-23
+    # Version: 1.1
+    #
+    # Version history:
+    # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
+    # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
+    #                     Integrated dynamic port loading from Nmap's services file.
+    #
+    # Notes:
+    # - Ensure the required dependencies are installed before running the script.
+    # - If `ipcalc` is not installed, the script will attempt to install it automatically.
+    # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
+    # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
+    #
+    # Example usage:
+    # - Input: "192.168.1.0/24"
+    # - Output:
+    #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
+    #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
+    #   - CSV File: "192.168.1.1,80,Open"
+
+    clear
+    echo -e "${MAGENTA}1 - Portscan using netcat ${RESET}"
     echo -e "${GRAY}+======================================================================+${RESET}"
-    echo -e "${GRAY}Esse port scan verifica algumas portas comuns em todos os hosts da rede"
+    echo -e "${GRAY}This port scan checks common open ports on all hosts in the network."
     echo -e "${GRAY}+======================================================================+${RESET}"
-    # Verifica se o ipcalc está instalado
-    if ! command -v ipcalc >/dev/null 2>&1; then
-        echo "O utilitário ipcalc não está instalado. Tentando instalar..."
-        # Detecta o gerenciador de pacotes e instala o ipcalc
-        if command -v apt-get >/dev/null 2>&1; then
-            sudo apt-get update
-            sudo apt-get install -y ipcalc
-        elif command -v yum >/dev/null 2>&1; then
-            sudo yum install -y ipcalc
-        elif command -v dnf >/dev/null 2>&1; then
-            sudo dnf install -y ipcalc
-        elif command -v pacman >/dev/null 2>&1; then
-            sudo pacman -Sy ipcalc
+
+    # Load ports dynamically from Nmap or use a fallback list
+    local nmap_services="/usr/share/nmap/nmap-services" # Path to Nmap's services file
+    local fallback_ports="80 23 443 21 22 25 3389 110 445 139 143 53 135 3306 8080 1723 111 995 993 5900"
+    local output_txt="portscan_results.txt"  # Output file for plain text
+    local output_csv="portscan_results.csv"  # Output file for CSV format
+
+    # Clear any existing results files
+    > "$output_txt"
+    > "$output_csv"
+
+    # Add headers to the CSV file
+    echo "Host,Port,Status" > "$output_csv"
+
+    # Check if the nmap-services file exists
+    # Extract the top 20 most common ports from the Nmap services file
+    if [[ -f "$nmap_services" ]]; then
+        # Extract unique port numbers, sorted by service frequency
+        PORT_LIST=$(awk '!/^#/ {print $2}' "$nmap_services" | grep -Eo '^[0-9]+' | sort -n | uniq | head -n 1000 | paste -sd ',')
+    
+        if [[ -n "$PORT_LIST" ]]; then
+            echo -e "${GREEN}Loaded the TOP 1K ports from Nmap's services file:${RESET} $nmap_services"
         else
-            echo "Não foi possível detectar o gerenciador de pacotes. Por favor, instale o ipcalc manualmente."
-            exit 1
+            echo -e "${YELLOW}Warning: Failed to extract ports from Nmap's services file. Falling back to predefined ports.${RESET}"
+            PORT_LIST="$fallback_ports"
         fi
+    else
+        echo -e "${YELLOW}Warning: Nmap services file not found at $nmap_services. Falling back to predefined ports.${RESET}"
+        PORT_LIST="$fallback_ports"
     fi
 
-    # Adiciona o trap para capturar Ctrl+C (opcional)
-    trap 'echo -e "\nScript interrompido pelo usuário."; exit 1' SIGINT
 
-    # Lista de portas a serem verificadas
-    LISTA_PORTAS="80 23 443 21 22 25 3389 110 445 139 143 53 135 3306 8080 1723 111 995 993 5900"
-    
-    # Solicita ao usuário que digite o IP com o CIDR de rede
-    echo -n "Digite o IP com o CIDR de rede (ex: 192.168.9.1/24): "
-    read -r MASCARA
-    
-    # Verifica se a máscara de rede é válida
-    if ! ipcalc -n -b -m "$MASCARA" > /dev/null 2>&1; then
-        echo "Máscara de rede inválida."
-        exit 1 # Sai do script com status de saída 1 (erro)
-        main_menu; # Retorna ao menu principal
+    # Handle Ctrl+C interruptions gracefully
+    trap 'echo -e "\nScript interrupted by user."; main_menu; exit 1' SIGINT
+
+    # Ask user to enter the IP range in CIDR notation
+    echo -n "Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): "
+    read -r NETWORK_MASK
+
+    # Validate the network mask
+    if ! ipcalc -n -b -m "$NETWORK_MASK" >/dev/null 2>&1; then
+        echo "Invalid network mask."
+        main_menu # Return to the main menu
+        return
     fi
-    
-    # Obtém o prefixo da rede a partir da máscara
-    REDE=$(ipcalc -n -b "$MASCARA" | awk '/Network/ {print $2}' | awk -F. '{print $1"."$2"."$3}')
-    
-    # Loop para verificar a porta em cada host da rede
+
+    # Extract the network prefix from the mask
+    NETWORK_PREFIX=$(ipcalc -n -b "$NETWORK_MASK" | awk '/Network/ {print $2}' | awk -F. '{print $1"."$2"."$3}')
+
+    # Start scanning each host in the network for the specified ports
+    echo -e "${CYAN}Scanning network: $NETWORK_MASK ${RESET}"
     for HOST in $(seq 1 254); do
-        IP="$REDE.$HOST"
-        for PORTA in $LISTA_PORTAS; do
-            # Verifica se a porta está aberta no host
-            nc -z -w 1 "$IP" "$PORTA" 2>/dev/null
+        IP="$NETWORK_PREFIX.$HOST"
+        for PORT in $PORT_LIST; do
+            # Check if the port is open on the host
+            nc -z -w 1 "$IP" "$PORT" 2>/dev/null
             if [ $? -eq 0 ]; then
-                echo "$IP com a porta $PORTA aberta"
+                result="Host: $IP - Open Port: $PORT"
+                echo -e "${GREEN}$result ${RESET}"
+
+                # Save results to the text file
+                echo "$result" >> "$output_txt"
+
+                # Save results to the CSV file
+                echo "$IP,$PORT,Open" >> "$output_csv"
             fi
-        done    
+        done
     done
-    
-    # Mensagem de conclusão da verificação
-    echo "Verificação terminada para $MASCARA"
-    # Solicita ao usuário para pressionar ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+
+    # Completion message
+    echo -e "${GREEN}Scan completed for $NETWORK_MASK ${RESET}"
+    echo -e "${GRAY}Results saved to:${RESET}"
+    echo -e " - ${CYAN}$output_txt${RESET}"
+    echo -e " - ${CYAN}$output_csv${RESET}"
+
+    # Prompt to continue
+    echo -e "${GRAY}Press ENTER to continue...${RESET}"
     read -r
-    main_menu; # Retorna ao menu principal
+    main_menu # Return to the main menu
 }
+
 # Define a função ii_parsing_html
 function ii_parsing_html(){
     
