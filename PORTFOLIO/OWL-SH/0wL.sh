@@ -375,11 +375,12 @@ function ii_parsing_html() {
         #
         # Author: R3v4N (w/GPT)
         # Created on: 2024-01-15
-        # Last Updated: 2024-01-15
-        # Version: 1.0
+        # Last Updated: 2024-01-24
+        # Version: 1.1
         #
         # Version history:
         # - 1.0 (2024-01-15): Initial version with basic subdomain and WHOIS functionality.
+        # - 1.1 (2024-01-24): Added dependency checks and updated timestamp format.
         #
         # Example usage:
         # - Input: https://example.com
@@ -390,18 +391,33 @@ function ii_parsing_html() {
         # - The report is saved in a file named "result_<date>.txt".
         #
 
+    # Function to check if dependencies are installed
+    check_dependencies() {
+        local dependencies=("curl" "whois" "nslookup" "dig")
+        for dep in "${dependencies[@]}"; do
+            if ! command -v "$dep" &>/dev/null; then
+                echo -e "${RED}Error: Dependency '$dep' is not installed.${RESET}"
+                echo "Please install '$dep' before running this script."
+                exit 1
+            fi
+        done
+    }
+
+    # Call the dependency check function
+    check_dependencies
+
     # Prompt the user to input the desired website URL
     echo "Enter the URL of the website to analyze:"
     read -r SITE
 
-    # Store the current date and time and define the output file name
-    timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+    # Store the current date and time in the specified format (day-hour-minutes-month-year)
+    timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
     output_file="result_$timestamp.txt"
 
     # Function to print text in color
     print_color() {
-        color=$1
-        text=$2
+        local color=$1
+        local text=$2
         echo -e "\e[0;${color}m${text}\e[0m"
     }
 
