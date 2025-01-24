@@ -677,11 +677,11 @@ function iv_metadata_analysis() {
         ascii_banner_art;
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
         subtitle;
-        echo -n "Enter the domain or extension to search (e.g., .gov.br): "
+        echo -n " Enter the domain or extension to search (e.g., .gov.br): "
         read -r SITE
-        echo -n "Enter the file extension to search for (e.g., .pdf): "
+        echo -n " Enter the file extension to search for (e.g., .pdf): "
         read -r FILE
-        echo -n "[Optional] Enter a keyword to refine the search (e.g., vaccine): "
+        echo -n " [Optional] Enter a keyword to refine the search (e.g., vaccine): "
         read -r KEYWORD
     }
 
@@ -693,6 +693,7 @@ function iv_metadata_analysis() {
         if sudo systemctl restart tor; then
             echo -e "${GREEN} =====================================================${RESET}"
             echo -e "${GREEN} Tor restarted successfully. New IP circuit activated!${RESET}"
+            echo ""
             sleep 4  # Allow time for the new circuit to establish
         else
             echo -e "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
