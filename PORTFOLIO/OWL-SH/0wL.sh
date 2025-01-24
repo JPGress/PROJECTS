@@ -1,74 +1,98 @@
 #!/bin/bash
-#todo ADD CABEÇALHO
-#todo: CONFIGURAR PROXY CHAINS AO INICIALIZAR O SCRIPT
+# TODO: ADD HEADER INFORMATION
+# TODO: CONFIGURE PROXYCHAINS WHEN INITIALIZING THE SCRIPT
 
-######################## VARIAVEIS ########################
-#
-# Definição das cores
-    BLACK="\e[30m"
-    RED="\e[31m"
-    GREEN="\e[32m"
-    YELLOW="\e[33m"
-    BLUE="\e[34m"
-    MAGENTA="\e[35m"
-    CYAN="\e[36m"
-    WHITE="\e[37m"
-    GRAY="\e[90m"
-# Definição das cores de fundo
-    BG_BLACK="\e[40m"
-    BG_RED="\e[41m"
-# Define a cor default do terminal
-    RESET="\e[0m"
-#
+######################## VARIABLES ########################
 
-######################## FUNÇÕES DE APOIO ########################
-function desabilitado(){
-    echo "" 
-    echo -e "${RED} >>> FUNCAO DESABILITADA <<<  ${RESET}"
-    echo "" && echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r && main_menu;
+# Color definitions
+BLACK="\e[30m"
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+MAGENTA="\e[35m"
+CYAN="\e[36m"
+WHITE="\e[37m"
+GRAY="\e[90m"
+
+# Background color definitions
+BG_BLACK="\e[40m"
+BG_RED="\e[41m"
+
+# Reset terminal color
+RESET="\e[0m"
+
+######################## SUPPORT FUNCTIONS ########################
+
+# Function: Enable Proxychains
+function enable_proxychains() {
+    # Check if proxychains is installed
+    if ! command -v proxychains &> /dev/null; then
+        echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
+        exit 1
+    fi
+
+    # Check if the proxychains configuration file exists
+    if [[ ! -f /etc/proxychains.conf ]]; then
+        echo -e "${RED} >>> ERROR: Proxychains configuration file not found. Make sure /etc/proxychains.conf exists. <<< ${RESET}"
+        exit 1
+    fi
+
+    echo -e "${GREEN} >>> Proxychains enabled. All traffic will be routed through it. <<< ${RESET}"
+    export PROXYCHAINS=1
 }
-#
-function msg_erro_root (){
+
+# Function: Disabled
+function disabled() {
+    echo ""
+    echo -e "${RED} >>> FUNCTION DISABLED <<< ${RESET}"
+    echo ""
+    echo -e "${GRAY} Press ENTER to continue ${RESET}"
+    read -r
+    main_menu
+}
+
+# Function: Error message for non-root users
+function error_not_root() {
     clear
     echo ""
-    echo -e "${BG_BLACK}${RED} >>>  VOCE DEVE SER ROOT PARA EXECUTAR ESSE SCRIPT!${RESET}"
-    echo""
-    exit 1 
+    echo -e "${BG_BLACK}${RED} >>> YOU MUST BE ROOT TO RUN THIS SCRIPT! <<< ${RESET}"
+    echo ""
+    exit 1
 }
-#
-function msg_erro_arquivo (){
+
+# Function: Error message for invalid usage
+function error_invalid_usage() {
     clear
-    echo ""        
-    echo -e "${BG_BLACK}${RED} >>> ERRO!${RESET}" 
-    echo ""        
-    echo -e "${BG_BLACK}${RED}Uso: $0 ${RESET}"       
-    exit 1  
+    echo ""
+    echo -e "${BG_BLACK}${RED} >>> ERROR! <<< ${RESET}"
+    echo ""
+    echo -e "${BG_BLACK}${RED} Usage: $0 ${RESET}"
+    exit 1
 }
-# Define a função opcao_invalida
-function opcao_invalida(){
-    # Exibe uma mensagem de opção inválida em vermelho com fundo preto
-    echo -e "${BG_RED}${BLACK} OPCAO INVALIDA!${RESET}${RED} Execute o script novamente e escolha uma opcao correta.${RESET}"
-    # Exibe uma instrução para pressionar ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r # Aguarda o usuário pressionar ENTER
-    main_menu; # Chama a função main_menu para exibir novamente o menu principal
+
+# Function: Invalid option
+function invalid_option() {
+    echo -e "${BG_RED}${BLACK} INVALID OPTION! ${RESET}${RED} Please run the script again and choose a valid option.${RESET}"
+    echo -e "${GRAY} Press ENTER to continue ${RESET}"
+    read -r
+    main_menu
 }
-# Define a função zero_sai_script
-function zero_sai_script(){
-    # Exibe uma mensagem para pressionar ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    # Lê a entrada do usuário e redireciona qualquer erro para /dev/null
+
+# Function: Exit script (on zero input)
+function exit_script() {
+    echo -e "${GRAY} Press ENTER to continue ${RESET}"
     read -r 2> /dev/null
-    exit 0 # Sai do script com status de saída 0 (sem erros)
+    exit 0
 }
-# Define a função de pausa do script
-function pausa_script(){
-    # Mensagem para pressionar ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+
+# Function: Pause the script
+function pause_script() {
+    echo -e "${GRAY} Press ENTER to continue ${RESET}"
     read -r 2> /dev/null
-    main_menu;
+    main_menu
 }
+
 
 ######################## FUNÇÕES MAIN ########################
 # Define a função texto_main_menu
@@ -1792,6 +1816,7 @@ if [ "$(id -u)" != "0" ]; then
         msg_erro_arquivo;
     else
         ######### Executa a função principal ########
+        enable_proxychains; # Call the function to enable proxychains at script start
         main_menu;
 fi
 #============================================================
