@@ -388,7 +388,7 @@ function ii_parsing_html() {
         #
         # Notes:
         # - Ensure the dependencies are installed before running the script.
-        # - The report is saved in a file named "result_<date>.txt".
+        # - The report is saved in a file named "result_<URL>_<date>.txt".
         #
 
     # Function to check if dependencies are installed
@@ -412,7 +412,7 @@ function ii_parsing_html() {
 
     # Store the current date and time in the specified format (day-hour-minutes-month-year)
     timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
-    output_file="result_$timestamp.txt"
+    output_file="result_$SITE'_$timestamp.txt"
 
     # Function to print text in color
     print_color() {
