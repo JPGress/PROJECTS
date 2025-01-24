@@ -148,13 +148,13 @@
 
         # Display numbered menu options
         echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 2 - Parsing HTML ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 3 - Google Hacking ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 4 - Metadata Analysis ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 5 - DNS Zone Transfer ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
+        echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
+        echo -e "${MAGENTA} 3 - Google Hacking ${RESET}" 
+        echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
+        echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
+        echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
         echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
+        echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
         echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
         echo -e "${MAGENTA} 10 - MiTM (Man-in-the-Middle)"
         echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
@@ -177,10 +177,6 @@
         echo -e "${GRAY}+==============================================+${RESET}"
         echo -e " ${WHITE}Enter 0 (zero) to exit${RESET}"
         echo -e "${GRAY}+==============================================+${RESET}"
-
-        # Prompt the user to select a menu option
-        #echo -ne "${CYAN} Enter the option number: ${RESET}"
-        #read -r MENU_OPTION # Read user input and store it in the MENU_OPTION variable
     }
 
 ######################## MAIN MENU ########################
