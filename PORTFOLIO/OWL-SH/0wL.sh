@@ -894,7 +894,7 @@
         download_files "$FILTERED_RESULTS_FILE"
         # Handle errors for missing or empty metadata file
         METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
-        #analyze_metadata
+        #analyze_metadata #! todo: delete if is really not needed
         handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
 
         # Process metadata and export CSV
