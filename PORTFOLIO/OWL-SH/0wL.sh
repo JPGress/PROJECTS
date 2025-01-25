@@ -828,7 +828,7 @@ function iv_metadata_analysis() {
     function handle_empty_results() {
         local file_to_check="$1"
         local context_message="$2"
-    
+
         if [[ ! -f "$file_to_check" ]]; then
             echo -e "${RED} Error: $context_message - File does not exist. ${RESET}"
             echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
@@ -837,7 +837,7 @@ function iv_metadata_analysis() {
             main_menu
             return 1
         fi
-    
+
         if [[ ! -s "$file_to_check" ]]; then
             echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
             echo -e "${YELLOW} This usually happens when no results were found. ${RESET}"
@@ -851,18 +851,34 @@ function iv_metadata_analysis() {
 
 
 
-    # Start the process
+    # Main workflow
     metadata_analysis_menu
     perform_search
+
+    FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+
+    # Handle errors for missing or empty filtered results
+    handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
+
+    # Proceed with file downloads
+    download_files "$FILTERED_RESULTS_FILE"
+
+    # Handle errors for missing or empty metadata file
+    METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
+    analyze_metadata
+    handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
+
+    # Process metadata and export CSV
     process_metadata_summary
 
-    if [[ -s "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt" ]]; then
-        download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-        extract_metadata_summary;
-    else
-        echo ""
-        echo -e "${RED} No files found for the specified search criteria.${RESET}"
-    fi
+
+    #if [[ -s "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt" ]]; then
+    #    download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+    #    extract_metadata_summary;
+    #else
+    #    echo ""
+    #    echo -e "${RED} No files found for the specified search criteria.${RESET}"
+    #fi
 
     echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
     read -r 2>/dev/null
