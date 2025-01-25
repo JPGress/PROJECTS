@@ -2255,22 +2255,22 @@
     #
 #============================================================
 
-######## CHEGAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
-# Verifica se o número de argumentos passados para o script é diferente de zero.
-# Check if the script is being run with root privileges 
-# If not, display an error message and exit with a non-zero status code 
-#Encerra todos os processos do openvpn
-if [ "$(id -u)" != "0" ]; then
-    error_not_rootV;
-    # Check if the correct number of arguments is provided 
-    # If not, display a usage message and exit with a non-zero status code 
-    elif [ "$#" -ne 0 ]; then
-        msg_erro_arquivo;
-    else
-        ######### Executa a função principal ########
-        enable_proxychains; # Call the function to enable proxychains at script start
-        main_menu;
-fi
+######## CHECAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
+    # Verifica se o número de argumentos passados para o script é diferente de zero.
+    # Check if the script is being run with root privileges 
+    # If not, display an error message and exit with a non-zero status code 
+    #Encerra todos os processos do openvpn
+    if [ "$(id -u)" != "0" ]; then
+        error_not_root;
+        # Check if the correct number of arguments is provided 
+        # If not, display a usage message and exit with a non-zero status code 
+        elif [ "$#" -ne 0 ]; then
+            msg_erro_arquivo;
+        else
+            ######### Executa a função principal ########
+            enable_proxychains; # Call the function to enable proxychains at script start
+            main_menu;
+    fi
 #============================================================
 
 #Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
