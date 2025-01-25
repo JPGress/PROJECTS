@@ -884,25 +884,37 @@
             return 0  # File exists and is not empty
         }
 
-        # Main workflow
-        metadata_analysis_menu
-        perform_search
-        FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-        # Handle errors for missing or empty filtered results
-        handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
-        # Proceed with file downloads
-        download_files "$FILTERED_RESULTS_FILE"
-        # Handle errors for missing or empty metadata file
-        METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
-        #analyze_metadata #! todo: delete if is really not needed
-        handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
+        # Function to handle the entire metadata analysis workflow
+        function run_metadata_analysis() {
+            # Step 1: Prompt user for inputs
+            metadata_analysis_menu
 
-        # Process metadata and export CSV
-        process_metadata_summary
+            # Step 2: Perform the search and save filtered URLs
+            perform_search
 
-        echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-        read -r 2>/dev/null
-        main_menu
+            # Step 3: Check and handle filtered results file
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
+
+            # Step 4: Download files
+            download_files "$FILTERED_RESULTS_FILE"
+
+            # Step 5: Extract metadata from downloaded files
+            extract_metadata_summary  # This generates METADATA_FILE
+
+            # Step 6: Check and handle metadata file
+            METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
+            handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
+
+            # Step 7: Process metadata and export CSV
+            process_metadata_summary
+
+            # Final step: Return to main menu
+            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+            read -r 2>/dev/null
+            main_menu
+        }
+
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor.
@@ -2197,7 +2209,7 @@
 # If not, display an error message and exit with a non-zero status code 
 #Encerra todos os processos do openvpn
 if [ "$(id -u)" != "0" ]; then
-    msg_erro_root;
+    error_not_rootV;
     # Check if the correct number of arguments is provided 
     # If not, display a usage message and exit with a non-zero status code 
     elif [ "$#" -ne 0 ]; then
