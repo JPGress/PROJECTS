@@ -59,7 +59,7 @@
         echo -e "${RED}████╔╝██║   ████╔╝██║██║███╗██║██║         ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   ${RESET}"
         echo -e "${RED}╚██████╔╝██╗╚██████╔╝╚███╔███╔╝███████╗    ███████║╚██████╗██║  ██║██║██║        ██║   ${RESET}"
         echo -e "${RED} ╚═════╝ ╚═╝ ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   ${RESET}"
-        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"   
+        echo -e "${RED}                                                                     sh-v 0.9.2 (Beta) ${RESET}"   
         echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
         echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
         echo -e "${GRAY}+====================================================================================+${RESET}"
@@ -179,6 +179,25 @@
         echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
         echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 5 - DNS Zone Transfer ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 10 - MiTM (Man-in-the-Middle)"
+        echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management"
+        echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command"
+        echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian)"
+        echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 16 - Quick Guide to Using Vim"
+        echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks"
+        echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips"
+        echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 21 - Reverse Shell for Windows ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 22 - RDP for Windows ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
 
         # Display instructions to exit the menu
         echo -e "${GRAY}+==============================================+${RESET}"
@@ -193,8 +212,8 @@
 
         # Define valid menu options dynamically
         valid_options=()
-        for i in {0..25}; do
-            if [[ "$i" -ne 23 ]]; then
+        for i in {0..23}; do
+            if [[ "$i" -ne 5 ]]; then
                 valid_options+=("$i")
             fi
         done
@@ -217,6 +236,25 @@
             2) ii_parsing_html ;; # Parse HTML
             3) iii_google_hacking ;; # Perform Google Hacking
             4) iv_metadata_analysis ;; # Analyze metadata from the Internet
+            5) disabled ;; # Perform DNS Zone Transfer
+            6) disabled ;; # Perform Subdomain Takeover
+            7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns ;;
+            8) disabled ;; # DNS Reconnaissance
+            9) disabled ;; # DISABLED - REQUIRES REFACTORING -> ix_google_general_query ;;
+            10) disabled ;; # MiTM (Man-in-the-Middle)
+            11) disabled ;; # DISABLED FOR MAINTENANCE -> xi_portscan_bashsocket ;;
+            12) disabled ;; # Useful network management commands
+            13) disabled ;; # Examples of the 'find' command
+            14) disabled ;; # Root password reset guide for Debian
+            15) disabled ;; # DISABLED FOR MAINTENANCE -> xv_redhat_root_password_reset ;;
+            16) disabled ;; # Quick guide to using Vim
+            17) disabled ;; # DISABLED FOR MAINTENANCE -> xvii_rbash_escape_techniques ;;
+            18) disabled ;; # Wireless network attacks
+            19) disabled ;; # Basic Windows commands
+            20) disabled ;; # DISABLED FOR MAINTENANCE -> xx_create_windows_script ;; #! TODO: DELETE
+            21) disabled ;; # Switch to Sgt Domingues' scanning script ;; #! TODO: DELETE
+            22) disabled ;; # NMAP network scan
+            23) disabled ;; # DISABLED FOR MAINTENANCE -> xxiv_windows_revshell ;;
             *) invalid_option ;; # Fallback case (should never happen with validation)
         esac
     }
@@ -641,66 +679,127 @@
         main_menu
     }   
 
-    # Function: iv_metadata_analysis
+    # Function: Perform metadata analysis for files on specific domains
     function iv_metadata_analysis() {
+        # Metadata Analysis - Perform metadata analysis for files on specific domains    
+            # ==============================================================================
+            # Metadata Analysis
+            # Version: 1.2 (2024-01-25)
+            # Author: R3v4N|0wL (jpgress@gmail.com)
+            #
+            # Description:
+            # This script automates the process of performing metadata analysis on files
+            #
+            # Description:
+            # This function automates the process of performing metadata analysis on files 
+            # retrieved from specified domains or websites. It performs the following steps:
+            # 1. Prompts the user for domain, file type, and an optional keyword for filtering.
+            # 2. Searches Google for URLs of the specified file type and downloads the files.
+            # 3. Extracts metadata fields (e.g., Author, Producer, Creator, MIME Type) using `exiftool`.
+            # 4. Organizes and summarizes the metadata into an easy-to-read format and exports to CSV.
+            # 5. Handles common errors like empty results or failed downloads to ensure a robust workflow.
+            #
+            # Dependencies:
+            # - `lynx`: Used for performing Google searches.
+            # - `wget`: Used for downloading files from the URLs found in the search results.
+            # - `exiftool`: Used for extracting metadata from downloaded files.
+            # - `grep`: Used for filtering and processing search results and metadata.
+            #
+            # Notes:
+            # - Ensure all dependencies are installed and accessible in your `$PATH`.
+            # - The function saves intermediate and final results to timestamped files and folders.
+            # - Random user-agent rotation is implemented for downloads to avoid detection.
+            #
+            # Example Usage:
+            # - Input:
+            #     Domain: `businesscorp.com.br`
+            #     File type: `pdf`
+            #     Keyword: `employee`
+            # - Output:
+            #     - Search results in `TIMESTAMP_filtered.txt`
+            #     - Downloaded files in `DOMAIN_TIMESTAMP/`
+            #     - Metadata summary in `DOMAIN_TIMESTAMP_metadata_summary.txt`
+            #     - Organized summary in `DOMAIN_TIMESTAMP_organized_metadata_summary.txt`
+            #     - Metadata CSV in `DOMAIN_TIMESTAMP_metadata_summary.csv`
+            #
+            # Version History:
+            # - 1.0 (2025-01-24): Initial implementation of metadata analysis workflow.
+            # - 1.1 (2025-01-25): Improved error handling, user-agent rotation, and metadata processing.
+            # - 1.2 (2025-01-25): Added structured output (CSV and organized summary) and validation.
+            #
+            # Author: R3v4N (w/ GPT assistance)
+            # ==============================================================================
+
+        # This script sets the SEARCH variable to use the 'lynx' command-line web browser.
+        # The 'lynx' command is configured with the following options:
+        # -dump: Outputs the formatted document to standard output.
+        # -hiddenlinks=merge: Merges hidden links into the document.
+        # -force_html: Forces the document to be interpreted as HTML.
         SEARCH="lynx -dump -hiddenlinks=merge -force_html"
         
         # Function to prompt the user for required input
         function metadata_analysis_menu() {
-            clear;
-            ascii_banner_art;
+            clear;  # Clears the terminal screen to give a clean interface
+            ascii_banner_art;  # Displays a banner or logo at the top of the screen
+            
+            # Display the title of this analysis step with colored formatting
             echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
-            subtitle;
+            
+            subtitle;  # Displays a subtitle or additional details about the script
+
+            # Prompt the user to enter the domain or website they want to analyze (e.g., government or business domains)
             echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
-            read -r SITE
+            read -r SITE  # Read the user's input and store it in the SITE variable
+
+            # Prompt the user to enter the file type they want to search for (e.g., PDFs, DOCX)
             echo -n " Enter the file extension to search for (e.g., pdf): "
-            read -r FILE
+            read -r FILE  # Read the user's input and store it in the FILE variable
+
+            # Prompt the user to optionally specify a keyword to refine the search (e.g., specific topics or terms)
             echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
-            read -r KEYWORD
+            read -r KEYWORD  # Read the user's input and store it in the KEYWORD variable
         }
 
-        # Function to perform the search based on user input
+
         function perform_search() {
-            if [ -z "$KEYWORD" ]; then
-                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-
-                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
-                echo -e ""
-
-                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
-                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                    | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
-
-                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-                    echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+            # Helper function to log search results
+            function log_results() {
+                local file="$1"
+                if [[ -s "$file" ]]; then
+                    echo -e "${GREEN} Search successful. Results saved to $file ${RESET}"
                 else
                     echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+                    local raw_results_file="raw_results_${TIMESTAMP}.txt"
+                    echo -e "${RED} Raw search results saved to ${YELLOW}$raw_results_file ${RESET}"
+                    mv "$file" "$raw_results_file"  # Save the empty file as raw results for debugging
                 fi
+            }
+
+            # Generate the timestamp and file names
+            TIMESTAMP=$(date +%d%H%M%b%Y)
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+
+            # Build the search query
+            local base_query="https://www.google.com/search?q=inurl:$SITE+filetype:$FILE"
+            if [[ -n "$KEYWORD" ]]; then
+                echo -e "${MAGENTA} Searching for $FILE files with \"$KEYWORD\" on $SITE... ${RESET}"
+                base_query+="+intext:$KEYWORD"
             else
-                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-
-                echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
-                echo -e ""
-
-                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
-                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                    | cut -d '=' -f2''  > "$FILTERED_RESULTS_FILE"
-
-                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-                    echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
-                else
-                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
-                fi
+                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
             fi
-        }
 
+            # Perform the search and filter results
+            echo ""
+            $SEARCH "$base_query" \
+                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
+
+            # Log the results
+            log_results "$FILTERED_RESULTS_FILE"
+        }       
+        
         # Function to download files from the search results
         function download_files() {
-
             USER_AGENTS=(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
                 "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
@@ -712,14 +811,27 @@
             FILE_LIST="$1"
             FOLDER="${SITE}_${TIMESTAMP}"
             mkdir -p "$FOLDER"
+            FAILED_DOWNLOADS=0
+
             while IFS= read -r URL; do
                 RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-                echo -e "${MAGENTA} ========================================================================== ${RESET}"
-                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"  # Log the download URL
+                echo -e "${MAGENTA} ==========================================================================${RESET}"
+                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"
                 wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
-                echo -e "${MAGENTA} ========================================================================== ${RESET}"
+
+                # Check if the file was successfully downloaded
+                if [[ $? -ne 0 ]]; then
+                    echo -e "${RED} Failed to download: $URL ${RESET}"
+                    ((FAILED_DOWNLOADS++))
+                fi
+                echo -e "${MAGENTA} ==========================================================================${RESET}"
             done < "$FILE_LIST"
+
             rm -f "$FILE_LIST"  # Clean up the temporary results file
+
+            if [[ $FAILED_DOWNLOADS -gt 0 ]]; then
+                echo -e "${YELLOW} Warning: $FAILED_DOWNLOADS files failed to download. ${RESET}"
+            fi
         }
 
         # Function to extract metadata for Author, Producer, Creator, and MIME Type
@@ -727,14 +839,25 @@
             FOLDER="${SITE}_${TIMESTAMP}"
             METADATA_FILE="${FOLDER}_metadata_summary.txt"
             echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
-        
+
+            # Check if folder contains files
+            if [[ -z "$(ls -A "$FOLDER")" ]]; then
+                echo -e "${RED} No files found in $FOLDER to extract metadata. ${RESET}"
+                echo -e "${GRAY} Returning to main menu.${RESET}"
+                return 1
+            fi
+
             # Initialize the metadata summary file
             echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
-        
+
             # Use exiftool to extract metadata and filter relevant fields
             exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
-        
-            echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+
+            if [[ -s "$METADATA_FILE" ]]; then
+                echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+            else
+                echo -e "${RED} No metadata extracted. Metadata file is empty. ${RESET}"
+            fi
         }
 
         # Function to process, organize, and export metadata
@@ -798,7 +921,7 @@
 
             if [[ ! -s "$file_to_check" ]]; then
                 echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
-                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban!. ${RESET}"
+                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban! =/ ${RESET}"
                 echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
                 read -r 2>/dev/null
                 main_menu
@@ -807,38 +930,49 @@
             return 0  # File exists and is not empty
         }
 
-        # Main workflow
-        metadata_analysis_menu
-        perform_search
+        # Function to handle the entire metadata analysis workflow
+        function run_metadata_analysis() {
+            # Step 1: Prompt user for inputs
+            metadata_analysis_menu
 
-        FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            # Step 2: Perform the search and save filtered URLs
+            perform_search
 
-        # Handle errors for missing or empty filtered results
-        handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
+            # Step 3: Check and handle filtered results file
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
 
-        # Proceed with file downloads
-        download_files "$FILTERED_RESULTS_FILE"
+            # Step 4: Download files
+            download_files "$FILTERED_RESULTS_FILE"
 
-        # Handle errors for missing or empty metadata file
-        METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
-        analyze_metadata
-        handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
+            # Step 5: Extract metadata from downloaded files
+            extract_metadata_summary  # This generates METADATA_FILE
 
-        # Process metadata and export CSV
-        process_metadata_summary
+            # Step 6: Check and handle metadata file
+            METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
+            handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
 
-        echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-        read -r 2>/dev/null
-        main_menu
+            # Step 7: Process metadata and export CSV
+            process_metadata_summary
+
+            # Final step: Return to main menu
+            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+            read -r 2>/dev/null
+            main_menu
+        }
+
+        # Ensure main workflow is executed
+        run_metadata_analysis;
+
     }
 
-######## CHEGAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
+######## CHECAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
     # Verifica se o número de argumentos passados para o script é diferente de zero.
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
     #Encerra todos os processos do openvpn
     if [ "$(id -u)" != "0" ]; then
-        msg_erro_root;
+        error_not_root;
         # Check if the correct number of arguments is provided 
         # If not, display a usage message and exit with a non-zero status code 
         elif [ "$#" -ne 0 ]; then
@@ -848,4 +982,5 @@
             enable_proxychains; # Call the function to enable proxychains at script start
             main_menu;
     fi
-#============================================================
+
+
