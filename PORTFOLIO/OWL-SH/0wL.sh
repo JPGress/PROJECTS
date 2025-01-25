@@ -760,7 +760,7 @@
             local base_query="https://www.google.com/search?q=inurl:$SITE+filetype:$FILE"
             if [[ -n "$KEYWORD" ]]; then
                 echo -e "${MAGENTA} Searching for $FILE files with \"$KEYWORD\" on $SITE... ${RESET}"
-                base_query+=" +intext:$KEYWORD"
+                base_query+="+intext:$KEYWORD"
             else
                 echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
             fi
