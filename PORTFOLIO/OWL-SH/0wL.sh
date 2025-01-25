@@ -1,6 +1,5 @@
 #!/bin/bash
 # TODO: ADD HEADER INFORMATION
-# TODO: CONFIGURE PROXYCHAINS WHEN INITIALIZING THE SCRIPT
 
 ######################## VARIABLES ########################
 
