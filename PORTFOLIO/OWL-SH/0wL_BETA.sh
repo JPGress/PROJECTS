@@ -179,27 +179,6 @@
         echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
         echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
-        echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
-        echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
-        echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
-        echo -e "${MAGENTA} 10 - MiTM (Man-in-the-Middle)"
-        echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
-        echo -e "${MAGENTA} 12 - Useful Commands for Network Management"
-        echo -e "${MAGENTA} 13 - Examples of the 'find' Command"
-        echo -e "${MAGENTA} 14 - Root Password Reset Guide (Debian)"
-        echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
-        echo -e "${MAGENTA} 16 - Quick Guide to Using Vim"
-        echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
-        echo -e "${MAGENTA} 18 - Wireless Network Attacks"
-        echo -e "${MAGENTA} 19 - Windows Tips"
-        echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
-        echo -e "${MAGENTA} 21 - Switch to Sgt Domingues' Scanning Script"
-        echo -e "${MAGENTA} 22 - NMAP Network Scan ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 24 - Reverse Shell for Windows ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 25 - RDP for Windows ${RESET}"
 
         # Display instructions to exit the menu
         echo -e "${GRAY}+==============================================+${RESET}"
@@ -238,26 +217,6 @@
             2) ii_parsing_html ;; # Parse HTML
             3) iii_google_hacking ;; # Perform Google Hacking
             4) iv_metadata_analysis ;; # Analyze metadata from the Internet
-            5) v_dns_zone_transfer ;; # Perform DNS Zone Transfer
-            6) vi_subdomain_takeover ;; # Perform Subdomain Takeover
-            7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns ;;
-            8) viii_dns_recon ;; # DNS Reconnaissance
-            9) disabled ;; # DISABLED - REQUIRES REFACTORING -> ix_google_general_query ;;
-            10) x_mitm ;; # MiTM (Man-in-the-Middle)
-            11) disabled ;; # DISABLED FOR MAINTENANCE -> xi_portscan_bashsocket ;;
-            12) xii_network_management_commands ;; # Useful network management commands
-            13) xiii_find_command_examples ;; # Examples of the 'find' command
-            14) xiv_debian_root_password_reset ;; # Root password reset guide for Debian
-            15) disabled ;; # DISABLED FOR MAINTENANCE -> xv_redhat_root_password_reset ;;
-            16) xvi_vim_quick_guide ;; # Quick guide to using Vim
-            17) disabled ;; # DISABLED FOR MAINTENANCE -> xvii_rbash_escape_techniques ;;
-            18) xviii_wifi_attacks ;; # Wireless network attacks
-            19) xix_windows_basic_commands ;; # Basic Windows commands
-            20) disabled ;; # DISABLED FOR MAINTENANCE -> xx_create_windows_script ;; #! TODO: DELETE
-            21) xxi_sgt_domingues_scanning_script ;; # Switch to Sgt Domingues' scanning script ;; #! TODO: DELETE
-            22) xxii_nmap_network_discovery ;; # NMAP network scan
-            24) disabled ;; # DISABLED FOR MAINTENANCE -> xxiv_windows_revshell ;;
-            25) disabled ;; # DISABLED FOR MAINTENANCE -> xxv_windows_rdp ;;
             *) invalid_option ;; # Fallback case (should never happen with validation)
         esac
     }
