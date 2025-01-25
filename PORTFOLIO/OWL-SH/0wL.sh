@@ -870,15 +870,6 @@
         # Process metadata and export CSV
         process_metadata_summary
 
-
-        #if [[ -s "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt" ]]; then
-        #    download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-        #    extract_metadata_summary;
-        #else
-        #    echo ""
-        #    echo -e "${RED} No files found for the specified search criteria.${RESET}"
-        #fi
-
         echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
         read -r 2>/dev/null
         main_menu
