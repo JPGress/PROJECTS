@@ -805,8 +805,6 @@ function iv_metadata_analysis() {
     main_menu
 }
 
-   
-
 # Define a função v_dns_zt para realizar uma transferência de zona DNS
 function v_dns_zt(){
     echo "DNS Zone Transfer"
