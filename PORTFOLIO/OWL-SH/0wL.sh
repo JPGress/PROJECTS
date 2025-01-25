@@ -684,204 +684,205 @@
         main_menu
     }   
 
-function iv_metadata_analysis() {
-    SEARCH="lynx -dump -hiddenlinks=merge -force_html"
-    
-    # Function to prompt the user for required input
-    function metadata_analysis_menu() {
-        clear;
-        ascii_banner_art;
-        echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
-        subtitle;
-        echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
-        read -r SITE
-        echo -n " Enter the file extension to search for (e.g., pdf): "
-        read -r FILE
-        echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
-        read -r KEYWORD
-    }
+    # Function: iv_metadata_analysis
+    function iv_metadata_analysis() {
+        SEARCH="lynx -dump -hiddenlinks=merge -force_html"
+        
+        # Function to prompt the user for required input
+        function metadata_analysis_menu() {
+            clear;
+            ascii_banner_art;
+            echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
+            subtitle;
+            echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
+            read -r SITE
+            echo -n " Enter the file extension to search for (e.g., pdf): "
+            read -r FILE
+            echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
+            read -r KEYWORD
+        }
 
-    # Function to perform the search based on user input
-    function perform_search() {
-        if [ -z "$KEYWORD" ]; then
-            TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+        # Function to perform the search based on user input
+        function perform_search() {
+            if [ -z "$KEYWORD" ]; then
+                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
+                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
 
-            echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
-            echo -e ""
+                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
+                echo -e ""
 
-            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
-                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
+                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
+                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                    | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
 
-            if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-                echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
+                    echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+                else
+                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+                fi
             else
-                echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
+                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+
+                echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
+                echo -e ""
+
+                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
+                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                    | cut -d '=' -f2''  > "$FILTERED_RESULTS_FILE"
+
+                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
+                    echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+                else
+                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+                fi
             fi
-        else
-            TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+        }
 
-            echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
-            echo -e ""
+        # Function to download files from the search results
+        function download_files() {
 
-            $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
-                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                | cut -d '=' -f2''  > "$FILTERED_RESULTS_FILE"
+            USER_AGENTS=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
+                "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"
+                "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Mobile Safari/537.36"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36 Edg/109.0.774.68"
+            )
 
-            if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-                echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
-            else
-                echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+            FILE_LIST="$1"
+            FOLDER="${SITE}_${TIMESTAMP}"
+            mkdir -p "$FOLDER"
+            while IFS= read -r URL; do
+                RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
+                echo -e "${MAGENTA}========================================================================== ${RESET}"
+                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"  # Log the download URL
+                wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
+                echo -e "${MAGENTA}========================================================================== ${RESET}"
+            done < "$FILE_LIST"
+            rm -f "$FILE_LIST"  # Clean up the temporary results file
+        }
+
+        # Function to extract metadata for Author, Producer, Creator, and MIME Type
+        function extract_metadata_summary() {
+            FOLDER="${SITE}_${TIMESTAMP}"
+            METADATA_FILE="${FOLDER}_metadata_summary.txt"
+            echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
+        
+            # Initialize the metadata summary file
+            echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
+        
+            # Use exiftool to extract metadata and filter relevant fields
+            exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
+        
+            echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+        }
+
+        # Function to process, organize, and export metadata
+        function process_metadata_summary() {
+            FOLDER="${SITE}_${TIMESTAMP}"
+            METADATA_FILE="${FOLDER}_metadata_summary.txt"
+            ORGANIZED_METADATA_FILE="${FOLDER}_organized_metadata_summary.txt"
+            CSV_FILE="${FOLDER}_metadata_summary.csv"
+
+            echo -e "${MAGENTA} Processing and organizing metadata for: $METADATA_FILE ${RESET}"
+
+            # Initialize the organized metadata file
+            echo -e "Organized Metadata Summary for $SITE - Generated on $(date)\n" > "$ORGANIZED_METADATA_FILE"
+
+            # Initialize the CSV file with headers
+            echo "Type,Value,Count" > "$CSV_FILE"
+
+            # Group by software (Creator Tool and Producer)
+            echo -e "=== Software Used (Creator Tool and Producer) ===\n" >> "$ORGANIZED_METADATA_FILE"
+            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
+                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
+            done
+
+            # Group by persons (Creator and Author)
+            echo -e "\n=== People Found (Creator and Author) ===\n" >> "$ORGANIZED_METADATA_FILE"
+            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
+                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
+            done
+
+            echo -e "${GREEN} Organized metadata saved to: $ORGANIZED_METADATA_FILE ${RESET}"
+            echo -e "${GREEN} Metadata CSV saved to: $CSV_FILE ${RESET}"
+
+            # Display summary on the screen
+            echo -e "\n${CYAN}=== Screen Summary ===${RESET}"
+            echo -e "${YELLOW}Top Software Used:${RESET}"
+            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "  $FIELD: $VALUE ($COUNT occurrences)"
+            done
+
+            echo -e "\n${YELLOW}Top People Mentioned:${RESET}"
+            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "  $FIELD: $VALUE ($COUNT occurrences)"
+            done
+        }
+
+        # Function to handle errors for empty results or missing files
+        function handle_empty_results() {
+            local file_to_check="$1"
+            local context_message="$2"
+
+            if [[ ! -f "$file_to_check" ]]; then
+                echo -e "${RED} Error: $context_message - File does not exist. ${RESET}"
+                echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2>/dev/null
+                main_menu
+                return 1
             fi
-        fi
+
+            if [[ ! -s "$file_to_check" ]]; then
+                echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
+                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban!. ${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2>/dev/null
+                main_menu
+                return 1
+            fi
+            return 0  # File exists and is not empty
+        }
+
+        # Main workflow
+        metadata_analysis_menu
+        perform_search
+
+        FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+
+        # Handle errors for missing or empty filtered results
+        handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
+
+        # Proceed with file downloads
+        download_files "$FILTERED_RESULTS_FILE"
+
+        # Handle errors for missing or empty metadata file
+        METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
+        analyze_metadata
+        handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
+
+        # Process metadata and export CSV
+        process_metadata_summary
+
+
+        #if [[ -s "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt" ]]; then
+        #    download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+        #    extract_metadata_summary;
+        #else
+        #    echo ""
+        #    echo -e "${RED} No files found for the specified search criteria.${RESET}"
+        #fi
+
+        echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+        read -r 2>/dev/null
+        main_menu
     }
-
-    # Function to download files from the search results
-    function download_files() {
-
-        USER_AGENTS=(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
-            "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"
-            "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Mobile Safari/537.36"
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36 Edg/109.0.774.68"
-        )
-
-        FILE_LIST="$1"
-        FOLDER="${SITE}_${TIMESTAMP}"
-        mkdir -p "$FOLDER"
-        while IFS= read -r URL; do
-            RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-            echo -e "${MAGENTA}========================================================================== ${RESET}"
-            echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"  # Log the download URL
-            wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
-            echo -e "${MAGENTA}========================================================================== ${RESET}"
-        done < "$FILE_LIST"
-        rm -f "$FILE_LIST"  # Clean up the temporary results file
-    }
-
-    # Function to extract metadata for Author, Producer, Creator, and MIME Type
-    function extract_metadata_summary() {
-        FOLDER="${SITE}_${TIMESTAMP}"
-        METADATA_FILE="${FOLDER}_metadata_summary.txt"
-        echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
-    
-        # Initialize the metadata summary file
-        echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
-    
-        # Use exiftool to extract metadata and filter relevant fields
-        exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
-    
-        echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
-    }
-
-    # Function to process, organize, and export metadata
-    function process_metadata_summary() {
-        FOLDER="${SITE}_${TIMESTAMP}"
-        METADATA_FILE="${FOLDER}_metadata_summary.txt"
-        ORGANIZED_METADATA_FILE="${FOLDER}_organized_metadata_summary.txt"
-        CSV_FILE="${FOLDER}_metadata_summary.csv"
-
-        echo -e "${MAGENTA} Processing and organizing metadata for: $METADATA_FILE ${RESET}"
-
-        # Initialize the organized metadata file
-        echo -e "Organized Metadata Summary for $SITE - Generated on $(date)\n" > "$ORGANIZED_METADATA_FILE"
-
-        # Initialize the CSV file with headers
-        echo "Type,Value,Count" > "$CSV_FILE"
-
-        # Group by software (Creator Tool and Producer)
-        echo -e "=== Software Used (Creator Tool and Producer) ===\n" >> "$ORGANIZED_METADATA_FILE"
-        grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-            echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
-            printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
-        done
-
-        # Group by persons (Creator and Author)
-        echo -e "\n=== People Found (Creator and Author) ===\n" >> "$ORGANIZED_METADATA_FILE"
-        grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-            echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
-            printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
-        done
-
-        echo -e "${GREEN} Organized metadata saved to: $ORGANIZED_METADATA_FILE ${RESET}"
-        echo -e "${GREEN} Metadata CSV saved to: $CSV_FILE ${RESET}"
-
-        # Display summary on the screen
-        echo -e "\n${CYAN}=== Screen Summary ===${RESET}"
-        echo -e "${YELLOW}Top Software Used:${RESET}"
-        grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-            echo "  $FIELD: $VALUE ($COUNT occurrences)"
-        done
-
-        echo -e "\n${YELLOW}Top People Mentioned:${RESET}"
-        grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-            echo "  $FIELD: $VALUE ($COUNT occurrences)"
-        done
-    }
-
-    # Function to handle errors for empty results or missing files
-    function handle_empty_results() {
-        local file_to_check="$1"
-        local context_message="$2"
-
-        if [[ ! -f "$file_to_check" ]]; then
-            echo -e "${RED} Error: $context_message - File does not exist. ${RESET}"
-            echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
-            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-            read -r 2>/dev/null
-            main_menu
-            return 1
-        fi
-
-        if [[ ! -s "$file_to_check" ]]; then
-            echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
-            echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban!. ${RESET}"
-            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-            read -r 2>/dev/null
-            main_menu
-            return 1
-        fi
-        return 0  # File exists and is not empty
-    }
-
-    # Main workflow
-    metadata_analysis_menu
-    perform_search
-
-    FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-
-    # Handle errors for missing or empty filtered results
-    handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
-
-    # Proceed with file downloads
-    download_files "$FILTERED_RESULTS_FILE"
-
-    # Handle errors for missing or empty metadata file
-    METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
-    analyze_metadata
-    handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
-
-    # Process metadata and export CSV
-    process_metadata_summary
-
-
-    #if [[ -s "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt" ]]; then
-    #    download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-    #    extract_metadata_summary;
-    #else
-    #    echo ""
-    #    echo -e "${RED} No files found for the specified search criteria.${RESET}"
-    #fi
-
-    echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-    read -r 2>/dev/null
-    main_menu
-}
 
 # Define a função v_dns_zt para realizar uma transferência de zona DNS
 function v_dns_zt(){
