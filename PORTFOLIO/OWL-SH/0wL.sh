@@ -181,24 +181,24 @@
         echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
         echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
-        echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
-        echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 5 - DNS Zone Transfer ${RESET}" 
+        echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
         echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
-        echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
         echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
-        echo -e "${MAGENTA} 10 - MiTM (Man-in-the-Middle)"
+        echo -e "${GRAY}${BG_BLACK} 10 - MiTM (Man-in-the-Middle)"
         echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
-        echo -e "${MAGENTA} 12 - Useful Commands for Network Management"
-        echo -e "${MAGENTA} 13 - Examples of the 'find' Command"
-        echo -e "${MAGENTA} 14 - Root Password Reset Guide (Debian)"
+        echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management"
+        echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command"
+        echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian)"
         echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
-        echo -e "${MAGENTA} 16 - Quick Guide to Using Vim"
+        echo -e "${GRAY}${BG_BLACK} 16 - Quick Guide to Using Vim"
         echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
-        echo -e "${MAGENTA} 18 - Wireless Network Attacks"
-        echo -e "${MAGENTA} 19 - Windows Tips"
+        echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks"
+        echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips"
         echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
-        echo -e "${MAGENTA} 21 - Switch to Sgt Domingues' Scanning Script"
-        echo -e "${MAGENTA} 22 - NMAP Network Scan ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 21 - Switch to Sgt Domingues' Scanning Script"
+        echo -e "${GRAY}${BG_BLACK} 22 - NMAP Network Scan ${RESET}"
         echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
         echo -e "${GRAY}${BG_BLACK} 24 - Reverse Shell for Windows ${RESET}"
         echo -e "${GRAY}${BG_BLACK} 25 - RDP for Windows ${RESET}"
@@ -757,10 +757,10 @@
             mkdir -p "$FOLDER"
             while IFS= read -r URL; do
                 RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-                echo -e "${MAGENTA}========================================================================== ${RESET}"
+                echo -e "${MAGENTA} ========================================================================== ${RESET}"
                 echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"  # Log the download URL
                 wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
-                echo -e "${MAGENTA}========================================================================== ${RESET}"
+                echo -e "${MAGENTA} ========================================================================== ${RESET}"
             done < "$FILE_LIST"
             rm -f "$FILE_LIST"  # Clean up the temporary results file
         }
@@ -896,6 +896,7 @@
         
         main_menu; # Retorna ao menu principal
     }
+
     # Define a função vi_Subdomain_takeover para realizar um ataque de Subdomain Takeover
     function vi_Subdomain_takeover(){
         # Solicita ao usuário o host para o ataque
