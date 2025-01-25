@@ -849,8 +849,6 @@ function iv_metadata_analysis() {
         return 0  # File exists and is not empty
     }
 
-
-
     # Main workflow
     metadata_analysis_menu
     perform_search
