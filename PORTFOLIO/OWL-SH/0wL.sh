@@ -774,8 +774,6 @@
             # Log the results
             log_results "$FILTERED_RESULTS_FILE"
         }
-
-
         
         # Function to download files from the search results
         function download_files() {
@@ -889,18 +887,14 @@
         # Main workflow
         metadata_analysis_menu
         perform_search
-
         FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-
         # Handle errors for missing or empty filtered results
         handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
-
         # Proceed with file downloads
         download_files "$FILTERED_RESULTS_FILE"
-
         # Handle errors for missing or empty metadata file
         METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
-        analyze_metadata
+        #analyze_metadata
         handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
 
         # Process metadata and export CSV
