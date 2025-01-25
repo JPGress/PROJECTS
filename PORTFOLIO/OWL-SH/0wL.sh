@@ -824,6 +824,32 @@ function iv_metadata_analysis() {
         done
     }
 
+    # Function to handle errors for empty results or missing files
+    function handle_empty_results() {
+        local file_to_check="$1"
+        local context_message="$2"
+    
+        if [[ ! -f "$file_to_check" ]]; then
+            echo -e "${RED} Error: $context_message - File does not exist. ${RESET}"
+            echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
+            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+            read -r 2>/dev/null
+            main_menu
+            return 1
+        fi
+    
+        if [[ ! -s "$file_to_check" ]]; then
+            echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
+            echo -e "${YELLOW} This usually happens when no results were found. ${RESET}"
+            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+            read -r 2>/dev/null
+            main_menu
+            return 1
+        fi
+        return 0  # File exists and is not empty
+    }
+
+
 
     # Start the process
     metadata_analysis_menu
