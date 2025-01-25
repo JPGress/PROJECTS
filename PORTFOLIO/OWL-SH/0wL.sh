@@ -764,15 +764,6 @@ function iv_metadata_analysis() {
         rm -f "$FILE_LIST"  # Clean up the temporary results file
     }
 
-    #! Function to analyze metadata of downloaded files (DEPRECATED)
-        #function analyze_metadata() {
-        #    FOLDER="${SITE}_${TIMESTAMP}"
-        #    echo -e "${MAGENTA} Analyzing metadata in files from folder: $FOLDER ${RESET}"
-        #    cd "$FOLDER" || exit
-        #    exiftool ./*
-        #    cd - || exit
-        #}
-
     # Function to extract metadata for Author, Producer, Creator, and MIME Type
     function extract_metadata_summary() {
         FOLDER="${SITE}_${TIMESTAMP}"
