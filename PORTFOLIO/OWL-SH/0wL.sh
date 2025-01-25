@@ -779,9 +779,56 @@ function iv_metadata_analysis() {
         echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
     }
 
+    # Function to process, organize, and export metadata
+    function process_metadata_summary() {
+        FOLDER="${SITE}_${TIMESTAMP}"
+        METADATA_FILE="${FOLDER}_metadata_summary.txt"
+        ORGANIZED_METADATA_FILE="${FOLDER}_organized_metadata_summary.txt"
+        CSV_FILE="${FOLDER}_metadata_summary.csv"
+
+        echo -e "${MAGENTA} Processing and organizing metadata for: $METADATA_FILE ${RESET}"
+
+        # Initialize the organized metadata file
+        echo -e "Organized Metadata Summary for $SITE - Generated on $(date)\n" > "$ORGANIZED_METADATA_FILE"
+
+        # Initialize the CSV file with headers
+        echo "Type,Value,Count" > "$CSV_FILE"
+
+        # Group by software (Creator Tool and Producer)
+        echo -e "=== Software Used (Creator Tool and Producer) ===\n" >> "$ORGANIZED_METADATA_FILE"
+        grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+            echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
+            printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
+        done
+
+        # Group by persons (Creator and Author)
+        echo -e "\n=== People Found (Creator and Author) ===\n" >> "$ORGANIZED_METADATA_FILE"
+        grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+            echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
+            printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
+        done
+
+        echo -e "${GREEN} Organized metadata saved to: $ORGANIZED_METADATA_FILE ${RESET}"
+        echo -e "${GREEN} Metadata CSV saved to: $CSV_FILE ${RESET}"
+
+        # Display summary on the screen
+        echo -e "\n${CYAN}=== Screen Summary ===${RESET}"
+        echo -e "${YELLOW}Top Software Used:${RESET}"
+        grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+            echo "  $FIELD: $VALUE ($COUNT occurrences)"
+        done
+
+        echo -e "\n${YELLOW}Top People Mentioned:${RESET}"
+        grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+            echo "  $FIELD: $VALUE ($COUNT occurrences)"
+        done
+    }
+
+
     # Start the process
     metadata_analysis_menu
     perform_search
+    process_metadata_summary
 
     if [[ -s "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt" ]]; then
         download_files "${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
