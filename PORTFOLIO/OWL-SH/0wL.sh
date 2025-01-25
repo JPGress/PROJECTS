@@ -682,8 +682,57 @@
         main_menu
     }   
 
-    # Function: iv_metadata_analysis
+    # Function: Perform metadata analysis for files on specific domains
     function iv_metadata_analysis() {
+        # Metadata Analysis - Perform metadata analysis for files on specific domains    
+            # ==============================================================================
+            # Metadata Analysis
+            # Version: 1.2 (2024-01-25)
+            # Author: R3v4N|0wL (jpgress@gmail.com)
+            #
+            # Description:
+            # This script automates the process of performing metadata analysis on files
+            #
+            # Description:
+            # This function automates the process of performing metadata analysis on files 
+            # retrieved from specified domains or websites. It performs the following steps:
+            # 1. Prompts the user for domain, file type, and an optional keyword for filtering.
+            # 2. Searches Google for URLs of the specified file type and downloads the files.
+            # 3. Extracts metadata fields (e.g., Author, Producer, Creator, MIME Type) using `exiftool`.
+            # 4. Organizes and summarizes the metadata into an easy-to-read format and exports to CSV.
+            # 5. Handles common errors like empty results or failed downloads to ensure a robust workflow.
+            #
+            # Dependencies:
+            # - `lynx`: Used for performing Google searches.
+            # - `wget`: Used for downloading files from the URLs found in the search results.
+            # - `exiftool`: Used for extracting metadata from downloaded files.
+            # - `grep`: Used for filtering and processing search results and metadata.
+            #
+            # Notes:
+            # - Ensure all dependencies are installed and accessible in your `$PATH`.
+            # - The function saves intermediate and final results to timestamped files and folders.
+            # - Random user-agent rotation is implemented for downloads to avoid detection.
+            #
+            # Example Usage:
+            # - Input:
+            #     Domain: `businesscorp.com.br`
+            #     File type: `pdf`
+            #     Keyword: `employee`
+            # - Output:
+            #     - Search results in `TIMESTAMP_filtered.txt`
+            #     - Downloaded files in `DOMAIN_TIMESTAMP/`
+            #     - Metadata summary in `DOMAIN_TIMESTAMP_metadata_summary.txt`
+            #     - Organized summary in `DOMAIN_TIMESTAMP_organized_metadata_summary.txt`
+            #     - Metadata CSV in `DOMAIN_TIMESTAMP_metadata_summary.csv`
+            #
+            # Version History:
+            # - 1.0 (2025-01-24): Initial implementation of metadata analysis workflow.
+            # - 1.1 (2025-01-25): Improved error handling, user-agent rotation, and metadata processing.
+            # - 1.2 (2025-01-25): Added structured output (CSV and organized summary) and validation.
+            #
+            # Author: R3v4N (w/ GPT assistance)
+            # ==============================================================================
+
         SEARCH="lynx -dump -hiddenlinks=merge -force_html"
         
         # Function to prompt the user for required input
@@ -736,7 +785,6 @@
             # Log the results
             log_results "$FILTERED_RESULTS_FILE"
         }       
-
         
         # Function to download files from the search results
         function download_files() {
