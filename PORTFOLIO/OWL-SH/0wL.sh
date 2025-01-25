@@ -700,45 +700,6 @@
             read -r KEYWORD
         }
 
-        # Function to perform the search based on user input
-            #        function perform_search() {
-            #            if [ -z "$KEYWORD" ]; then
-            #                TIMESTAMP=$(date +%d%H%M%b%Y)
-            #                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-            #
-            #                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
-            #                echo -e ""
-            #
-            #                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
-            #                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-            #                    | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
-            #
-            #                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-            #                    echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
-            #                else
-            #                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-            #                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
-            #                fi
-            #            else
-            #                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-            #                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-            #
-            #                echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
-            #                echo -e ""
-            #
-            #                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
-            #                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-            #                    | cut -d '=' -f2''  > "$FILTERED_RESULTS_FILE"
-            #
-            #                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-            #                    echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
-            #                else
-            #                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-            #                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
-            #                fi
-            #            fi
-            #        }
-        
         function perform_search() {
             # Helper function to log search results
             function log_results() {
@@ -749,6 +710,7 @@
                     echo -e "${RED} No results found for the specified search criteria. ${RESET}"
                     local raw_results_file="raw_results_${TIMESTAMP}.txt"
                     echo -e "${RED} Raw search results saved to ${YELLOW}$raw_results_file ${RESET}"
+                    mv "$file" "$raw_results_file"  # Save the empty file as raw results for debugging
                 fi
             }
 
@@ -773,7 +735,8 @@
 
             # Log the results
             log_results "$FILTERED_RESULTS_FILE"
-        }
+        }       
+
         
         # Function to download files from the search results
         function download_files() {
@@ -810,7 +773,6 @@
                 echo -e "${YELLOW} Warning: $FAILED_DOWNLOADS files failed to download. ${RESET}"
             fi
         }
-
 
         # Function to extract metadata for Author, Producer, Creator, and MIME Type
         function extract_metadata_summary() {
