@@ -1,7 +1,8 @@
 #!/bin/bash
 # TODO: ADD HEADER INFORMATION
+# TODO:Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
-######################## VARIABLES ########################
+#* VARIABLES ########################
 
     # Color definitions
     BLACK="\e[30m"
@@ -21,7 +22,7 @@
     # Reset terminal color
     RESET="\e[0m"
 
-######################## SUPPORT FUNCTIONS ########################
+#* SUPPORT FUNCTIONS ########################
     # Function: Enable Proxychains
     function enable_proxychains() {
         clear; # Clear terminal screen
@@ -206,7 +207,7 @@
         echo -e "${GRAY}+==============================================+${RESET}"
     }
 
-######################## MAIN MENU ########################
+#* MAIN MENU ########################
     # Function: Main menu
     function main_menu() {
         display_main_menu # Display the menu
@@ -261,7 +262,7 @@
         esac
     }
 
-######################## FUNÇÕES DO MENU ########################
+#* FUNÇÕES DO MENU ########################
     # Function: Script to perform a port scan on a network using netcat
     function i_portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
@@ -2252,9 +2253,9 @@
         tilix --action=app-new-session --command="$(xfreerdp /u:"$USER" /p:"$PASSWD" /w:1366 /h:768 /v:"$IP_HOST" /smart-sizing +auto-reconnect)"
     }
     #
-#============================================================
 
-######## CHECAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
+
+#* CHECAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
     # Verifica se o número de argumentos passados para o script é diferente de zero.
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
@@ -2270,6 +2271,4 @@
             enable_proxychains; # Call the function to enable proxychains at script start
             main_menu;
     fi
-#============================================================
 
-#Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
