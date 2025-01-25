@@ -949,6 +949,8 @@
             main_menu
         }
 
+        run_metadata_analysis;
+
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor.
