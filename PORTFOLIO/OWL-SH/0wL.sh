@@ -840,7 +840,7 @@ function iv_metadata_analysis() {
 
         if [[ ! -s "$file_to_check" ]]; then
             echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
-            echo -e "${YELLOW} This usually happens when no results were found. ${RESET}"
+            echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban!. ${RESET}"
             echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
             read -r 2>/dev/null
             main_menu
