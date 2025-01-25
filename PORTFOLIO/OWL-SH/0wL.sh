@@ -805,14 +805,26 @@
             METADATA_FILE="${FOLDER}_metadata_summary.txt"
             echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
         
+            # Check if folder contains files
+            if [[ -z "$(ls -A "$FOLDER")" ]]; then
+                echo -e "${RED} No files found in $FOLDER to extract metadata. ${RESET}"
+                echo -e "${GRAY} Returning to main menu.${RESET}"
+                return 1
+            fi
+        
             # Initialize the metadata summary file
-            echo -e " Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
+            echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
         
             # Use exiftool to extract metadata and filter relevant fields
             exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
         
-            echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+            if [[ -s "$METADATA_FILE" ]]; then
+                echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+            else
+                echo -e "${RED} No metadata extracted. Metadata file is empty. ${RESET}"
+            fi
         }
+
 
         # Function to process, organize, and export metadata
         function process_metadata_summary() {
