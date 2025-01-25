@@ -777,7 +777,6 @@
         
         # Function to download files from the search results
         function download_files() {
-
             USER_AGENTS=(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
                 "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
@@ -789,42 +788,55 @@
             FILE_LIST="$1"
             FOLDER="${SITE}_${TIMESTAMP}"
             mkdir -p "$FOLDER"
+            FAILED_DOWNLOADS=0
+
             while IFS= read -r URL; do
                 RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-                echo -e "${MAGENTA} ========================================================================== ${RESET}"
-                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"  # Log the download URL
+                echo -e "${MAGENTA} ==========================================================================${RESET}"
+                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"
                 wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
-                echo -e "${MAGENTA} ========================================================================== ${RESET}"
+
+                # Check if the file was successfully downloaded
+                if [[ $? -ne 0 ]]; then
+                    echo -e "${RED} Failed to download: $URL ${RESET}"
+                    ((FAILED_DOWNLOADS++))
+                fi
+                echo -e "${MAGENTA} ==========================================================================${RESET}"
             done < "$FILE_LIST"
+
             rm -f "$FILE_LIST"  # Clean up the temporary results file
+
+            if [[ $FAILED_DOWNLOADS -gt 0 ]]; then
+                echo -e "${YELLOW} Warning: $FAILED_DOWNLOADS files failed to download. ${RESET}"
+            fi
         }
+
 
         # Function to extract metadata for Author, Producer, Creator, and MIME Type
         function extract_metadata_summary() {
             FOLDER="${SITE}_${TIMESTAMP}"
             METADATA_FILE="${FOLDER}_metadata_summary.txt"
             echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
-        
+
             # Check if folder contains files
             if [[ -z "$(ls -A "$FOLDER")" ]]; then
                 echo -e "${RED} No files found in $FOLDER to extract metadata. ${RESET}"
                 echo -e "${GRAY} Returning to main menu.${RESET}"
                 return 1
             fi
-        
+
             # Initialize the metadata summary file
             echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
-        
+
             # Use exiftool to extract metadata and filter relevant fields
             exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
-        
+
             if [[ -s "$METADATA_FILE" ]]; then
                 echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
             else
                 echo -e "${RED} No metadata extracted. Metadata file is empty. ${RESET}"
             fi
         }
-
 
         # Function to process, organize, and export metadata
         function process_metadata_summary() {
