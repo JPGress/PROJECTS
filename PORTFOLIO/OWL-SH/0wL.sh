@@ -773,6 +773,21 @@ function iv_metadata_analysis() {
         cd - || exit
     }
 
+    # Function to extract metadata for Author, Producer, Creator, and MIME Type
+    function extract_metadata_summary() {
+        FOLDER="${SITE}_${TIMESTAMP}"
+        METADATA_FILE="${FOLDER}_metadata_summary.txt"
+        echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
+    
+        # Initialize the metadata summary file
+        echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
+    
+        # Use exiftool to extract metadata and filter relevant fields
+        exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
+    
+        echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+    }
+
     # Start the process
     metadata_analysis_menu
     perform_search
