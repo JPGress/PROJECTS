@@ -701,44 +701,82 @@
         }
 
         # Function to perform the search based on user input
+            #        function perform_search() {
+            #            if [ -z "$KEYWORD" ]; then
+            #                TIMESTAMP=$(date +%d%H%M%b%Y)
+            #                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            #
+            #                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
+            #                echo -e ""
+            #
+            #                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
+            #                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+            #                    | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
+            #
+            #                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
+            #                    echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+            #                else
+            #                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+            #                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+            #                fi
+            #            else
+            #                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
+            #                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            #
+            #                echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
+            #                echo -e ""
+            #
+            #                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
+            #                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+            #                    | cut -d '=' -f2''  > "$FILTERED_RESULTS_FILE"
+            #
+            #                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
+            #                    echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+            #                else
+            #                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+            #                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+            #                fi
+            #            fi
+            #        }
+        
         function perform_search() {
-            if [ -z "$KEYWORD" ]; then
-                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-
-                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
-                echo -e ""
-
-                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE" \
-                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                    | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
-
-                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-                    echo -e "${GREEN} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
+            # Helper function to log search results
+            function log_results() {
+                local file="$1"
+                if [[ -s "$file" ]]; then
+                    echo -e "${GREEN} Search successful. Results saved to $file ${RESET}"
                 else
                     echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
+                    local raw_results_file="raw_results_${TIMESTAMP}.txt"
+                    echo -e "${RED} Raw search results saved to ${YELLOW}$raw_results_file ${RESET}"
                 fi
+            }
+
+            # Generate the timestamp and file names
+            TIMESTAMP=$(date +%d%H%M%b%Y)
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+
+            # Build the search query
+            local base_query="https://www.google.com/search?q=inurl:$SITE+filetype:$FILE"
+            if [[ -n "$KEYWORD" ]]; then
+                echo -e "${MAGENTA} Searching for $FILE files with \"$KEYWORD\" on $SITE... ${RESET}"
+                base_query+=" +intext:$KEYWORD"
             else
-                TIMESTAMP=$(date +%d%H%M%b%Y)-UTC
-                FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-
-                echo -e "${MAGENTA} Searching for $FILE files with ${KEYWORD} on $SITE... ${RESET}"
-                echo -e ""
-
-                $SEARCH "https://www.google.com/search?q=inurl:$SITE+filetype:$FILE+intext:$KEYWORD" \
-                    | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                    | cut -d '=' -f2''  > "$FILTERED_RESULTS_FILE"
-
-                if [[ -s "$FILTERED_RESULTS_FILE" ]]; then
-                    echo -e "${MAGENTA} Search successful. Results saved to $FILTERED_RESULTS_FILE ${RESET}"
-                else
-                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                    echo -e "${RED} Raw search results saved to ${YELLOW}raw_results_${TIMESTAMP}.txt ${RESET}"
-                fi
+                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
             fi
+
+            # Perform the search and filter results
+            echo ""
+            $SEARCH "$base_query" \
+                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
+
+            # Log the results
+            log_results "$FILTERED_RESULTS_FILE"
         }
 
+
+        
         # Function to download files from the search results
         function download_files() {
 
@@ -770,7 +808,7 @@
             echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
         
             # Initialize the metadata summary file
-            echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
+            echo -e " Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
         
             # Use exiftool to extract metadata and filter relevant fields
             exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
@@ -839,7 +877,7 @@
 
             if [[ ! -s "$file_to_check" ]]; then
                 echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
-                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban!. ${RESET}"
+                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban! =/ ${RESET}"
                 echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
                 read -r 2>/dev/null
                 main_menu
