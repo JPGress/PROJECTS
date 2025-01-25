@@ -733,21 +733,36 @@
             # Author: R3v4N (w/ GPT assistance)
             # ==============================================================================
 
+        # This script sets the SEARCH variable to use the 'lynx' command-line web browser.
+        # The 'lynx' command is configured with the following options:
+        # -dump: Outputs the formatted document to standard output.
+        # -hiddenlinks=merge: Merges hidden links into the document.
+        # -force_html: Forces the document to be interpreted as HTML.
         SEARCH="lynx -dump -hiddenlinks=merge -force_html"
         
         # Function to prompt the user for required input
         function metadata_analysis_menu() {
-            clear;
-            ascii_banner_art;
+            clear;  # Clears the terminal screen to give a clean interface
+            ascii_banner_art;  # Displays a banner or logo at the top of the screen
+            
+            # Display the title of this analysis step with colored formatting
             echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
-            subtitle;
+            
+            subtitle;  # Displays a subtitle or additional details about the script
+
+            # Prompt the user to enter the domain or website they want to analyze (e.g., government or business domains)
             echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
-            read -r SITE
+            read -r SITE  # Read the user's input and store it in the SITE variable
+
+            # Prompt the user to enter the file type they want to search for (e.g., PDFs, DOCX)
             echo -n " Enter the file extension to search for (e.g., pdf): "
-            read -r FILE
+            read -r FILE  # Read the user's input and store it in the FILE variable
+
+            # Prompt the user to optionally specify a keyword to refine the search (e.g., specific topics or terms)
             echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
-            read -r KEYWORD
+            read -r KEYWORD  # Read the user's input and store it in the KEYWORD variable
         }
+
 
         function perform_search() {
             # Helper function to log search results
@@ -949,6 +964,7 @@
             main_menu
         }
 
+        # Ensure main workflow is executed
         run_metadata_analysis;
 
     }
