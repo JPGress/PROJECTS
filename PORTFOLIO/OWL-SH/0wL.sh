@@ -197,11 +197,9 @@
         echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks"
         echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips"
         echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 21 - Switch to Sgt Domingues' Scanning Script"
-        echo -e "${GRAY}${BG_BLACK} 22 - NMAP Network Scan ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 21 - Reverse Shell for Windows ${RESET}"
+        echo -e "${GRAY}${BG_BLACK} 22 - RDP for Windows ${RESET}"
         echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 24 - Reverse Shell for Windows ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 25 - RDP for Windows ${RESET}"
 
         # Display instructions to exit the menu
         echo -e "${GRAY}+==============================================+${RESET}"
