@@ -756,8 +756,10 @@ function iv_metadata_analysis() {
         mkdir -p "$FOLDER"
         while IFS= read -r URL; do
             RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-            echo -e "Downloading file with ${RANDOM_USER_AGENT}"  # Log the download URL
+            echo -e "${MAGENTA}========================================================================== ${RESET}"
+            echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"  # Log the download URL
             wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
+            echo -e "${MAGENTA}========================================================================== ${RESET}"
         done < "$FILE_LIST"
         rm -f "$FILE_LIST"  # Clean up the temporary results file
     }
