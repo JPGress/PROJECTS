@@ -238,7 +238,7 @@
             2) ii_parsing_html ;; # Parse HTML
             3) iii_google_hacking ;; # Perform Google Hacking
             4) iv_metadata_analysis ;; # Analyze metadata from the Internet
-            5) v_dns_zone_transfer ;; # Perform DNS Zone Transfer
+            5) v_dns_zt; # Perform DNS Zone Transfer
             6) vi_subdomain_takeover ;; # Perform Subdomain Takeover
             7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns ;;
             8) viii_dns_recon ;; # DNS Reconnaissance
