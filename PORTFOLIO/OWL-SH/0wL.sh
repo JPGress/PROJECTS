@@ -217,6 +217,14 @@
         echo -e "${GRAY}+==============================================+${RESET}"
     }
 
+    function sub_menu(){
+        clear;  # Clear the terminal screen for clean output
+        ascii_banner_art;  # Display ASCII art banner
+        echo -e "${MAGENTA} $title ${RESET}"
+        subtitle;  # Display a subtitle
+    }
+
+
 #* MAIN MENU ########################
     # Function: Main menu
     function main_menu() {
