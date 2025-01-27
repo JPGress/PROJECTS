@@ -1213,7 +1213,6 @@
         takeover_workflow
     }
 
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Function: vii_rev_dns
     function vii_rev_dns() {
         # vii_rev_dns - Perform Reverse DNS Lookup for a specified range of IP addresses
@@ -1301,6 +1300,7 @@
         reverse_dns_workflow
     }
 
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Define a função viii_recon_dns para realizar uma reconhecimento de DNS
     function viii_recon_dns(){
         # Conta o total de linhas no arquivo de lista de subdomínios
