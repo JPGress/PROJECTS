@@ -226,7 +226,7 @@
             echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
             echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
             echo -e "${MAGENTA} 7 - Reverse DNS ${RESET}" 
-            echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
+            echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 10 - MiTM (Man-in-the-Middle)"
             echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
@@ -1302,39 +1302,104 @@
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     
-    # Define a função viii_recon_dns para realizar uma reconhecimento de DNS
-    function viii_recon_dns(){
-        # Conta o total de linhas no arquivo de lista de subdomínios
-        TOTAL_LINHAS=$(wc -l /usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt|awk '{print $1}')
-        
-        echo "DNS recon"
-        
-        # Solicita ao usuário o endereço para o DNS RECON
-        echo "Insira o endereço para o DNS RECON (EX: businesscorp.com.br)"
-        read -r DOMAIN
-        
-        # Inicializa a contagem de linha
-        linha=0
-        
-        # Itera sobre cada subdomínio na lista de subdomínios
-        # shellcheck disable=SC2013
-        for SUBDOMAIN in $(cat /usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt); do
-            # shellcheck disable=SC2219
-            let linha++ # Incrementa o contador de linha
-            
-            # Realiza uma pesquisa de DNS para o subdomínio atual e salva no arquivo dns_recon_$DOMAIN.txt
-            host "$SUBDOMAIN"."$DOMAIN" >> dns_recon_"$DOMAIN".txt
-            
-            # Exibe o progresso da pesquisa
-            echo "--------PESQUISANDO---------> $linha/$TOTAL_LINHAS"
-        done 
-        
-        # Aguarda o usuário pressionar Enter para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-        
-        main_menu; # Retorna ao menu principal
+    # Function: viii_recon_dns
+function viii_recon_dns() {
+    # viii_recon_dns - Perform DNS reconnaissance on a target domain using a subdomain wordlist
+        #
+        # Description:
+        # This script automates DNS reconnaissance by iterating through a list of subdomains
+        # and performing DNS queries to identify active subdomains. The results are saved in
+        # a timestamped file for later analysis.
+        #
+        # Notes:
+        # - Requires the `host` command to perform DNS queries.
+        # - The script uses a predefined wordlist located at `/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt`.
+        # - Displays progress to the user during execution.
+        #
+        # Example usage:
+        # - Input:
+        #   - Target domain: businesscorp.com.br
+        # - Output:
+        #   - File `dns_recon_businesscorp.com.br_<timestamp>.txt` containing active subdomains.
+        #
+        # Created on: 2025-01-26
+        # Last Updated: 2025-01-26
+        # Version: 1.1
+        #
+        # Author: R3v4N (w/GPT)
+        #
+
+    # Function to load and count the total lines in the subdomain wordlist
+    function load_wordlist() {
+            WORDLIST="/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"  # Path to the wordlist
+            if [[ ! -f "$WORDLIST" ]]; then
+                echo -e "${RED}Error: Wordlist not found at $WORDLIST.${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2>/dev/null
+                main_menu
+                return 1
+            fi
+            TOTAL_LINES=$(wc -l "$WORDLIST" | awk '{print $1}')  # Count the total lines
+        }
+
+        # Function to prompt the user for the target domain
+        function prompt_user_inputs() {
+            echo -e "${MAGENTA} DNS Reconnaissance ${RESET}"
+            echo -en "${CYAN} Enter the target domain (e.g., businesscorp.com.br): ${RESET}"
+            read -r DOMAIN  # Read the domain input from the user
+        }
+
+        # Function to prepare the output file
+        function prepare_output_file() {
+            TIMESTAMP=$(date +%d%H%M%b%Y)  # Generate a timestamp
+            OUTPUT_FILE="dns_recon_${DOMAIN}_${TIMESTAMP}.txt"  # Define the output file name
+
+            rm -rf "$OUTPUT_FILE"  # Remove the file if it exists
+            touch "$OUTPUT_FILE"  # Create a new empty file
+        }
+
+        # Function to perform DNS reconnaissance
+        function perform_dns_recon() {
+            LINE_COUNT=0  # Initialize the line counter
+
+            echo -e "${YELLOW} Starting DNS reconnaissance for: $DOMAIN ${RESET}"
+            for SUBDOMAIN in $(cat "$WORDLIST"); do
+                ((LINE_COUNT++))  # Increment the line counter
+
+                # Query the DNS for the current subdomain and append results to the output file
+                host "$SUBDOMAIN.$DOMAIN" >> "$OUTPUT_FILE"
+
+                # Display the progress
+                echo -e "${CYAN}-------- Searching ---------> $LINE_COUNT/$TOTAL_LINES ${RESET}"
+            done
     }
+
+    # Function to display results
+    function display_results() {
+        echo -e "${GREEN} DNS reconnaissance results saved to: $OUTPUT_FILE ${RESET}"
+        echo -e "${CYAN}=== Results Preview ===${RESET}"
+        head -n 10 "$OUTPUT_FILE"  # Display the first 10 lines as a preview
+        echo -e "${YELLOW}... (Full results available in the output file) ${RESET}"
+    }
+
+    # Main workflow for DNS reconnaissance
+    function dns_recon_workflow() {
+        load_wordlist || return  # Load the wordlist and validate its existence
+        prompt_user_inputs  # Prompt the user for inputs
+        prepare_output_file  # Prepare the output file
+        perform_dns_recon  # Perform DNS reconnaissance
+        display_results  # Display the results to the user
+
+        # Wait for the user to press ENTER before returning to the main menu
+        echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+        read -r 2>/dev/null
+        main_menu  # Return to the main menu
+    }
+
+    # Execute the main workflow
+    dns_recon_workflow
+}
+
 
     # Define a função ix_consulta_geral_google para realizar uma consulta geral no Google
     function ix_consulta_geral_google(){
