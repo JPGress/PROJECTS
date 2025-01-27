@@ -118,17 +118,6 @@
         main_menu
     }
 
-    # Function: Exit script (on zero input)
-    function exit_script() {
-        clear; # Clear terminal screen
-        ascii_banner_art; # Call ASCII banner art
-        echo -e "${RED} >>> Exiting the script. Bye! ${RESET}"
-        echo -e "${RED} Press ENTER to continue ${RESET}"
-        read -r 2> /dev/null
-        clear; # Clear terminal screen
-        exit 0
-    }
-
     # Function: Pause the script
     function pause_script() {
         echo -e "${GRAY} Press ENTER to continue ${RESET}"
@@ -180,43 +169,7 @@
             exit 1
         fi
     }
-
-    # Function: Display the main menu
-    function display_main_menu() {
-        clear; # Clears the terminal screen
-        ascii_banner_art; # Call ASCII banner art
-
-        # Display numbered menu options
-        echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
-        echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
-        echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
-        echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
-        echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
-        echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 10 - MiTM (Man-in-the-Middle)"
-        echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management"
-        echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command"
-        echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian)"
-        echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 16 - Quick Guide to Using Vim"
-        echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks"
-        echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips"
-        echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 21 - Reverse Shell for Windows ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 22 - RDP for Windows ${RESET}"
-        echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
-
-        # Display instructions to exit the menu
-        echo -e "${GRAY}+==============================================+${RESET}"
-        echo -e " ${WHITE}Enter 0 (zero) to exit${RESET}"
-        echo -e "${GRAY}+==============================================+${RESET}"
-    }
-
+    
     function sub_menu(){
         clear;  # Clear the terminal screen for clean output
         ascii_banner_art;  # Display ASCII art banner
@@ -228,56 +181,145 @@
 #* MAIN MENU ########################
     # Function: Main menu
     function main_menu() {
-        display_main_menu # Display the menu
+        # main_menu - Display the main menu and handle user input
+            #
+            # Description:
+            # This function displays the main menu, validates the user's selection, and calls the appropriate script or feature based on the input.
+            # It performs the following operations:
+            # 1. Displays the main menu with valid options.
+            # 2. Validates user input against available options.
+            # 3. Calls the respective function for the selected option.
+            #
+            # Notes:
+            # - Invalid inputs will prompt the user to re-enter their choice.
+            # - Disabled options are marked in the menu and cannot be selected.
+            #
+            # Example usage:
+            # - Input: Option number (e.g., 1 for Port Scan).
+            # - Output: Calls the selected function or feature.
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.1
+            #
+            # Author: R3v4N (w/GPT)
+            #
+        function display_main_menu() {
+            clear; # Clears the terminal screen
+            ascii_banner_art; # Call ASCII banner art
 
-        # Define valid menu options dynamically
-        valid_options=()
-        for i in {0..25}; do
-            if [[ "$i" -ne 23 ]]; then
-                valid_options+=("$i")
+            # Display numbered menu options
+            echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
+            echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
+            echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
+            echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
+            echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
+            echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
+            echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
+            echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 10 - MiTM (Man-in-the-Middle)"
+            echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management"
+            echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command"
+            echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian)"
+            echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 16 - Quick Guide to Using Vim"
+            echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks"
+            echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips"
+            echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 21 - Reverse Shell for Windows ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 22 - RDP for Windows ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
+
+            # Display instructions to exit the menu
+            echo -e "${GRAY}+==============================================+${RESET}"
+            echo -e " ${WHITE}Enter 0 (zero) to exit${RESET}"
+            echo -e "${GRAY}+==============================================+${RESET}"
+        }
+
+                # Validate user input
+        function validate_input() {
+            local input="$1"  # User input
+            shift  # Remove input from arguments list
+            local valid_options=("$@")  # Remaining arguments are valid options
+
+            # Check if input is in the list of valid options
+            for option in "${valid_options[@]}"; do
+                if [[ "$input" == "$option" ]]; then
+                    return 0  # Input is valid
+                fi
+            done
+            return 1  # Input is invalid
+        }
+
+        # Handle invalid menu options
+        function invalid_option() {
+            echo -e "${RED} Invalid option. Please try again. ${RESET}"
+            pause_script  # Pause to allow the user to see the error
+        }
+
+        # Exit the script gracefully
+        function exit_script() {
+            echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
+            exit 0
+        }
+
+        # Process the menu option selected by the user
+        function process_menu_option() {
+            local option="$1"
+            case $option in
+                0) exit_script ;;  # Exit the script
+                1) i_portscan ;;  # Perform a port scan
+                2) ii_parsing_html ;;  # Parse HTML
+                3) iii_google_hacking ;;  # Google Hacking
+                4) iv_metadata_analysis ;;  # Metadata Analysis
+                5) v_dns_zt ;;  # DNS Zone Transfer
+                6) vi_Subdomain_takeover ;;  # Subdomain Takeover
+                8) viii_dns_recon ;;  # DNS Reconnaissance
+                10) x_mitm ;;  # MiTM (Man-in-the-Middle)
+                12) xii_network_management_commands ;;  # Network Management Commands
+                13) xiii_find_command_examples ;;  # 'Find' Command Examples
+                14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
+                16) xvi_vim_quick_guide ;;  # Vim Quick Guide
+                18) xviii_wifi_attacks ;;  # Wireless Network Attacks
+                19) xix_windows_basic_commands ;;  # Basic Windows Commands
+                21) xxi_sgt_domingues_scanning_script ;;  # Sgt Domingues' Scanning Script
+                22) xxii_nmap_network_discovery ;;  # NMAP Network Discovery
+                *) invalid_option ;;  # Fallback case for unexpected values
+            esac
+        }
+
+        # Main workflow
+        function main_menu_workflow() {
+            display_main_menu  # Display the menu
+
+            # Define valid menu options dynamically
+            valid_options=()
+            for i in {0..25}; do
+                if [[ "$i" -ne 23 ]]; then
+                    valid_options+=("$i")  # Exclude option 23
+                fi
+            done
+
+            # Prompt the user for input
+            echo -ne "${CYAN} Enter the option number: ${RESET}"
+            read -r MENU_OPTION  # Read user input
+
+            # Validate the input
+            if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
+                invalid_option  # Handle invalid input
+                main_menu_workflow  # Restart the menu
+                return
             fi
-        done
 
-        # Prompt user for input
-        echo -ne "${CYAN} Enter the option number: ${RESET}"
-        read -r MENU_OPTION # Read user input
+            # Process the valid menu option
+            process_menu_option "$MENU_OPTION"
+        }
 
-        # Validate the user input
-        if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
-            invalid_option # Call the invalid_option function if input is invalid
-            main_menu # Restart the menu
-            return
-        fi
-
-        # If valid, proceed to handle the selected option
-        case $MENU_OPTION in
-            0) exit_script ;; # Exit the script
-            1) i_portscan ;; # Perform a port scan
-            2) ii_parsing_html ;; # Parse HTML
-            3) iii_google_hacking ;; # Perform Google Hacking
-            4) iv_metadata_analysis ;; # Analyze metadata from the Internet
-            5) v_dns_zt;; # Perform DNS Zone Transfer
-            6) vi_Subdomain_takeover ;; # Perform Subdomain Takeover
-            7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns ;;
-            8) viii_dns_recon ;; # DNS Reconnaissance
-            9) disabled ;; # DISABLED - REQUIRES REFACTORING -> ix_google_general_query ;;
-            10) x_mitm ;; # MiTM (Man-in-the-Middle)
-            11) disabled ;; # DISABLED FOR MAINTENANCE -> xi_portscan_bashsocket ;;
-            12) xii_network_management_commands ;; # Useful network management commands
-            13) xiii_find_command_examples ;; # Examples of the 'find' command
-            14) xiv_debian_root_password_reset ;; # Root password reset guide for Debian
-            15) disabled ;; # DISABLED FOR MAINTENANCE -> xv_redhat_root_password_reset ;;
-            16) xvi_vim_quick_guide ;; # Quick guide to using Vim
-            17) disabled ;; # DISABLED FOR MAINTENANCE -> xvii_rbash_escape_techniques ;;
-            18) xviii_wifi_attacks ;; # Wireless network attacks
-            19) xix_windows_basic_commands ;; # Basic Windows commands
-            20) disabled ;; # DISABLED FOR MAINTENANCE -> xx_create_windows_script ;; #! TODO: DELETE
-            21) xxi_sgt_domingues_scanning_script ;; # Switch to Sgt Domingues' scanning script ;; #! TODO: DELETE
-            22) xxii_nmap_network_discovery ;; # NMAP network scan
-            24) disabled ;; # DISABLED FOR MAINTENANCE -> xxiv_windows_revshell ;;
-            25) disabled ;; # DISABLED FOR MAINTENANCE -> xxv_windows_rdp ;;
-            *) invalid_option ;; # Fallback case (should never happen with validation)
-        esac
+        # Execute the main menu workflow
+        main_menu_workflow
     }
 
 #* FUNÇÕES DO MENU ########################
