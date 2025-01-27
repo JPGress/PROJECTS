@@ -1248,13 +1248,13 @@
         # Function to prompt the user for inputs
         function prompt_user_inputs() {
             
-            echo -en "${CYAN} Enter the base address (e.g., 192.168.0): ${RESET}"
+            echo -en " Enter the base address (e.g., 192.168.0): ${RESET}"
             read -r BASE_ADDRESS  # Read the base address from the user
 
-            echo -en "${CYAN} Enter the start of the IP range: ${RESET}"
+            echo -en " Enter the start of the IP range: ${RESET}"
             read -r START  # Read the start of the IP range
 
-            echo -en "${CYAN} Enter the end of the IP range: ${RESET}"
+            echo -en " Enter the end of the IP range: ${RESET}"
             read -r END  # Read the end of the IP range
         }
 
