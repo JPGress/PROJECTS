@@ -1019,31 +1019,38 @@
             read -r TARGET  # Read user input and store it in the TARGET variable
         }
         
+        function dnz_zt_check(){
+            # Fetch the nameservers (NS) for the specified target domain
+            NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
+
+            # Check if any nameservers were found
+            if [[ -z "$NS_SERVERS" ]]; then
+                echo "No nameservers found for the domain $TARGET."
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2> /dev/null
+                main_menu  # Return to the main menu
+                return
+            fi
+        }
         
-        # Fetch the nameservers (NS) for the specified target domain
-        NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
-        
-        # Check if any nameservers were found
-        if [[ -z "$NS_SERVERS" ]]; then
-            echo "No nameservers found for the domain $TARGET."
-            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-            read -r 2> /dev/null
-            main_menu  # Return to the main menu
-            return
-        fi
+        function dns_zt_attack(){
+            # Iterate over the nameservers and attempt a DNS zone transfer for each
+            for SERVER in $NS_SERVERS; do
+                echo "Attempting zone transfer on nameserver: $SERVER"
+                host -l -a "$TARGET" "$SERVER"  # Attempt the zone transfer and list DNS records
+            done
+        }
 
-        # Iterate over the nameservers and attempt a DNS zone transfer for each
-        for SERVER in $NS_SERVERS; do
-            echo "Attempting zone transfer on nameserver: $SERVER"
-            host -l -a "$TARGET" "$SERVER"  # Attempt the zone transfer and list DNS records
-        done
+        function dns_zt_workflow(){
+            dns_zt_main_menu;
+            dnz_zt_check;
+            dns_zt_attack;
+            pause_script;
+            main_menu;
+        }
 
+        dns_zt_workflow;
 
-        dns_zt_main_menu
-        # Wait for the user to press Enter before returning to the main menu
-        pause_script;
-        # Return to the main menu
-        main_menu
     }
 
 
