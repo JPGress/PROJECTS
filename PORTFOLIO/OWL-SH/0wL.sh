@@ -210,7 +210,6 @@
             echo -e "${GRAY} Select an option by entering the corresponding number.${RESET}"
             subtitle; # Display a subtitle
             
-
             # Display numbered menu options
             echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
             echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
@@ -235,10 +234,7 @@
             echo -e "${GRAY}${BG_BLACK} 21 - Reverse Shell for Windows ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 22 - RDP for Windows ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
-
-            # Display instructions to exit the menu
-            echo -e "${GRAY}+==============================================+${RESET}"
-            echo -e " ${WHITE}Enter 0 (zero) to exit${RESET}"
+            echo -e " ${WHITE} 0 - (zero) to exit${RESET}"
             echo -e "${GRAY}+==============================================+${RESET}"
         }
 
@@ -309,6 +305,7 @@
             # Prompt the user for input
             echo -ne "${CYAN} Enter the option number: ${RESET}"
             read -r MENU_OPTION  # Read user input
+            echo -e "${GRAY}+==============================================+${RESET}"
 
             # Validate the input
             if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
