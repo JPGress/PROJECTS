@@ -1008,7 +1008,6 @@
     function v_dns_zt() {
         clear;
         ascii_banner_art;
-        subtitle;
         echo -e "${MAGENTA} DNS Zone Transfer ${RESET}" # Display a title for the DNS Zone Transfer operation
         subtitle;
 
