@@ -276,6 +276,7 @@
                 4) iv_metadata_analysis ;;  # Metadata Analysis
                 5) v_dns_zt ;;  # DNS Zone Transfer
                 6) vi_Subdomain_takeover ;;  # Subdomain Takeover
+                7) vii_rev_dns ;;  # Reverse DNS
                 8) viii_dns_recon ;;  # DNS Reconnaissance
                 10) x_mitm ;;  # MiTM (Man-in-the-Middle)
                 12) xii_network_management_commands ;;  # Network Management Commands
@@ -1205,44 +1206,97 @@
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-    # Define a função vii_rev_dns para realizar uma pesquisa de DNS reverso
-    function vii_rev_dns(){
-        echo "Dns Reverse"
-        
-        # Solicita ao usuário o endereço para a pesquisa de DNS reverso
-        echo "Insira o endereço para o DNS REVERSE"
-        read -r ADDRESS
-        
-        # Solicita ao usuário o início do intervalo de endereços IP
-        echo "Digite o início do intervalo de endereços IP"
-        read -r START
-        
-        # Solicita ao usuário o fim do intervalo de endereços IP
-        echo "Digite o fim do intervalo de endereços IP"
-        read -r END
-        
-        # Define o nome do arquivo de saída
-        OUTPUT="$ADDRESS.$START-$END.txt"
-        
-        # Remove o arquivo de saída se existir e cria um novo
-        rm -rf "$OUTPUT"
-        touch "$OUTPUT"
-        
-        # Itera sobre os endereços IP no intervalo especificado e realiza a pesquisa de DNS reverso
-        for RANGE in $(seq "$START" "$END"); do
-            # Usa o comando host para obter o registro PTR e extrai o nome do host
-            host -t ptr "$ADDRESS"."$RANGE" | cut -d ' ' -f5 | grep -v '.ip-' >> "$OUTPUT"
-        done
-        
-        # Exibe o conteúdo do arquivo de saída
-        cat "$OUTPUT"
-        
-        # Aguarda o usuário pressionar Enter para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-        
-        main_menu; # Retorna ao menu principal
+    # Function: vii_rev_dns
+    function vii_rev_dns() {
+        # vii_rev_dns - Perform Reverse DNS Lookup for a specified range of IP addresses
+            #
+            # Description:
+            # This script automates a reverse DNS lookup operation for a range of IP addresses.
+            # It performs the following operations:
+            # 1. Prompts the user for the base address and IP range.
+            # 2. Iterates over the specified range and queries DNS for PTR records.
+            # 3. Saves the results to a timestamped file and displays the output to the user.
+            #
+            # Notes:
+            # - Requires the `host` command to perform DNS lookups.
+            # - Output is saved in a timestamped file for reference.
+            # - Designed for educational purposes; ensure proper permissions for testing.
+            #
+            # Example usage:
+            # - Input:
+            #   - Base address: 192.168.0
+            #   - Range: Start = 1, End = 10
+            # - Output:
+            #   - PTR records for IPs 192.168.0.1 through 192.168.0.10.
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.1
+            #
+            # Author: R3v4N (w/GPT)
+            #
+
+        local title="Reverse DNS Lookup"  # Define the title for this operation
+
+        # Function to prompt the user for inputs
+        function prompt_user_inputs() {
+            
+            echo -en "${CYAN} Enter the base address (e.g., 192.168.0): ${RESET}"
+            read -r BASE_ADDRESS  # Read the base address from the user
+
+            echo -en "${CYAN} Enter the start of the IP range: ${RESET}"
+            read -r START  # Read the start of the IP range
+
+            echo -en "${CYAN} Enter the end of the IP range: ${RESET}"
+            read -r END  # Read the end of the IP range
+        }
+
+        # Function to prepare the output file
+        function prepare_output_file() {
+            TIMESTAMP=$(date +%d%H%M%b%Y)  # Generate a timestamp
+            OUTPUT_FILE="${BASE_ADDRESS}.${START}-${END}_${TIMESTAMP}.txt"  # Define the output file name
+
+            rm -rf "$OUTPUT_FILE"  # Remove the file if it exists
+            touch "$OUTPUT_FILE"  # Create a new empty file
+        }
+
+        # Function to perform reverse DNS lookups
+        function perform_reverse_dns() {
+            echo -e "${YELLOW} Performing reverse DNS lookups for range: ${BASE_ADDRESS}.${START}-${END} ${RESET}"
+            for RANGE in $(seq "$START" "$END"); do
+                # Query the PTR record and filter the result
+                host -t ptr "${BASE_ADDRESS}.${RANGE}" \
+                    | cut -d ' ' -f5 \
+                    | grep -v '.ip-' >> "$OUTPUT_FILE"
+            done
+        }
+
+        # Function to display results
+        function display_results() {
+            echo -e "${GREEN} Reverse DNS lookup results saved to: $OUTPUT_FILE ${RESET}"
+            echo -e "${CYAN}=== Results ===${RESET}"
+            cat "$OUTPUT_FILE"  # Display the contents of the output file
+        }
+
+        # Main workflow for the reverse DNS lookup
+        function reverse_dns_workflow() {
+            
+            sub_menu;  # Display the sub-menu for Reverse DNS Lookup
+            prompt_user_inputs  # Prompt the user for inputs
+            prepare_output_file  # Prepare the output file
+            perform_reverse_dns  # Perform reverse DNS lookups
+            display_results  # Display the results to the user
+
+            # Wait for the user to press ENTER before returning to the main menu
+            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+            read -r 2>/dev/null
+            main_menu  # Return to the main menu
+        }
+
+        # Execute the main workflow
+        reverse_dns_workflow
     }
+
     # Define a função viii_recon_dns para realizar uma reconhecimento de DNS
     function viii_recon_dns(){
         # Conta o total de linhas no arquivo de lista de subdomínios
