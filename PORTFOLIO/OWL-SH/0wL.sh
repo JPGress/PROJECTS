@@ -1006,13 +1006,14 @@
         # Ensure proper legal and ethical practices are followed while using this script.
     
     function v_dns_zt() {
+        clear;
         ascii_banner_art;
         subtitle;
-        # Display a title for the DNS Zone Transfer operation
-        echo "DNS Zone Transfer"
+        
+        echo "DNS Zone Transfer" # Display a title for the DNS Zone Transfer operation
 
         # Prompt the user to enter the target domain for the DNS operation
-        echo "Enter the target domain or URL"
+        echo -en "Enter the target domain or URL"
         read -r TARGET  # Read user input and store it in the TARGET variable
 
         # Fetch the nameservers (NS) for the specified target domain
