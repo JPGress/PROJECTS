@@ -177,6 +177,14 @@
         subtitle;  # Display a subtitle
     }
 
+    function exit_to_main_menu(){
+        # Wait for the user to press ENTER before returning to the main menu
+        echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+        read -r 2>/dev/null
+        main_menu  # Return to the main menu
+        exit 0  # Exit the script
+    }
+
 
 #* MAIN MENU ########################
     # Function: Main menu
@@ -1287,10 +1295,6 @@
             perform_reverse_dns  # Perform reverse DNS lookups
             display_results  # Display the results to the user
 
-            # Wait for the user to press ENTER before returning to the main menu
-            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-            read -r 2>/dev/null
-            main_menu  # Return to the main menu
         }
 
         # Execute the main workflow
