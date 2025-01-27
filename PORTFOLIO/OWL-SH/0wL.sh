@@ -211,7 +211,7 @@
             subtitle; # Display a subtitle
             
             # Display numbered menu options
-            echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
+            echo -e "${MAGENTA} 1 - Portscan (netcat) ${RESET}" 
             echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
             echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
             echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
