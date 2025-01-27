@@ -207,6 +207,9 @@
         function display_main_menu() {
             clear; # Clears the terminal screen
             ascii_banner_art; # Call ASCII banner art
+            echo -e "${GRAY} Select an option by entering the corresponding number.${RESET}"
+            subtitle; # Display a subtitle
+            
 
             # Display numbered menu options
             echo -e "${MAGENTA} 1 - Portscan ${RESET}" 
