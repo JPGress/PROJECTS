@@ -1038,8 +1038,7 @@
         done
 
         # Wait for the user to press Enter before returning to the main menu
-        echo -e "${GRAY} Press ENTER to continue.${RESET}"
-        read -r 2> /dev/null
+        pause_script;
 
         # Return to the main menu
         main_menu
