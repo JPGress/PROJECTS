@@ -1016,7 +1016,7 @@
         subtitle;
 
         # Prompt the user to enter the target domain for the DNS operation
-        echo -en "Enter the target domain or URL"
+        echo -en "${RED} Enter the target domain or URL: ${RESET}"
         read -r TARGET  # Read user input and store it in the TARGET variable
 
         # Fetch the nameservers (NS) for the specified target domain
