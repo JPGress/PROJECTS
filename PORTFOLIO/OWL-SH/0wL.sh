@@ -973,86 +973,94 @@
 
     }
 
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor
+    # Function: Perform DNS Zone Transfer for reconnaissance
     function v_dns_zt() {
         # v_dns_zt - Perform DNS Zone Transfer for reconnaissance
             #
             # Description:
-            # This script automates a DNS Zone Transfer operation, which attempts to retrieve all DNS records from a target's DNS server.
-            # It performs the following operations:
-            # 1. Prompts the user for the target domain.
-            # 2. Fetches the nameservers (NS) associated with the domain.
-            # 3. Attempts a zone transfer on each nameserver found to list the DNS records.
+            # This script automates a DNS Zone Transfer (a DNS recon technique) to attempt retrieval of all DNS zone records 
+            # from the target's DNS server. It is a useful reconnaissance step when exploring the DNS structure of a domain.
+            # 
+            # Steps:
+            # 1. Prompts the user to input the target domain or URL (e.g., example.com).
+            # 2. Retrieves the nameservers (NS records) for the specified domain.
+            # 3. Iterates over each nameserver and attempts a DNS Zone Transfer.
             #
             # Dependencies:
-            # - `host`: To query DNS records and attempt zone transfers.
+            # - `host`: A tool used to query DNS records and perform the zone transfer.
+            #
+            # Notes:
+            # - Ensure this script is used only for ethical purposes with proper authorization.
+            # - Zone transfers may fail if DNS servers are configured securely to block unauthorized access.
             #
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
-            # Last Updated: 2025-01-25
-            # Version: 1.0
-            #
-            # Notes:
-            # - This script is intended for ethical testing only. Ensure you have permission to test the target domain.
-            # - DNS Zone Transfer attempts are typically restricted by secure DNS configurations.
+            # Last Updated: 2025-01-26
+            # Version: 1.1
             #
             # Example usage:
             # - Input: example.com
             # - Output: Lists the DNS zone records if the transfer is successful.
             #
-            # Example result:
-            # - Target: example.com
+            # Example results:
             # - Nameserver: ns1.example.com
             #   Zone Records:
             #   - A records
             #   - MX records
             #   - TXT records
             #
-            # Ensure proper legal and ethical practices are followed while using this script.
-        function dns_zt_main_menu(){ 
-            clear;
-            ascii_banner_art;
-            echo -e "${MAGENTA} DNS Zone Transfer ${RESET}" # Display a title for the DNS Zone Transfer operation
-            subtitle;
-            # Prompt the user to enter the target domain for the DNS operation
-            echo -en "${RED} Enter the target domain or URL: ${RESET}"
-            read -r TARGET  # Read user input and store it in the TARGET variable
-        }
+            # Disclaimer:
+            # - Unauthorized use of this script is prohibited. Always ensure you have explicit permission before testing.
         
-        function dnz_zt_check(){
-            # Fetch the nameservers (NS) for the specified target domain
+        # Function: Display menu to collect user input
+        function dns_zt_main_menu() {
+            clear;  # Clear the terminal for a clean interface
+            ascii_banner_art;  # Display an ASCII banner
+            echo -e "${MAGENTA} DNS Zone Transfer ${RESET}"  # Show the operation's name
+            subtitle;  # Add a decorative subtitle
+            echo -en "${RED} Enter the target domain or URL: ${RESET}"  # Ask for the target domain
+            read -r TARGET  # Store user input in the TARGET variable
+        }
+
+        # Function: Validate if nameservers exist for the target
+        function dnz_zt_check() {
+            # Fetch the nameservers (NS records) for the domain
             NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
 
             # Check if any nameservers were found
             if [[ -z "$NS_SERVERS" ]]; then
-                echo "No nameservers found for the domain $TARGET."
+                # If no nameservers are found, notify the user and return to the main menu
+                echo -e "${RED} No nameservers found for the domain $TARGET. ${RESET}"
                 echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                read -r 2> /dev/null
-                main_menu  # Return to the main menu
-                return
+                read -r 2> /dev/null  # Wait for the user to press Enter
+                main_menu;  # Redirect back to the main menu
+                return  # Exit the function to prevent further execution
             fi
         }
-        
-        function dns_zt_attack(){
-            # Iterate over the nameservers and attempt a DNS zone transfer for each
+
+        # Function: Attempt a DNS Zone Transfer on each nameserver
+        function dns_zt_attack() {
+            # Loop through each nameserver and perform the zone transfer attempt
             for SERVER in $NS_SERVERS; do
-                echo "Attempting zone transfer on nameserver: $SERVER"
-                host -l -a "$TARGET" "$SERVER"  # Attempt the zone transfer and list DNS records
+                echo -e "${CYAN} Attempting zone transfer on nameserver: $SERVER ${RESET}"  # Notify the user of progress
+                host -l -a "$TARGET" "$SERVER"  # Run the zone transfer command for the current nameserver
             done
         }
 
-        function dns_zt_workflow(){
-            dns_zt_main_menu;
-            dnz_zt_check;
-            dns_zt_attack;
-            pause_script;
-            main_menu;
+        # Function: Control the entire workflow of the DNS Zone Transfer operation
+        function dns_zt_workflow() {
+            dns_zt_main_menu;  # Collect user input
+            dnz_zt_check;  # Validate nameservers
+            dns_zt_attack;  # Perform the attack
+            pause_script;  # Pause and wait for user input before returning
+            main_menu;  # Return to the main menu
         }
 
+        # Execute the DNS Zone Transfer workflow
         dns_zt_workflow;
-
     }
 
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor
 
     # Define a função vi_Subdomain_takeover para realizar um ataque de Subdomain Takeover
     function vi_Subdomain_takeover(){
