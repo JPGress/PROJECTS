@@ -22,7 +22,11 @@
     # Reset terminal color
     RESET="\e[0m"
 
+    # Version
     VERSION="0.9.3"
+
+    # Author
+    AUTHOR="JPGress a.k.a R3v4N||0wL"
 
 #* SUPPORT FUNCTIONS ########################
     # Function: Enable Proxychains
@@ -69,7 +73,7 @@
     function author_version() {
         echo -e "${RED}                                                                           sh v $VERSION ${RESET}"
         echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
-        echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
+        echo -e "${GRAY}+                          Created by $AUTHOR                       +${RESET}"
         subtitle;
     }
 
