@@ -330,7 +330,7 @@
         main_menu_workflow
     }
 
-#* FUNÇÕES DO MENU ########################
+#* SCRIPTS ########################
     # Function: Script to perform a port scan on a network using netcat
     function i_portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
