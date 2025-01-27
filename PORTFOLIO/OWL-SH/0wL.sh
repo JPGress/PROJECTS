@@ -181,7 +181,7 @@
         echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
         echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 5 - DNS Zone Transfer ${RESET}" 
+        echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
         echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
         echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
         echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
@@ -1006,6 +1006,8 @@
         # Ensure proper legal and ethical practices are followed while using this script.
     
     function v_dns_zt() {
+        ascii_banner_art;
+        subtitle;
         # Display a title for the DNS Zone Transfer operation
         echo "DNS Zone Transfer"
 
