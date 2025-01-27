@@ -1009,8 +1009,8 @@
         clear;
         ascii_banner_art;
         subtitle;
-        
-        echo "DNS Zone Transfer" # Display a title for the DNS Zone Transfer operation
+        echo -e "${MAGENTA} DNS Zone Transfer ${RESET}" # Display a title for the DNS Zone Transfer operation
+        subtitle;
 
         # Prompt the user to enter the target domain for the DNS operation
         echo -en "Enter the target domain or URL"
