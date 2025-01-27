@@ -22,6 +22,8 @@
     # Reset terminal color
     RESET="\e[0m"
 
+    VERSION="0.9.3"
+
 #* SUPPORT FUNCTIONS ########################
     # Function: Enable Proxychains
     function enable_proxychains() {
@@ -65,7 +67,7 @@
     }
 
     function author_version() {
-        echo -e "${RED}                                                                            sh-v 0.9.1 ${RESET}"
+        echo -e "${RED}                                                                           sh v $VERSION ${RESET}"
         echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
         echo -e "${GRAY}+                          Created by JPGress a.k.a R3v4N||0wL                       +${RESET}"
         subtitle;
@@ -186,7 +188,7 @@
         echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
         echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
         echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
-        echo -e "${GRAY}${BG_BLACK} 6 - Subdomain Takeover ${RESET}" 
+        echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
         echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
         echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
         echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
@@ -243,7 +245,7 @@
             3) iii_google_hacking ;; # Perform Google Hacking
             4) iv_metadata_analysis ;; # Analyze metadata from the Internet
             5) v_dns_zt;; # Perform DNS Zone Transfer
-            6) vi_subdomain_takeover ;; # Perform Subdomain Takeover
+            6) vi_Subdomain_takeover ;; # Perform Subdomain Takeover
             7) disabled ;; # DISABLED FOR MAINTENANCE -> vii_reverse_dns ;;
             8) viii_dns_recon ;; # DNS Reconnaissance
             9) disabled ;; # DISABLED - REQUIRES REFACTORING -> ix_google_general_query ;;
@@ -1060,32 +1062,98 @@
         dns_zt_workflow;
     }
 
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
 
-    # Define a função vi_Subdomain_takeover para realizar um ataque de Subdomain Takeover
-    function vi_Subdomain_takeover(){
-        # Solicita ao usuário o host para o ataque
-        echo "Digite o host para o ataque de Subdomain takeover"
-        read -r HOST
+    # Function: Perform a Subdomain Takeover check
+    function vi_Subdomain_takeover() {
+        # vi_Subdomain_takeover - Perform a Subdomain Takeover check
+            #
+            # Description:
+            # This script automates the process of detecting potential Subdomain Takeover vulnerabilities.
+            # It works by:
+            # 1. Prompting the user to input the target domain and a file containing subdomains to test.
+            # 2. Iterating over each subdomain in the provided file.
+            # 3. Checking the CNAME records of each subdomain to identify potential takeovers.
+            #
+            # Dependencies:
+            # - `host`: Used to query CNAME records for subdomains.
+            #
+            # Notes:
+            # - Ensure you have the proper permissions and ethical clearance before testing any domain.
+            # - The file containing subdomains should have one subdomain per line.
+            #
+            # Example usage:
+            # - Input: Target domain: example.com
+            #         Subdomain file: subdomains.txt
+            # - Output: Lists any subdomains with a CNAME record that indicates a possible takeover vulnerability.
+            #
+            # Example result:
+            # - Subdomain: vulnerable.example.com
+            #   CNAME: alias-for-unused-service.s3.amazonaws.com
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.0
+            #
+            # Author: R3v4N (w/GPT)
+            #
         
-        # Solicita ao usuário o arquivo contendo os domínios a serem testados
-        echo "Aponte para o arquivo com os domínios a serem testados."
-        read -r FILE
         
-        # Define o comando a ser usado para verificar os CNAME dos subdomínios
-        COMMAND="host -t cname"
-        
-        # Itera sobre cada palavra no arquivo de domínios e executa o comando de verificação
-        for WORD in $($FILE); do
-            $COMMAND "$WORD"."$HOST" | grep "alias for"
-        done
-        
-        # Aguarda o usuário pressionar Enter para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-        
-        main_menu; # Retorna ao menu principal
+        # Function: Collect user inputs
+        function collect_inputs() {
+            clear;  # Clear the terminal screen for clean output
+            ascii_banner_art;  # Display ASCII art banner
+            echo -e "${MAGENTA} Subdomain Takeover ${RESET}"
+            subtitle;  # Display a subtitle
+
+            # Prompt for the target domain
+            echo -en "${CYAN} Enter the target domain (e.g., example.com): ${RESET}"
+            read -r HOST  # Store the target domain in the HOST variable
+
+            # Prompt for the file containing subdomains
+            echo -en "${CYAN} Enter the file containing subdomains (one per line): ${RESET}"
+            read -r FILE  # Store the file path in the FILE variable
+
+            # Validate that the file exists and is not empty
+            if [[ ! -f "$FILE" || ! -s "$FILE" ]]; then
+                echo -e "${RED} Error: The specified file does not exist or is empty. ${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2> /dev/null
+                main_menu
+                return 1
+            fi
+        }
+
+        # Function: Perform Subdomain Takeover check
+        function perform_takeover_check() {
+            # Define the command to check CNAME records
+            COMMAND="host -t cname"
+
+            # Iterate over each subdomain in the file
+            echo -e "${CYAN} Checking for potential Subdomain Takeover vulnerabilities... ${RESET}"
+            while IFS= read -r WORD; do
+                RESULT=$($COMMAND "$WORD"."$HOST" 2>/dev/null | grep "alias for")
+                if [[ -n "$RESULT" ]]; then
+                    # Print results if a CNAME alias is found
+                    echo -e "${YELLOW} Subdomain: ${RESET}$WORD.$HOST"
+                    echo -e "${GREEN} CNAME: ${RESET}$RESULT"
+                fi
+            done < "$FILE"
+        }
+
+        # Function: Control the workflow
+        function takeover_workflow() {
+            collect_inputs || return  # Collect inputs and return if validation fails
+            perform_takeover_check  # Perform the subdomain takeover checks
+            pause_script  # Pause and wait for the user before returning to the menu
+            main_menu  # Return to the main menu
+        }
+
+        # Execute the workflow
+        takeover_workflow
     }
+
+
     # Define a função vii_rev_dns para realizar uma pesquisa de DNS reverso
     function vii_rev_dns(){
         echo "Dns Reverse"
