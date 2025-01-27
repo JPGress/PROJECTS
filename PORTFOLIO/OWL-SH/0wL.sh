@@ -1301,6 +1301,7 @@
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
+    
     # Define a função viii_recon_dns para realizar uma reconhecimento de DNS
     function viii_recon_dns(){
         # Conta o total de linhas no arquivo de lista de subdomínios
@@ -1334,6 +1335,7 @@
         
         main_menu; # Retorna ao menu principal
     }
+
     # Define a função ix_consulta_geral_google para realizar uma consulta geral no Google
     function ix_consulta_geral_google(){
         echo "Consulta Geral Google" # Exibe mensagem indicando o início da consulta
@@ -1464,427 +1466,433 @@
         read -r 2> /dev/null
         main_menu;
     }
+
     # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
     function xii_comandos_uteis_linux(){
-    # limpa a tela
-    clear
+        # limpa a tela
+        clear
 
-    # exibe um cabeçalho
-    echo
-    echo ">>>>>>>>>> COMANDOS LINUX <<<<<<<<<<"
-    echo
+        # exibe um cabeçalho
+        echo
+        echo ">>>>>>>>>> COMANDOS LINUX <<<<<<<<<<"
+        echo
 
-    # exibe uma seção com comandos para gerenciamento de rede
-    echo -e "${RED}# Comandos uteis na gerencia de redes${RESET}"
-    echo
+        # exibe uma seção com comandos para gerenciamento de rede
+        echo -e "${RED}# Comandos uteis na gerencia de redes${RESET}"
+        echo
 
-    # exibe a sintaxe básica para os comandos
-    echo "Sintaxe -> comando (suite)"
-    echo
+        # exibe a sintaxe básica para os comandos
+        echo "Sintaxe -> comando (suite)"
+        echo
 
-    ### Listar tabela ARP
+        ### Listar tabela ARP
 
-    # exibe a seção para o comando arp
-    echo -e "${RED}## Listar tabela ARP${RESET}"
-    echo
+        # exibe a seção para o comando arp
+        echo -e "${RED}## Listar tabela ARP${RESET}"
+        echo
 
-    # mostra como usar o comando arp (Net-tools & IP route) para listar a tabela ARP
-    echo "arp -a (Net-tools & IP route)"
-    echo
+        # mostra como usar o comando arp (Net-tools & IP route) para listar a tabela ARP
+        echo "arp -a (Net-tools & IP route)"
+        echo
 
-    ### Exibir IPs configurados
+        ### Exibir IPs configurados
 
-    # exibe a seção para os comandos ifconfig e ip addr
-    echo -e "${RED}## Exibir Ips configurados${RESET}"
-    echo
+        # exibe a seção para os comandos ifconfig e ip addr
+        echo -e "${RED}## Exibir Ips configurados${RESET}"
+        echo
 
-    # mostra como usar o comando ifconfig (Net-tools) para exibir IPs configurados
-    echo "ifconfig -a (Net-tools)"
+        # mostra como usar o comando ifconfig (Net-tools) para exibir IPs configurados
+        echo "ifconfig -a (Net-tools)"
 
-    # mostra como usar o comando ip addr (IP route) para exibir IPs configurados
-    echo "ip addr (IP route)"
-    echo
+        # mostra como usar o comando ip addr (IP route) para exibir IPs configurados
+        echo "ip addr (IP route)"
+        echo
 
-    ### Ativar/Desativar uma interface
+        ### Ativar/Desativar uma interface
 
-    # exibe a seção para os comandos ifconfig e ip link
-    echo -e "${RED}## Ativar/Desativar uma interface${RESET}"
-    echo
+        # exibe a seção para os comandos ifconfig e ip link
+        echo -e "${RED}## Ativar/Desativar uma interface${RESET}"
+        echo
 
-    # mostra como usar o comando ifconfig eth0 up/down (Net-tools) para ativar/desativar a interface eth0
-    echo "ifconfig eth0 up/down (Net-tools)"
+        # mostra como usar o comando ifconfig eth0 up/down (Net-tools) para ativar/desativar a interface eth0
+        echo "ifconfig eth0 up/down (Net-tools)"
 
-    # mostra como usar o comando ip link set eth0 up/down (IP route) para ativar/desativar a interface eth0
-    echo "ip link set eth0 up/down (IP route)"
+        # mostra como usar o comando ip link set eth0 up/down (IP route) para ativar/desativar a interface eth0
+        echo "ip link set eth0 up/down (IP route)"
 
-    # observação sobre a interface eth0
-    echo -e "${GRAY}ps: eth0 refere-se a sua interface de rede. Para saber qual as suas interfaces, execute um dos comandos em 'Exibir Ips configurados'${RESET}"
-    echo
+        # observação sobre a interface eth0
+        echo -e "${GRAY}ps: eth0 refere-se a sua interface de rede. Para saber qual as suas interfaces, execute um dos comandos em 'Exibir Ips configurados'${RESET}"
+        echo
 
-    ### Exibir conexões ativas
+        ### Exibir conexões ativas
 
-    # exibe a seção para os comandos netstat e ss
-    echo -e "${RED}## Exibe conexões ativas${RESET}"
-    echo
+        # exibe a seção para os comandos netstat e ss
+        echo -e "${RED}## Exibe conexões ativas${RESET}"
+        echo
 
-    # mostra como usar o comando netstat (Net-tools) para exibir conexões ativas
-    echo "netstat (Net-tools)"
+        # mostra como usar o comando netstat (Net-tools) para exibir conexões ativas
+        echo "netstat (Net-tools)"
 
-    # mostra como usar o comando ss (IP route) para exibir conexões ativas
-    echo "ss (IP route)"
+        # mostra como usar o comando ss (IP route) para exibir conexões ativas
+        echo "ss (IP route)"
 
-    # observação sobre o comando ss para detectar shells indesejadas
-    echo -e "${GRAY}ps: para (talvez) saber se o chineizinho tem uma shell no seu computador, execute o comando 'ss -lntp'${RESET}"
-    echo
+        # observação sobre o comando ss para detectar shells indesejadas
+        echo -e "${GRAY}ps: para (talvez) saber se o chineizinho tem uma shell no seu computador, execute o comando 'ss -lntp'${RESET}"
+        echo
 
-    ### Exibir Rotas
+        ### Exibir Rotas
 
-    # exibe a seção para os comandos route e ip route
-    echo -e "${RED}## Exibe Rotas${RESET}"
-    echo
+        # exibe a seção para os comandos route e ip route
+        echo -e "${RED}## Exibe Rotas${RESET}"
+        echo
 
-    # mostra como usar o comando route (Net-tools) para exibir rotas
-    echo "route (Net-tools)"
+        # mostra como usar o comando route (Net-tools) para exibir rotas
+        echo "route (Net-tools)"
 
-    # mostra como usar o comando ip route (IP route) para exibir rotas
-    echo "ip route (IP route)"
-    echo
+        # mostra como usar o comando ip route (IP route) para exibir rotas
+        echo "ip route (IP route)"
+        echo
 
-    # exibe uma seção com informações sobre configurações de placa de rede
-    echo -e "${RED}# Configurações de Placa de Rede${RESET}"
-    echo
+        # exibe uma seção com informações sobre configurações de placa de rede
+        echo -e "${RED}# Configurações de Placa de Rede${RESET}"
+        echo
 
-    ### Configurações de rede em Debian
+        ### Configurações de rede em Debian
 
-    # explica como configurar a rede de forma persistente em sistemas derivados do Debian
-    echo -e "Nos sistemas derivados do ${RED}Debian${RESET}, a configuração persistente de rede é feita no arquivo ${RED}/etc/network/interfaces${RESET}"
-    echo
+        # explica como configurar a rede de forma persistente em sistemas derivados do Debian
+        echo -e "Nos sistemas derivados do ${RED}Debian${RESET}, a configuração persistente de rede é feita no arquivo ${RED}/etc/network/interfaces${RESET}"
+        echo
 
-    ### Configurações de rede em Red Hat Linux
+        ### Configurações de rede em Red Hat Linux
 
-    # explica como configurar a rede de forma persistente em sistemas derivados do Red Hat Linux
-    echo -e "Nos sistemas derivados do ${RED}Red Hat Linux${RESET}, a configuração persistente de rede é configurada nos arquivos encontrados no diretório ${RED}/etc/sysconfig/network-scripts${RESET}"
-    echo
+        # explica como configurar a rede de forma persistente em sistemas derivados do Red Hat Linux
+        echo -e "Nos sistemas derivados do ${RED}Red Hat Linux${RESET}, a configuração persistente de rede é configurada nos arquivos encontrados no diretório ${RED}/etc/sysconfig/network-scripts${RESET}"
+        echo
 
-    # pausa o script até que o usuário pressione ENTER
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    # chama a função main_menu para retornar ao menu principal
-    main_menu;
+        # chama a função main_menu para retornar ao menu principal
+        main_menu;
     }
+    
     # Define a função xiii_exemplos_find para explicar sobre o comando find
     function xiii_exemplos_find(){
-    # limpa a tela
-    clear
+        # limpa a tela
+        clear
 
-    # exibe um cabeçalho
-    echo
-    echo ">>>>>>>>>> COMANDOS LINUX - FIND & SEUS EXEMPLOS <<<<<<<<<<"
-    echo
+        # exibe um cabeçalho
+        echo
+        echo ">>>>>>>>>> COMANDOS LINUX - FIND & SEUS EXEMPLOS <<<<<<<<<<"
+        echo
 
-    ### Listar todos os arquivos em um diretório
+        ### Listar todos os arquivos em um diretório
 
-    # exibe a descrição e o comando para listar todos os arquivos em um diretório
-    echo -e "${RED}# exibe uma lista com todos os arquivos localizados em um determinado diretório, incluindo os arquivos armazenados nos subdiretórios.${RESET}"
-    echo -e "$ find ."
-    echo
+        # exibe a descrição e o comando para listar todos os arquivos em um diretório
+        echo -e "${RED}# exibe uma lista com todos os arquivos localizados em um determinado diretório, incluindo os arquivos armazenados nos subdiretórios.${RESET}"
+        echo -e "$ find ."
+        echo
 
-    ### Buscar por arquivos com maxdepth
+        ### Buscar por arquivos com maxdepth
 
-    # exibe a descrição e o comando para buscar por arquivos com um nível máximo de subdiretórios (maxdepth)
-    echo -e "${RED}# Condição que define o nível de 'profundidade' na navegação dos subdiretórios por meio do maxdepth.${RESET}"
-    echo -e "$ find /etc -maxdepth 1 -name *.sh"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos com um nível máximo de subdiretórios (maxdepth)
+        echo -e "${RED}# Condição que define o nível de 'profundidade' na navegação dos subdiretórios por meio do maxdepth.${RESET}"
+        echo -e "$ find /etc -maxdepth 1 -name *.sh"
+        echo
 
-    ### Buscar por arquivos com nome específico
+        ### Buscar por arquivos com nome específico
 
-    # exibe a descrição e o comando para buscar por arquivos com nome específico usando curingas
-    echo -e "${RED}# Pesquisa por arquivos${RESET}"
-    echo -e "$ find ./test -type f -name <arquivo*>"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos com nome específico usando curingas
+        echo -e "${RED}# Pesquisa por arquivos${RESET}"
+        echo -e "$ find ./test -type f -name <arquivo*>"
+        echo
 
-    ### Buscar por diretórios com nome específico
+        ### Buscar por diretórios com nome específico
 
-    # exibe a descrição e o comando para buscar por diretórios com nome específico usando curingas
-    echo -e "${RED}# Pesquisa por diretórios${RESET}"
-    echo -e "$ find ./test -type d -name <diretorio*>"
-    echo
+        # exibe a descrição e o comando para buscar por diretórios com nome específico usando curingas
+        echo -e "${RED}# Pesquisa por diretórios${RESET}"
+        echo -e "$ find ./test -type d -name <diretorio*>"
+        echo
 
-    ### Buscar por arquivos ocultos
+        ### Buscar por arquivos ocultos
 
-    # exibe a descrição e o comando para buscar por arquivos ocultos
-    echo -e "${RED}# Pesquisa por arquivos ocultos${RESET}"
-    echo -e "$ find ~ -type f -name ".*""
-    echo
+        # exibe a descrição e o comando para buscar por arquivos ocultos
+        echo -e "${RED}# Pesquisa por arquivos ocultos${RESET}"
+        echo -e "$ find ~ -type f -name ".*""
+        echo
 
-    ### Buscar por arquivos com permissões específicas
+        ### Buscar por arquivos com permissões específicas
 
-    # exibe a descrição e o comando para buscar por arquivos com permissões específicas
-    echo -e "${RED}# Pesquisa por arquivos com determinadas permissões${RESET}"
-    echo -e "# find / -type f -perm 0740 -type f -exec ls -la {} 2>/dev/null \;"
-    echo
-    echo -e "${RED}# Pesquisa por arquivos com permissões SUID${RESET}"
-    echo -e "# find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos com permissões específicas
+        echo -e "${RED}# Pesquisa por arquivos com determinadas permissões${RESET}"
+        echo -e "# find / -type f -perm 0740 -type f -exec ls -la {} 2>/dev/null \;"
+        echo
+        echo -e "${RED}# Pesquisa por arquivos com permissões SUID${RESET}"
+        echo -e "# find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;"
+        echo
 
 
-    ### Buscar por arquivos do usuário específico
+        ### Buscar por arquivos do usuário específico
 
-    # exibe a descrição e o comando para buscar por arquivos do usuário específico
-    echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin${RESET}"
-    echo -e "$ find . –user msfadmin"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos do usuário específico
+        echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin${RESET}"
+        echo -e "$ find . –user msfadmin"
+        echo
 
-    ### Buscar por arquivos do usuário específico com extensão específica
+        ### Buscar por arquivos do usuário específico com extensão específica
 
-    # exibe a descrição e o comando para buscar por arquivos do usuário específico com extensão específica
-    echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin de extensão .txt${RESET}"
-    echo -e "$ find . –user msfadmin –name ‘*.txt’"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos do usuário específico com extensão específica
+        echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin de extensão .txt${RESET}"
+        echo -e "$ find . –user msfadmin –name ‘*.txt’"
+        echo
 
-    ### Buscar por arquivos do grupo específico
+        ### Buscar por arquivos do grupo específico
 
-    # exibe a descrição e o comando para buscar por arquivos do grupo específico
-    echo -e "${RED}# Pesquisa por arquivos do grupo adm${RESET}"
-    echo -e "# find . –group adm"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos do grupo específico
+        echo -e "${RED}# Pesquisa por arquivos do grupo adm${RESET}"
+        echo -e "# find . –group adm"
+        echo
 
-    ### Buscar por arquivos modificados há N dias
+        ### Buscar por arquivos modificados há N dias
 
-    # exibe a descrição e o comando para buscar por arquivos modificados há N dias
-    echo -e "${RED}# Pesquisa por arquivos modificados a N dias${RESET}"
-    echo -e "find / -mtime 5"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos modificados há N dias
+        echo -e "${RED}# Pesquisa por arquivos modificados a N dias${RESET}"
+        echo -e "find / -mtime 5"
+        echo
 
-    ### Buscar por arquivos acessados há N dias
+        ### Buscar por arquivos acessados há N dias
 
-    # exibe a descrição e o comando para buscar por arquivos acessados há N dias
-    echo -e "${RED}# Pesquisa por arquivos acessados a N dias${RESET}"
-    echo -e "# find / -atime 5"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos acessados há N dias
+        echo -e "${RED}# Pesquisa por arquivos acessados a N dias${RESET}"
+        echo -e "# find / -atime 5"
+        echo
 
-    ### Buscar e executar comando com arquivos encontrados
+        ### Buscar e executar comando com arquivos encontrados
 
-    # exibe a descrição e o comando para buscar por arquivos e executar um comando com cada um deles
-    echo -e "${RED}# Realiza a busca e executa comando com entradas encontradas.${RESET}"
-    echo -e "# find / -name "*.pdf" -type f -exec ls -lah {} \;"
-    echo
+        # exibe a descrição e o comando para buscar por arquivos e executar um comando com cada um deles
+        echo -e "${RED}# Realiza a busca e executa comando com entradas encontradas.${RESET}"
+        echo -e "# find / -name "*.pdf" -type f -exec ls -lah {} \;"
+        echo
 
-    # pausa o script até que o usuário pressione ENTER
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    # chama a função main_menu para retornar ao menu principal
-    main_menu;
+        # chama a função main_menu para retornar ao menu principal
+        main_menu;
     }
+
     # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no debian
     function xiv_debian_memento_troca_senha_root(){
-    # limpa a tela
-    clear
+        # limpa a tela
+        clear
 
-    # exibe um cabeçalho informativo
-    echo
-    echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Debian e derivados ###${RESET}"
-    echo
+        # exibe um cabeçalho informativo
+        echo
+        echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Debian e derivados ###${RESET}"
+        echo
 
-    ### Passo 1: Reiniciar o computador
+        ### Passo 1: Reiniciar o computador
 
-    # instrui o usuário a reiniciar o computador alvo
-    echo -e " 1. ${RED}Reiniciar o computador alvo;${RESET}"
+        # instrui o usuário a reiniciar o computador alvo
+        echo -e " 1. ${RED}Reiniciar o computador alvo;${RESET}"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 2: Editar o menu do GRUB
+        ### Passo 2: Editar o menu do GRUB
 
-    # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
-    echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
+        # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
+        echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 3: Localizar e modificar a linha de comando
+        ### Passo 3: Localizar e modificar a linha de comando
 
-    # instrui o usuário a localizar a linha que inicia com "linux boot..." e substituir "ro quiet" por "init=/bin/bash rw"
-    echo -e " 3. Procurar pela linha que inicia com ${RED}'linux boot…${RESET}', substituir ${RED}'ro quiet${RESET}' ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
+        # instrui o usuário a localizar a linha que inicia com "linux boot..." e substituir "ro quiet" por "init=/bin/bash rw"
+        echo -e " 3. Procurar pela linha que inicia com ${RED}'linux boot…${RESET}', substituir ${RED}'ro quiet${RESET}' ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 4: Salvar as alterações e inicializar o sistema
+        ### Passo 4: Salvar as alterações e inicializar o sistema
 
-    # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
-    echo -e " 4. Pressione ${RED}'Ctrl+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
+        # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
+        echo -e " 4. Pressione ${RED}'Ctrl+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 5: Definir a nova senha de root
+        ### Passo 5: Definir a nova senha de root
 
-    # instrui o usuário a definir a nova senha de root após o sistema inicializar
-    echo -e " 5. Após a inicialização do sistema, execute ${RED}'passwd root'${RESET} e digite a nova senha."
+        # instrui o usuário a definir a nova senha de root após o sistema inicializar
+        echo -e " 5. Após a inicialização do sistema, execute ${RED}'passwd root'${RESET} e digite a nova senha."
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 6: Reinicializar o sistema
+        ### Passo 6: Reinicializar o sistema
 
-    # instrui o usuário a reinicializar o sistema após definir a nova senha
-    echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'reboot -f'${RESET}"
+        # instrui o usuário a reinicializar o sistema após definir a nova senha
+        echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'reboot -f'${RESET}"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Mensagem de confirmação
+        ### Mensagem de confirmação
 
-    # exibe uma mensagem informando que a senha do root foi redefinida
-    echo
-    echo -e "${RED}### NESSE MOMENTO, SE DEU TUDO CERTO, VOCÊ POSSUI A SENHA DO ROOT USER ###${RESET}"
-    echo
+        # exibe uma mensagem informando que a senha do root foi redefinida
+        echo
+        echo -e "${RED}### NESSE MOMENTO, SE DEU TUDO CERTO, VOCÊ POSSUI A SENHA DO ROOT USER ###${RESET}"
+        echo
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    # volta para o menu principal
-    main_menu;
+        # volta para o menu principal
+        main_menu;
     }
+    
     # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no redhat
     function xv_redhat_memento_troca_senha_root(){
-    # limpa a tela
-    clear
+        # limpa a tela
+        clear
 
-    # exibe um cabeçalho informativo
-    echo
-    echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Red Hat e derivados ###${RESET}"
-    echo
+        # exibe um cabeçalho informativo
+        echo
+        echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Red Hat e derivados ###${RESET}"
+        echo
 
-    ### Passo 1: Reiniciar o computador
+        ### Passo 1: Reiniciar o computador
 
-    # instrui o usuário a reiniciar o computador alvo
-    echo -e " 1. ${RED}Reiniciar o computador alvo${RESET}"
+        # instrui o usuário a reiniciar o computador alvo
+        echo -e " 1. ${RED}Reiniciar o computador alvo${RESET}"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 2: Editar o menu do GRUB
+        ### Passo 2: Editar o menu do GRUB
 
-    # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
-    echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
+        # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
+        echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 3: Localizar e modificar a linha de comando no CentOS/Fedora
+        ### Passo 3: Localizar e modificar a linha de comando no CentOS/Fedora
 
-    # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en_US.UTF-8" por "init=/bin/bash rw" (para CentOS/Fedora)
-    echo -e " 3. Procurar pela linha que inicia com ${RED}'linux16...'${RESET}, substituir ${RED}'rghb quiet LANG=en_US.UTF-8${RESET} ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
+        # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en_US.UTF-8" por "init=/bin/bash rw" (para CentOS/Fedora)
+        echo -e " 3. Procurar pela linha que inicia com ${RED}'linux16...'${RESET}, substituir ${RED}'rghb quiet LANG=en_US.UTF-8${RESET} ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 4: Salvar as alterações e inicializar o sistema
+        ### Passo 4: Salvar as alterações e inicializar o sistema
 
-    # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
-    echo -e " 4. Pressione ${RED}'Ctrl\+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
+        # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
+        echo -e " 4. Pressione ${RED}'Ctrl\+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 5: Desabilitar o SELinux (somente CentOS/Fedora)
+        ### Passo 5: Desabilitar o SELinux (somente CentOS/Fedora)
 
-    # informa ao usuário que o SELinux precisa ser desabilitado (apenas para CentOS/Fedora)
-    echo -e " 5. Após a inicialização do sistema, temos que desabilitar o SELinux. Para isso, edite o arquivo ${RED}'/etc/selinux/config'${RESET} e substitua a opção ${RED}'enforcing'${RESET} por ${RED}'disable'${RESET};"
+        # informa ao usuário que o SELinux precisa ser desabilitado (apenas para CentOS/Fedora)
+        echo -e " 5. Após a inicialização do sistema, temos que desabilitar o SELinux. Para isso, edite o arquivo ${RED}'/etc/selinux/config'${RESET} e substitua a opção ${RED}'enforcing'${RESET} por ${RED}'disable'${RESET};"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 6: Reinicializar o sistema (somente CentOS/Fedora)
+        ### Passo 6: Reinicializar o sistema (somente CentOS/Fedora)
 
-    # instrui o usuário a reinicializar o sistema após desabilitar o SELinux (apenas para CentOS/Fedora)
-    echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'/sbin/halt –reboot \-f'${RESET}"
+        # instrui o usuário a reinicializar o sistema após desabilitar o SELinux (apenas para CentOS/Fedora)
+        echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'/sbin/halt –reboot \-f'${RESET}"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 7: Editar o menu do GRUB novamente (somente Rocky/Alma)
+        ### Passo 7: Editar o menu do GRUB novamente (somente Rocky/Alma)
 
-    # informa ao usuário que o menu do GRUB precisa ser editado novamente (apenas para Rocky/Alma)
-    echo -e " 7. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
+        # informa ao usuário que o menu do GRUB precisa ser editado novamente (apenas para Rocky/Alma)
+        echo -e " 7. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
 
-    # pausa o script até que o usuário pressione ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # pausa o script até que o usuário pressione ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    ### Passo 8: Localizar e modificar a linha de comando no Rocky/Alma
+        ### Passo 8: Localizar e modificar a linha de comando no Rocky/Alma
 
-    # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en
+        # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en
     }
+    
     # Definição da função xvi_vim_memento
     function xvi_vim_memento(){
-    # Limpa a tela
-    clear
+        # Limpa a tela
+        clear
 
-    # Exibe cabeçalho do lembrete de uso do Vim
-    echo -e "${GREEN}============= LEMBRETE DE USO DO VIM =============${RESET}"
-    echo
+        # Exibe cabeçalho do lembrete de uso do Vim
+        echo -e "${GREEN}============= LEMBRETE DE USO DO VIM =============${RESET}"
+        echo
 
-    # **Inserção de texto**
-    echo -e "${YELLOW}Inserção de texto:${RESET}"
-    echo -e "Pressione 'i' para entrar no modo de inserção."
+        # **Inserção de texto**
+        echo -e "${YELLOW}Inserção de texto:${RESET}"
+        echo -e "Pressione 'i' para entrar no modo de inserção."
 
-    # **Salvar e sair**
-    echo -e "\n${YELLOW}Salvar e sair:${RESET}"
-    echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':wq' para salvar e sair."
+        # **Salvar e sair**
+        echo -e "\n${YELLOW}Salvar e sair:${RESET}"
+        echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':wq' para salvar e sair."
 
-    # **Sair sem salvar**
-    echo -e "\n${YELLOW}Sair sem salvar:${RESET}"
-    echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':q!' para sair sem salvar."
+        # **Sair sem salvar**
+        echo -e "\n${YELLOW}Sair sem salvar:${RESET}"
+        echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':q!' para sair sem salvar."
 
-    # **Movimentação pelo texto**
-    echo -e "\n${YELLOW}Movimentação pelo texto:${RESET}"
-    echo -e "Use as teclas de seta ou as teclas 'h', 'j', 'k' e 'l' para mover o cursor."
+        # **Movimentação pelo texto**
+        echo -e "\n${YELLOW}Movimentação pelo texto:${RESET}"
+        echo -e "Use as teclas de seta ou as teclas 'h', 'j', 'k' e 'l' para mover o cursor."
 
-    # **Excluir texto**
-    echo -e "\n${YELLOW}Excluir texto:${RESET}"
-    echo -e "Pressione 'x' para excluir o caractere sob o cursor."
+        # **Excluir texto**
+        echo -e "\n${YELLOW}Excluir texto:${RESET}"
+        echo -e "Pressione 'x' para excluir o caractere sob o cursor."
 
-    # **Desfazer e refazer**
-    echo -e "\n${YELLOW}Desfazer e Refazer:${RESET}"
-    echo -e "Pressione 'u' para desfazer e 'Ctrl + r' para refazer."
+        # **Desfazer e refazer**
+        echo -e "\n${YELLOW}Desfazer e Refazer:${RESET}"
+        echo -e "Pressione 'u' para desfazer e 'Ctrl + r' para refazer."
 
-    # **Buscar e substituir**
-    echo -e "\n${YELLOW}Buscar e Substituir:${RESET}"
-    echo -e "Digite '/' para iniciar a busca. Para substituir, use ':s/palavra/nova_palavra/g'."
+        # **Buscar e substituir**
+        echo -e "\n${YELLOW}Buscar e Substituir:${RESET}"
+        echo -e "Digite '/' para iniciar a busca. Para substituir, use ':s/palavra/nova_palavra/g'."
 
-    # **Ajuda**
-    echo -e "\n${YELLOW}Ajuda:${RESET}"
-    echo -e "Digite ':help' para obter ajuda."
+        # **Ajuda**
+        echo -e "\n${YELLOW}Ajuda:${RESET}"
+        echo -e "Digite ':help' para obter ajuda."
 
-    # Exibe rodapé do lembrete de uso do Vim
-    echo -e "\n${GREEN}===================================================${RESET}"
-    echo
+        # Exibe rodapé do lembrete de uso do Vim
+        echo -e "\n${GREEN}===================================================${RESET}"
+        echo
 
-    # Mensagem para pressionar ENTER para continuar
-    echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-    read -r 2> /dev/null
+        # Mensagem para pressionar ENTER para continuar
+        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+        read -r 2> /dev/null
 
-    # Chamada da função principal do menu principal após pressionar ENTER
-    main_menu;
+        # Chamada da função principal do menu principal após pressionar ENTER
+        main_menu;
     }
+
     # Definição da função principal xvii_tec_esc_rbash
     function xvii_tec_esc_rbash(){
 
@@ -2014,6 +2022,7 @@
         main_tec_esc_rbash
 
     }
+
     # Este script realiza testes de penetração em redes wireless
     function xviii_wifi_atk(){
         ##############################################################
@@ -2171,6 +2180,7 @@
         main_wifi_atk;
 
     }
+
     #
     function xix_cmd_basicos_windows(){
         clear
@@ -2474,6 +2484,7 @@
 
 
     }
+
     #
     function xxii_nmap_descoberta_de_rede(){
         local rede
@@ -2482,14 +2493,17 @@
         echo ""
         pausa_script;
     }
+
     #
     function xxiii_nmap(){
         echo "nmap"
     }
+
     #
     function xxiv_revshell_windows(){
         echo "revshell_windows"
     }
+
     #
     function xxv_rdp_windows(){
         echo -n "Insira o IP do host windows: "
@@ -2499,6 +2513,16 @@
         echo -n "Insira o password: "
         read -r PASSWD
         tilix --action=app-new-session --command="$(xfreerdp /u:"$USER" /p:"$PASSWD" /w:1366 /h:768 /v:"$IP_HOST" /smart-sizing +auto-reconnect)"
+    }
+    #
+    function xxvi_ssh_windows(){
+        echo -n "Insira o IP do host windows: "
+        read -r IP_HOST
+        echo -n "Insira o usuario: "
+        read -r USER
+        echo -n "Insira o password: "
+        read -r PASSWD
+        ssh -p 3389 "$USER@$IP_HOST"
     }
     #
 
