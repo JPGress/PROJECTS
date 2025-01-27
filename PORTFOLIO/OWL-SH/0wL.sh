@@ -217,7 +217,7 @@
             echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
             echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
             echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
-            echo -e "${GRAY}${BG_BLACK} 7 - Reverse DNS ${RESET}" 
+            echo -e "${MAGENTA} 7 - Reverse DNS ${RESET}" 
             echo -e "${GRAY}${BG_BLACK} 8 - DNS Reconnaissance ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 10 - MiTM (Man-in-the-Middle)"
