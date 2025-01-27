@@ -970,26 +970,75 @@
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor.
-    # Define a função v_dns_zt para realizar uma transferência de zona DNS
-    function v_dns_zt(){
+    # v_dns_zt - Perform DNS Zone Transfer for reconnaissance
+        #
+        # Description:
+        # This script automates a DNS Zone Transfer operation, which attempts to retrieve all DNS records from a target's DNS server.
+        # It performs the following operations:
+        # 1. Prompts the user for the target domain.
+        # 2. Fetches the nameservers (NS) associated with the domain.
+        # 3. Attempts a zone transfer on each nameserver found to list the DNS records.
+        #
+        # Dependencies:
+        # - `host`: To query DNS records and attempt zone transfers.
+        #
+        # Author: R3v4N (w/GPT)
+        # Created on: 2025-01-25
+        # Last Updated: 2025-01-25
+        # Version: 1.0
+        #
+        # Notes:
+        # - This script is intended for ethical testing only. Ensure you have permission to test the target domain.
+        # - DNS Zone Transfer attempts are typically restricted by secure DNS configurations.
+        #
+        # Example usage:
+        # - Input: example.com
+        # - Output: Lists the DNS zone records if the transfer is successful.
+        #
+        # Example result:
+        # - Target: example.com
+        # - Nameserver: ns1.example.com
+        #   Zone Records:
+        #   - A records
+        #   - MX records
+        #   - TXT records
+        #
+        # Ensure proper legal and ethical practices are followed while using this script.
+    
+    function v_dns_zt() {
+        # Display a title for the DNS Zone Transfer operation
         echo "DNS Zone Transfer"
-        echo "Digite a URL do alvo"
-        read -r TARGET
-        
-        # Obter servidores de nomes para o domínio especificado
+
+        # Prompt the user to enter the target domain for the DNS operation
+        echo "Enter the target domain or URL"
+        read -r TARGET  # Read user input and store it in the TARGET variable
+
+        # Fetch the nameservers (NS) for the specified target domain
         NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
         
-        # Iterar sobre os servidores de nomes e listar os registros de zona de autoridade
+        # Check if any nameservers were found
+        if [[ -z "$NS_SERVERS" ]]; then
+            echo "No nameservers found for the domain $TARGET."
+            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+            read -r 2> /dev/null
+            main_menu  # Return to the main menu
+            return
+        fi
+
+        # Iterate over the nameservers and attempt a DNS zone transfer for each
         for SERVER in $NS_SERVERS; do
-            host -l -a "$TARGET" "$SERVER"
+            echo "Attempting zone transfer on nameserver: $SERVER"
+            host -l -a "$TARGET" "$SERVER"  # Attempt the zone transfer and list DNS records
         done
-        
-        # Aguarda o usuário pressionar Enter para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
+
+        # Wait for the user to press Enter before returning to the main menu
+        echo -e "${GRAY} Press ENTER to continue.${RESET}"
         read -r 2> /dev/null
-        
-        main_menu; # Retorna ao menu principal
+
+        # Return to the main menu
+        main_menu
     }
+
 
     # Define a função vi_Subdomain_takeover para realizar um ataque de Subdomain Takeover
     function vi_Subdomain_takeover(){
