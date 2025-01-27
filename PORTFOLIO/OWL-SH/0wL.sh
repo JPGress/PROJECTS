@@ -1115,8 +1115,6 @@
         dns_zt_workflow;
     }
 
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-
     # Function: Perform a Subdomain Takeover check
     function vi_Subdomain_takeover() {
         # vi_Subdomain_takeover - Perform a Subdomain Takeover check
@@ -1206,7 +1204,7 @@
         takeover_workflow
     }
 
-
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Define a função vii_rev_dns para realizar uma pesquisa de DNS reverso
     function vii_rev_dns(){
         echo "Dns Reverse"
