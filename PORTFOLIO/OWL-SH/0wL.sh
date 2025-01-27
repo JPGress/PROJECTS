@@ -1294,7 +1294,7 @@
             prepare_output_file  # Prepare the output file
             perform_reverse_dns  # Perform reverse DNS lookups
             display_results  # Display the results to the user
-
+            exit_to_main_menu; # Exit the script and return to the main menu
         }
 
         # Execute the main workflow
