@@ -1299,8 +1299,6 @@
         # Execute the main workflow
         reverse_dns_workflow
     }
-
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     
     # Function: viii_recon_dns
     function viii_recon_dns() {
@@ -1398,51 +1396,8 @@
         dns_recon_workflow
     }
 
-
-    # Define a função ix_consulta_geral_google para realizar uma consulta geral no Google
-    function ix_consulta_geral_google(){
-        echo "Consulta Geral Google" # Exibe mensagem indicando o início da consulta
-        
-        # Define as variáveis
-        #FIREFOX_SEARCH="firefox &"
-        LYNX_SEARCH="lynx -dump -hiddenlinks=merge -force_html"
-        LISTA=./amanda2csv.csv
-        
-        # Define a função para aguardar a entrada do usuário
-        function waitingUser() {
-            read -r "Pressione Enter para continuar..."
-        }
-        
-        # Define a função para realizar a consulta geral no Google
-        function consulta_geral_google (){
-            # Itera sobre cada linha no arquivo de lista de consultas
-            while IFS= read -r LINHA; do
-                local NOME
-                NOME="$(echo "$LINHA" |awk -F, '{print $1}')" # Extrai o nome da linha
-                local CPF
-                CPF="$(echo "$LINHA" |awk -F, '{print $2}')"   # Extrai o CPF da linha
-                
-                # Exibe a mensagem indicando a pesquisa atual
-                echo "==="
-                echo "Pesquisando:""$NOME"+"$CPF"
-                
-                # Realiza a pesquisa no Google usando lynx e filtra os resultados
-                $LYNX_SEARCH "https://www.google.com/search?q=intext:$NOME+intext:$CPF" | grep -i '\.pdf' | cut -d '=' -f2 | grep -v 'x-raw-image' | sed 's/...$//' | grep -E -i "(HTTPS|HTTP)"
-                
-                waitingUser # Aguarda o usuário pressionar Enter para continuar com a próxima pesquisa
-            done < "$LISTA" # Redireciona o arquivo de lista de consultas para a entrada do loop
-            echo "============ fim da consulta ===========" # Indica o fim da consulta
-        }
-        
-        # Chama a função para realizar a consulta geral no Google
-        consulta_geral_google
-        
-        # Aguarda o usuário pressionar Enter para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-        
-        main_menu; # Retorna ao menu principal
-    }
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
+    
     # Define a função x_mitm para realizar um ataque de Man-in-the-Middle (MiTM)
     function x_mitm(){
         ########### VARIAVEIS ##############
