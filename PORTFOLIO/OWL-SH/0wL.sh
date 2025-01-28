@@ -1391,11 +1391,7 @@
             prepare_output_file  # Prepare the output file
             perform_dns_recon  # Perform DNS reconnaissance
             display_results  # Display the results to the user
-
-            # Wait for the user to press ENTER before returning to the main menu
-            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-            read -r 2>/dev/null
-            main_menu  # Return to the main menu
+            exit_to_main_menu # Exit the script and return to the main menu
         }
 
         # Execute the main workflow
