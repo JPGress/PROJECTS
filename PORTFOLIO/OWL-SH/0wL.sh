@@ -1329,6 +1329,8 @@
             # Author: R3v4N (w/GPT)
             #
 
+        local title="DNS Reconnaissance"  # Define the title for this operation
+
         # Function to load and count the total lines in the subdomain wordlist
         function load_wordlist() {
                 WORDLIST="/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"  # Path to the wordlist
@@ -1344,7 +1346,6 @@
 
             # Function to prompt the user for the target domain
             function prompt_user_inputs() {
-                echo -e "${MAGENTA} DNS Reconnaissance ${RESET}"
                 echo -en "${CYAN} Enter the target domain (e.g., businesscorp.com.br): ${RESET}"
                 read -r DOMAIN  # Read the domain input from the user
             }

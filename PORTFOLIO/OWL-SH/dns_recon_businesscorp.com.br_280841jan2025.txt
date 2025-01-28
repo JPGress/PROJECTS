@@ -1,0 +1,66 @@
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
+;; communications error to 10.255.255.254#53: timed out
+;; communications error to 10.255.255.254#53: timed out
+;; no servers could be reached
