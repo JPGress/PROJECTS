@@ -1385,6 +1385,7 @@
 
         # Main workflow for DNS reconnaissance
         function dns_recon_workflow() {
+            sub_menu;
             load_wordlist || return  # Load the wordlist and validate its existence
             prompt_user_inputs  # Prompt the user for inputs
             prepare_output_file  # Prepare the output file
