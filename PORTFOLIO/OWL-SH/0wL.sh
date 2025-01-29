@@ -1398,7 +1398,7 @@
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     
-    # Define a função x_mitm para realizar um ataque de Man-in-the-Middle (MiTM)
+    # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
     function x_mitm() {
         # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
             #
@@ -1426,6 +1426,9 @@
             # - Ensure all dependencies are installed.
             # - This script is intended for ethical testing only.
             # - Always have explicit permission before performing MiTM operations.
+            # - Make sure to properly configure your network and firewall rules.
+            #
+        #
 
         # Function to check if all required dependencies are installed
         function check_dependencies() {
@@ -1521,7 +1524,6 @@
         # Function to run the full MiTM attack workflow
         function main_mitm() {
             trap cleanup EXIT  # Ensure cleanup runs on script exit
-
             check_dependencies       # Verify required tools are installed
             identify_attack_environment  # Detect attack network and interface
             display_attack_info      # Display attack setup information
