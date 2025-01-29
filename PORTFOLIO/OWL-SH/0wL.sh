@@ -227,8 +227,8 @@
             echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
             echo -e "${MAGENTA} 7 - Reverse DNS ${RESET}" 
             echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 9 - OSINTool ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 10 - MiTM (Man-in-the-Middle)"
+            echo -e "${MAGENTA} 9 - MiTM (Man-in-the-Middle) ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 10 - "Reserved Option" ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management"
             echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command"
@@ -286,7 +286,7 @@
                 6) vi_Subdomain_takeover ;;  # Subdomain Takeover
                 7) vii_rev_dns ;;  # Reverse DNS
                 8) viii_recon_dns ;;  # DNS Reconnaissance
-                10) x_mitm ;;  # MiTM (Man-in-the-Middle)
+                9) ix_mitm ;;  # MiTM (Man-in-the-Middle)
                 12) xii_network_management_commands ;;  # Network Management Commands
                 13) xiii_find_command_examples ;;  # 'Find' Command Examples
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
@@ -1399,7 +1399,7 @@
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     
     # Define a função x_mitm para realizar um ataque de Man-in-the-Middle (MiTM)
-    function x_mitm(){
+    function ix_mitm(){
         ########### VARIAVEIS ##############
         # Obtém o nome da interface de rede que começa com 'tap'.
         INTERFACE=$(ip -br a | grep tap | head -n 1 | cut -d ' ' -f1)
