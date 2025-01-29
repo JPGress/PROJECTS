@@ -1685,21 +1685,34 @@
         }
 
         # Function to display command usage
-        function display_command() {
+        function display_description() {
             local description="$1"
-            local command="$2"
+            
             echo -e "${RED} Description: $description${RESET}"
-            echo
-            echo -e " $command"
-            echo
+            
+        }
+
+        function display_command(){
+            local command="$1"
+            echo -e " $ $command"
         }
 
         # Function to display useful network management commands
         function network_management_commands() {
             display_section "USEFUL NETOWRK MANAGEMENT COMMANDS"
-            display_command "List ARP Table" "arp -a (Net-tools & IP route)"
-            display_command "Show Configured IPs" "ifconfig -a (Net-tools) \n ip addr (IP route)"
-            display_command "Enable/Disable Network Interface" "ifconfig eth0 up/down (Net-tools) \n ip link set eth0 up/down (IP route)"
+            
+            display_description "List ARP Table"
+            display_command  "arp -a" 
+            display_command "ip neigh show"
+            
+            display_description "Show Configured IPs" 
+            display_command "ifconfig -a"
+            display_command "ip addr"
+            
+            display_description "Enable/Disable Network Interface"
+            display_command  "ifconfig eth0 up/down"
+            display_command "ip link set eth0 up/down"
+            
             echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
             echo
         }
