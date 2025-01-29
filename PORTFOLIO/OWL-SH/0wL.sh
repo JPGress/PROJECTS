@@ -1679,7 +1679,8 @@
         # Function to display a section title
         function display_section() {
             local title="$1"
-            echo -e "${RED}# $title${RESET}"
+            echo -e "${RED} SECTION: $title${RESET}"
+            subtitle;  # Add a decorative subtitle
             echo
         }
 
@@ -1695,32 +1696,32 @@
 
         # Function to display useful network management commands
         function network_management_commands() {
-            display_section "Useful Network Management Commands"
+            display_section " USEFUL NETOWRK MANAGEMENT COMMANDS"
             display_command "List ARP Table" "arp -a (Net-tools & IP route)"
             display_command "Show Configured IPs" "ifconfig -a (Net-tools) \n ip addr (IP route)"
             display_command "Enable/Disable Network Interface" "ifconfig eth0 up/down (Net-tools) \n ip link set eth0 up/down (IP route)"
-            echo -e "${GRAY}Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
+            echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
             echo
         }
 
         # Function to display connection monitoring commands
         function connection_monitoring_commands() {
-            display_section "Active Connections"
+            display_section " ACTIVE CONNECTIONS"
             display_command "Show Active Connections" "netstat (Net-tools) \n ss (IP route)"
-            echo -e "${GRAY}Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
+            echo -e "${GRAY} Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
             echo
         }
 
         # Function to display routing-related commands
         function routing_commands() {
-            display_section "Routing Information"
+            display_section " ROUTING INFORMATION"
             display_command "Show Routing Table" "route (Net-tools) \n ip route (IP route)"
             echo
         }
 
         # Function to display persistent network configuration information
         function network_configuration_info() {
-            display_section "Persistent Network Configuration"
+            display_section "PERSISTENT NETWORK CONFIGURATION"
             echo -e "In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
             echo
             echo -e "In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
