@@ -1700,22 +1700,27 @@
         function system_enumeration() {
             display_section "SYSTEM AND NETWORK ENUMERATION"
                 display_description "System information"
-                    uname -a
+                    echo -n "${GREEN}$(uname -a)${RESET}"
                     echo
                     subtitle; # Add a decorative subtitle
-                
+
                 display_description "Network interfaces"
-                    ip -br a
+                    echo -n "${GREEN}$(ip -br a)${RESET}"
                     echo
                     subtitle; # Add a decorative subtitle
-                
+
                 display_description "Ports listening on the system"
-                    ss -lntp | head -10
+                    echo -n "${GREEN}$(ss -lntp | head -10)${RESET}"
                     echo
                     subtitle; # Add a decorative subtitle
-                
+
                 display_description "Enumerated installed security network tools"
-                    dpkg -l | grep -E 'nmap|wireshark|metasploit'
+                    echo -n "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit')${RESET}"
+                    echo
+                    subtitle; # Add a decorative subtitle
+
+                display_description "Hostname & Domain"
+                    echo -n "${GREEN}$(ps -ef | head -10)${RESET}"
                     echo
                     subtitle; # Add a decorative subtitle
         }
