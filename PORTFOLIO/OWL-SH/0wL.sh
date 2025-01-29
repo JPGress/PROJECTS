@@ -1687,14 +1687,14 @@
         # Function to display command usage
         function display_description() {
             local description="$1"
-            
             echo -e "${RED} Description: $description${RESET}"
-            
+            echo
         }
 
         function display_command(){
             local command="$1"
-            echo -e " $ $command"
+            echo -e "${GREEN} $ $command${RESET}"
+            echo
         }
 
         # Function to display useful network management commands
