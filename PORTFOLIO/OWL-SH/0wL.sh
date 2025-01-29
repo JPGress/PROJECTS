@@ -1590,9 +1590,9 @@
             local log_file="${LOG_DIR}/scan_${target}_$(date +%d%m%Y_%H%M%S).log"
             local max_parallel_jobs=100  # Allow more parallel scans without freezing
 
-            echo -e " \nScanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
-            echo "${GREEN}-----------------------------------------------------${RESET}"
-            echo "${GREEN} Port scan log for ${YELLOW}$target (Scanned on $(date))${RESET}" > "$log_file"
+            echo -e " Scanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
+            echo -e "${GREEN}-----------------------------------------------------${RESET}"
+            echo -e "${GREEN} Port scan log for ${YELLOW}$target (Scanned on $(date))${RESET}" > "$log_file"
 
             for ((port=start_port; port<=end_port; port++)); do
                 scan_port "$target" "$port" "$log_file" &
@@ -1614,23 +1614,23 @@
 
             # Get user input for target
             while true; do
-                echo -n " Enter target IP or domain: "
+                echo -n "${RED} Enter target IP or domain: ${RESET}"
                 read -r target
                 validate_target "$target" && break
             done
 
             # Get user input for port range
-            echo -n " Enter start port (default: 1): "
+            echo -n "${RED} Enter start port (default: 1): ${RESET}"
             read -r start_port
             start_port=${start_port:-1}  # Default to 1 if empty
 
-            echo -n " Enter end port (default: 65535): "
+            echo -n "${RED} Enter end port (default: 65535): ${RESET}"
             read -r end_port
             end_port=${end_port:-65535}  # Default to 65535 if empty
 
             # Validate port numbers
             if [[ ! "$start_port" =~ ^[0-9]+$ ]] || [[ ! "$end_port" =~ ^[0-9]+$ ]] || ((start_port > end_port)); then
-                echo -e "${RED}Error: Invalid port range. Please enter valid numbers.${RESET}"
+                echo -e "${RED} >>> Error: Invalid port range. Please enter valid numbers. <<< ${RESET}"
                 return
             fi
 
