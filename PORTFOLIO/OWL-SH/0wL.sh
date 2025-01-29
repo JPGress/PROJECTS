@@ -1399,7 +1399,7 @@
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     
     # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
-    function x_mitm() {
+    function ix_mitm() {
         # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
             #
             # Description:
@@ -1510,7 +1510,7 @@
                 | grep -E '\[P.\]' \
                 | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' \
                 | tee captures.txt
-    }
+        }
 
         # Function to clean up and restore system settings
         function cleanup() {
