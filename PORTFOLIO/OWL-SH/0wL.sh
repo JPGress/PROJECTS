@@ -1614,17 +1614,17 @@
 
             # Get user input for target
             while true; do
-                echo -n "${RED} Enter target IP or domain: ${RESET}"
+                echo -ne "${RED} Enter target IP or domain: ${RESET}"
                 read -r target
                 validate_target "$target" && break
             done
 
             # Get user input for port range
-            echo -n "${RED} Enter start port (default: 1): ${RESET}"
+            echo -ne "${RED} Enter start port (default: 1): ${RESET}"
             read -r start_port
             start_port=${start_port:-1}  # Default to 1 if empty
 
-            echo -n "${RED} Enter end port (default: 65535): ${RESET}"
+            echo -ne "${RED} Enter end port (default: 65535): ${RESET}"
             read -r end_port
             end_port=${end_port:-65535}  # Default to 65535 if empty
 
