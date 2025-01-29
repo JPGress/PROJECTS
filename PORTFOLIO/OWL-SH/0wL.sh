@@ -1533,7 +1533,6 @@
         main_mitm
     }
 
-
     # Function: Perform a Bash-based TCP port scan
     function x_portscan_bashsocket(){
         # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
@@ -1548,7 +1547,7 @@
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
             # Last Updated: 2025-01-25
-            # Version: 1.1
+            # Version: 1.2
             #
             # Notes:
             # - This script is intended for ethical testing only.
@@ -1567,31 +1566,35 @@
             fi
         }
 
-        # Function to scan a single port
+        # Function to scan a single port (with timeout)
         function scan_port() {
             local target="$1"
             local port="$2"
 
-            (exec 3<>/dev/tcp/"$target"/"$port") &>/dev/null && echo -e "${GREEN} [OPEN] Port $port ${RESET}"
+            timeout 1 bash -c "exec 3<>/dev/tcp/$target/$port" 2>/dev/null \
+                && echo -e "${GREEN} [OPEN] Port $port ${RESET}" &
         }
 
-        # Function to perform port scanning
+        # Function to perform port scanning with background job control
         function perform_port_scan() {
             local target="$1"
             local start_port="$2"
             local end_port="$3"
+            local max_parallel_jobs=50  # Limits simultaneous scans to prevent overload
 
             echo -e "\nScanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
             echo "-----------------------------------------------------"
 
-            local open_ports=()
-
             for ((port=start_port; port<=end_port; port++)); do
-                scan_port "$target" "$port" &
-                sleep 0.005  # Small delay to prevent overwhelming the system
+                scan_port "$target" "$port"
+
+                # Limit background jobs to prevent system overload
+                if (( $(jobs -p | wc -l) >= max_parallel_jobs )); then
+                    wait -n  # Wait for at least one job to finish before spawning new ones
+                fi
             done
 
-            wait  # Wait for all background jobs to finish
+            wait  # Ensure all remaining jobs finish
 
             echo -e "\n${CYAN}Scan complete.${RESET}"
         }
@@ -1637,7 +1640,7 @@
         # Execute port scan function
         run_portscan
     }
-
+    
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
     function xii_comandos_uteis_linux(){
