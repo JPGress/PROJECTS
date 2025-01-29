@@ -1395,8 +1395,6 @@
         # Execute the main workflow
         dns_recon_workflow
     }
-
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     
     # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
     function ix_mitm() {
@@ -1536,6 +1534,7 @@
         main_mitm
     }
 
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Portscan usando bashsocket
     function xi_portscan_bashsocket(){
         # Script retirado do livro Cybersecurity Ops with bash e modificado para as minhas necessidades
