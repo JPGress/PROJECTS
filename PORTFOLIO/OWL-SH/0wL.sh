@@ -1733,11 +1733,7 @@
             connection_monitoring_commands
             routing_commands
             network_configuration_info
-
-            # Pause and return to the main menu
-            echo -e "${GRAY} Press ENTER to continue ${RESET}"
-            read -r 2> /dev/null
-            main_menu
+            exit_to_main_menu
         }
 
         # Execute workflow
