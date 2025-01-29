@@ -230,8 +230,8 @@
             echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
             echo -e "${MAGENTA} 9 - MiTM (Man-in-the-Middle) ${RESET}"
             echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 11 - Reserved Option ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management ${RESET}"
+            echo -e "${MAGENTA} 11 - Useful Commands for Network Management ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 12 - Reserved Option ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
             echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
@@ -283,6 +283,7 @@
                 8) viii_recon_dns ;;  # DNS Reconnaissance
                 9) ix_mitm ;;  # MiTM (Man-in-the-Middle)
                 10) x_portscan_bashsocket ;;  # Port Scan (Bash Sockets)
+                11) xi_useful_linux_commands ;; # Useful Linux commands
                 12) xii_network_management_commands ;;  # Network Management Commands
                 13) xiii_find_command_examples ;;  # 'Find' Command Examples
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
@@ -1650,7 +1651,7 @@
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-    function xii_useful_linux_commands() {
+    function xi_useful_linux_commands() {
         # Function: Display useful Linux networking commands
             #
             # Description:
