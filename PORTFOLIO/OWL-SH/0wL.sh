@@ -282,7 +282,7 @@
                 7) vii_rev_dns ;;  # Reverse DNS
                 8) viii_recon_dns ;;  # DNS Reconnaissance
                 9) ix_mitm ;;  # MiTM (Man-in-the-Middle)
-                10) x_portscan_bash_sockets ;;  # Port Scan (Bash Sockets)
+                10) x_portscan_bashsocket ;;  # Port Scan (Bash Sockets)
                 12) xii_network_management_commands ;;  # Network Management Commands
                 13) xiii_find_command_examples ;;  # 'Find' Command Examples
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
@@ -1534,7 +1534,7 @@
     }
 
 
-    # Portscan usando bashsocket
+    # Function: Perform a Bash-based TCP port scan
     function x_portscan_bashsocket(){
         # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
             #
