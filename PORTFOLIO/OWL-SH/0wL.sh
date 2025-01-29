@@ -1609,7 +1609,7 @@
 
         }
 
-        function user_input{
+        function user_input(){
             # Get user input for target
             while true; do
                 echo -ne "${RED} Enter target IP or domain: ${RESET}"
