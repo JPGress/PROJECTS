@@ -1638,9 +1638,10 @@
             main_menu
         }
 
-# Execute port scan function
-run_portscan
-
+        # Execute port scan function
+        run_portscan
+    }
+    
     # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
     function xii_comandos_uteis_linux(){
         # limpa a tela
