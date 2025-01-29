@@ -1715,30 +1715,42 @@
             
             echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
             echo
+            subtitle;  # Add a decorative subtitle
         }
 
         # Function to display connection monitoring commands
         function connection_monitoring_commands() {
             display_section " ACTIVE CONNECTIONS"
-            display_command "Show Active Connections" "netstat (Net-tools) \n ss (IP route)"
+            
+            display_description "Show Active Connections"
+            display_command "netstat"
+            display_command "ss"
+            
             echo -e "${GRAY} Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
             echo
+            subtitle;  # Add a decorative subtitle
         }
 
         # Function to display routing-related commands
         function routing_commands() {
             display_section " ROUTING INFORMATION"
-            display_command "Show Routing Table" "route (Net-tools) \n ip route (IP route)"
+            
+            display_description "Show Routing Table"
+            display_command  "route"
+            display_command "ip route"
+            
             echo
+            subtitle;  # Add a decorative subtitle
         }
 
         # Function to display persistent network configuration information
         function network_configuration_info() {
             display_section "PERSISTENT NETWORK CONFIGURATION"
-            echo -e "In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
+            echo -e "${GRENN} In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
             echo
-            echo -e "In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
+            echo -e "${GRENN} In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
             echo
+            subtitle;  # Add a decorative subtitle
         }
 
         # Main execution workflow
