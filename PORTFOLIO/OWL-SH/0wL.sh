@@ -1578,7 +1578,7 @@
             local log_file="$3"
 
             if timeout 1 bash -c "exec 3<>/dev/tcp/$target/$port" 2>/dev/null; then
-                echo -e "${GREEN} [OPEN] ${MAGENTA} Port $port ${RESET}" | tee -a "$log_file"
+                echo -e "${MAGENTA} Port $port -> ${GREEN} [OPEN] ${RESET}" | tee -a "$log_file"
             fi
         }
 
