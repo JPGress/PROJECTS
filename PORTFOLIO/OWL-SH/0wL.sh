@@ -1475,7 +1475,7 @@
             tcpdump -i "$INTERFACE" -t host "$TARGET_01" and host "$TARGET_02" \
                 | grep -E '\[P.\]' \
                 | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' \
-                | tee capturas.txt
+                | tee captures.txt
         }
 
         ########### MAIN WORKFLOW ##########
