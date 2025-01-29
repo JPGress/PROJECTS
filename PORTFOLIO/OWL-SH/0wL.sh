@@ -112,7 +112,7 @@
 
     # Function: Invalid option
     function invalid_option() {
-        echo -e "${BG_RED}${BLACK} INVALID OPTION! ${RESET}${RED} Please run the script again and choose a valid option.${RESET}"
+        echo -e "${BLACK} ${BG_RED}INVALID OPTION! ${RESET}${RED} Please run the script again and choose a valid option.${RESET}"
         echo -e "${GRAY} Press ENTER to continue ${RESET}"
         read -r
         main_menu
@@ -259,12 +259,6 @@
                 fi
             done
             return 1  # Input is invalid
-        }
-
-        # Handle invalid menu options
-        function invalid_option() {
-            echo -e "${RED} Invalid option. Please try again. ${RESET}"
-            pause_script  # Pause to allow the user to see the error
         }
 
         # Exit the script gracefully
