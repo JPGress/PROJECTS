@@ -1677,16 +1677,28 @@
         title="Useful Linux Networking Commands"  # Define the title for this operation
 
         function system_enumeration() {
-            echo -e "Gathering system information..."
-            uname -a
-            echo -e "Listing network interfaces..."
-            ip a
-            echo -e "Checking ports..."
-            ss -lntp | head -10
-            echo -e "Enumerating installed security network tools..."
-            dpkg -l | grep -E 'nmap|wireshark|metasploit'
-        }
+            echo -e "${RED} >>> System information <<<${RESET}"
+                echo
+                uname -a
+                echo
+                subtitle; # Add a decorative subtitle
+            echo -e "${RED} >>> Network interfaces <<<${RESET}"
+                echo
+                ip -br a
+                echo
+                subtitle; # Add a decorative subtitle
+            echo -e "${RED} >>> Ports listening on the system <<<${RESET}"
+                echo
+                ss -lntp | head -10
+                echo
+                subtitle; # Add a decorative subtitle
+            echo -e "${RED} >>> Enumerated installed security network tools <<<${RESET}"
+                echo
+                dpkg -l | grep -E 'nmap|wireshark|metasploit'
+                echo
+                subtitle; # Add a decorative subtitle
 
+        }
 
         # Function to display a section title
         function display_section() {
