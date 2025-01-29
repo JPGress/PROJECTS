@@ -1676,6 +1676,18 @@
 
         title="Useful Linux Networking Commands"  # Define the title for this operation
 
+        function system_enumeration() {
+            echo -e "Gathering system information..."
+            uname -a
+            echo -e "Listing network interfaces..."
+            ip a
+            echo -e "Checking ports..."
+            ss -lntp | head -10
+            echo -e "Enumerating installed security network tools..."
+            dpkg -l | grep -E 'nmap|wireshark|metasploit'
+        }
+
+
         # Function to display a section title
         function display_section() {
             local title="$1"
@@ -1756,6 +1768,7 @@
         # Main execution workflow
         function useful_commands_workflow() {
             display_banner
+            system_enumeration
             network_management_commands
             connection_monitoring_commands
             routing_commands
