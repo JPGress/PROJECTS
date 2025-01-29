@@ -1533,7 +1533,7 @@
         main_mitm
     }
 
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
+
     # Portscan usando bashsocket
     function x_portscan_bashsocket(){
         # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
@@ -1638,6 +1638,7 @@
         run_portscan
     }
 
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
     function xii_comandos_uteis_linux(){
         # limpa a tela
