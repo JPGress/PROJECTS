@@ -1606,6 +1606,7 @@
 
             wait  # Ensure all remaining jobs finish
             echo -e "\n${CYAN} Scan complete. Log saved to: $log_file ${RESET}"
+
         }
 
         function user_input{
@@ -1631,13 +1632,14 @@
                 return
             fi
 
+            export target start_port end_port
 
         }
 
         # Function to run the port scan workflow
         function portscan_workflow() {
             clear; # clear terminal
-            sub_menu; # Ca
+            sub_menu; 
             user_input;
             perform_port_scan "$target" "$start_port" "$end_port" # Start the scan
             exit_to_main_menu; # Return to main menu
