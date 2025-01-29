@@ -1699,45 +1699,42 @@
 
         function system_enumeration() {
             display_section "SYSTEM AND NETWORK ENUMERATION"
-            display_description "System information"
-            uname -a
-            echo
-            subtitle; # Add a decorative subtitle
-            
-            echo -e "${RED} >>> Network interfaces <<<${RESET}"
-                echo
-                ip -br a
-                echo
-                subtitle; # Add a decorative subtitle
-            
-            echo -e "${RED} >>> Ports listening on the system <<<${RESET}"
-                echo
-                ss -lntp | head -10
-                echo
-                subtitle; # Add a decorative subtitle
-            
-            echo -e "${RED} >>> Enumerated installed security network tools <<<${RESET}"
-                echo
-                dpkg -l | grep -E 'nmap|wireshark|metasploit'
-                echo
-                subtitle; # Add a decorative subtitle
+                display_description "System information"
+                    uname -a
+                    echo
+                    subtitle; # Add a decorative subtitle
+                
+                display_description "Network interfaces"
+                    ip -br a
+                    echo
+                    subtitle; # Add a decorative subtitle
+                
+                display_description "Ports listening on the system"
+                    ss -lntp | head -10
+                    echo
+                    subtitle; # Add a decorative subtitle
+                
+                display_description "Enumerated installed security network tools"
+                    dpkg -l | grep -E 'nmap|wireshark|metasploit'
+                    echo
+                    subtitle; # Add a decorative subtitle
         }
 
         # Function to display useful network management commands
         function network_management_commands() {
             display_section "USEFUL NETOWRK MANAGEMENT COMMANDS"
             
-            display_description "List ARP Table"
-            display_command  "arp -a" 
-            display_command "ip neigh show"
+                display_description "List ARP Table"
+                    display_command  "arp -a" 
+                    display_command "ip neigh show"
             
-            display_description "Show Configured IPs" 
-            display_command "ifconfig -a"
-            display_command "ip addr"
+                display_description "Show Configured IPs" 
+                    display_command "ifconfig -a"
+                    display_command "ip addr"
             
-            display_description "Enable/Disable Network Interface"
-            display_command  "ifconfig eth0 up/down"
-            display_command "ip link set eth0 up/down"
+                display_description "Enable/Disable Network Interface"
+                    display_command  "ifconfig eth0 up/down"
+                    display_command "ip link set eth0 up/down"
             
             echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
             echo
