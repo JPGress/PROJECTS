@@ -1426,7 +1426,9 @@
             # - Always have explicit permission before performing MiTM operations.
             # - Make sure to properly configure your network and firewall rules.
             #
-        #
+
+
+        local title="Man-in-the-Middle (MiTM) Attack"  # Define the title for this operation
 
         # Function to check if all required dependencies are installed
         function check_dependencies() {
@@ -1512,15 +1514,16 @@
 
         # Function to clean up and restore system settings
         function cleanup() {
-            echo -e "${YELLOW}Stopping attack and restoring system settings...${RESET}"
+            echo -e "${RED} Stopping attack and restoring system settings...${RESET}"
             pkill -f arpspoof
             pkill -f tcpdump
             macchanger -p "$INTERFACE"  # Restore the original MAC address
-            echo "Cleanup complete."
+            echo "${GREEN} >>> Cleanup complete. <<<${RESET}"
         }
 
         # Function to run the full MiTM attack workflow
         function main_mitm() {
+            sub_menu                 # Call the header function
             trap cleanup EXIT  # Ensure cleanup runs on script exit
             check_dependencies       # Verify required tools are installed
             identify_attack_environment  # Detect attack network and interface
