@@ -1213,7 +1213,7 @@
         takeover_workflow
     }
 
-    # Function: vii_rev_dns
+    # Function: Perform Reverse DNS Lookup for a specified range of IP addresses
     function vii_rev_dns() {
         # vii_rev_dns - Perform Reverse DNS Lookup for a specified range of IP addresses
             #
@@ -1300,7 +1300,7 @@
         reverse_dns_workflow
     }
     
-    # Function: viii_recon_dns
+    # Function: Perform DNS reconnaissance on a target domain using a subdomain wordlist
     function viii_recon_dns() {
         # viii_recon_dns - Perform DNS reconnaissance on a target domain using a subdomain wordlist
             #
@@ -1396,7 +1396,7 @@
         dns_recon_workflow
     }
     
-    # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
+    # Function: Perform a Man-in-the-Middle (MiTM) attack
     function ix_mitm() {
         # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
             #
