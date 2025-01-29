@@ -1433,7 +1433,7 @@
             local dependencies=("ipcalc" "macchanger" "konsole" "arpspoof" "tcpdump")
             for tool in "${dependencies[@]}"; do
                 if ! command -v "$tool" &>/dev/null; then
-                    echo -e "${RED}Error: $tool is not installed. Please install it and try again.${RESET}"
+                    echo -e "${RED} Error: $tool is not installed. Please install it and try again.${RESET}"
                     exit 1
                 fi
             done
@@ -1446,7 +1446,7 @@
                 | grep -F "Network:" | awk '{print $2}')
 
             if [[ -z "$INTERFACE" || -z "$NETWORK" ]]; then
-                echo -e "${RED}Error: Could not determine attack interface or network.${RESET}"
+                echo -e "${RED} Error: Could not determine attack interface or network.${RESET}"
                 exit 1
             fi
         }
