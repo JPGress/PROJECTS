@@ -1578,7 +1578,7 @@
             local log_file="$3"
 
             if timeout 1 bash -c "exec 3<>/dev/tcp/$target/$port" 2>/dev/null; then
-                echo -e "${MAGENTA} Port $port -> ${GREEN} [OPEN] ${RESET}" | tee -a "$log_file"
+                echo -e "${MAGENTA} Port $port -> ${GREEN}[OPEN] ${RESET}" | tee -a "$log_file"
             fi
         }
 
@@ -1590,6 +1590,7 @@
             local log_file="${LOG_DIR}/scan_${target}_$(date +%d%m%Y_%H%M%S).log"
             local max_parallel_jobs=100  # Allow more parallel scans without freezing
 
+            echo -e "${GREEN}-----------------------------------------------------${RESET}"
             echo -e " Scanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
             echo -e "${GREEN}-----------------------------------------------------${RESET}"
             echo -e "${GREEN} Port scan log for ${YELLOW}$target (Scanned on $(date))${RESET}" > "$log_file"
