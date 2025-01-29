@@ -1687,7 +1687,7 @@
         function display_command() {
             local description="$1"
             local command="$2"
-            echo -e "${RED}## $description${RESET}"
+            echo -e "${RED} >>> $description${RESET}"
             echo
             echo "$command"
             echo
