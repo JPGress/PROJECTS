@@ -1679,7 +1679,7 @@
         # Function to display a section title
         function display_section() {
             local title="$1"
-            echo -e "${RED} SECTION: $title${RESET}"
+            echo -e "${RED} #SECTION: $title${RESET}"
             subtitle;  # Add a decorative subtitle
             echo
         }
@@ -1688,15 +1688,15 @@
         function display_command() {
             local description="$1"
             local command="$2"
-            echo -e "${RED} >>> $description${RESET}"
+            echo -e "${RED} Description: $description${RESET}"
             echo
-            echo "$command"
+            echo -e " $command"
             echo
         }
 
         # Function to display useful network management commands
         function network_management_commands() {
-            display_section " USEFUL NETOWRK MANAGEMENT COMMANDS"
+            display_section "USEFUL NETOWRK MANAGEMENT COMMANDS"
             display_command "List ARP Table" "arp -a (Net-tools & IP route)"
             display_command "Show Configured IPs" "ifconfig -a (Net-tools) \n ip addr (IP route)"
             display_command "Enable/Disable Network Interface" "ifconfig eth0 up/down (Net-tools) \n ip link set eth0 up/down (IP route)"
