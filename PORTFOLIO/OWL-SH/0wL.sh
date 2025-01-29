@@ -228,8 +228,8 @@
             echo -e "${MAGENTA} 7 - Reverse DNS ${RESET}" 
             echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
             echo -e "${MAGENTA} 9 - MiTM (Man-in-the-Middle) ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 10 - "Reserved Option" ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 11 - Portscan (Bash sockets) ${RESET}"
+            echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 11 - Reserved Option ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management"
             echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command"
             echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian)"
@@ -1539,35 +1539,107 @@
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Portscan usando bashsocket
-    function xi_portscan_bashsocket(){
-        # Script retirado do livro Cybersecurity Ops with bash e modificado para as minhas necessidades
-        #
-        # Descrição:
-        # Executa um portscan em um determinado host
-        #
+    function x_portscan_bashsocket(){
+        # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
+            #
+            # Description:
+            # This script performs a port scan on a specified target using Bash sockets.
+            # It checks for open TCP ports within a given range.
+            #
+            # Dependencies:
+            # - Bash with TCP socket support (`/dev/tcp/`)
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-25
+            # Version: 1.1
+            #
+            # Notes:
+            # - This script is intended for ethical testing only.
+            # - Use responsibly and ensure you have permission before scanning any target.
 
-        echo -n "Insira o alvo para o portscan (ex: 192.168.9.5): "
-        read -r host_alvo
-        printf 'Alvo -> %s - Porta(s): ' "$host_alvo"  # Imprime o prefixo antes do loop
-
-        # Usar uma variável para armazenar as portas encontradas
-        portas_encontradas=""
-
-        # Loop para verificar portas abertas
-        for ((porta=1; porta<1024; porta++)); do
-            cat >/dev/null 2>&1 < /dev/tcp/"${host_alvo}"/"${porta}"
-            # shellcheck disable=SC2181
-            if (($? == 0)); then 
-                portas_encontradas+=" $porta"  # Adiciona a porta à lista de portas encontradas
+        # Function to validate IPv4 address or hostname
+        function validate_target() {
+            local target="$1"
+            if [[ "$target" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+                return 0  # Valid IPv4
+            elif [[ "$target" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+                return 0  # Valid hostname
+            else
+                echo -e "${RED}Error: Invalid target entered. Please enter a valid IP or hostname.${RESET}"
+                return 1
             fi
-        done 
+        }
 
-        # Imprime a lista de portas encontradas
-        echo "Portas abertas em $host_alvo: $portas_encontradas"
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-        main_menu;
-    }
+        # Function to scan a single port
+        function scan_port() {
+            local target="$1"
+            local port="$2"
+
+            (exec 3<>/dev/tcp/"$target"/"$port") &>/dev/null && echo -e "${GREEN} [OPEN] Port $port ${RESET}"
+        }
+
+        # Function to perform port scanning
+        function perform_port_scan() {
+            local target="$1"
+            local start_port="$2"
+            local end_port="$3"
+
+            echo -e "\nScanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
+            echo "-----------------------------------------------------"
+
+            local open_ports=()
+
+            for ((port=start_port; port<=end_port; port++)); do
+                scan_port "$target" "$port" &
+                sleep 0.005  # Small delay to prevent overwhelming the system
+            done
+
+            wait  # Wait for all background jobs to finish
+
+            echo -e "\n${CYAN}Scan complete.${RESET}"
+        }
+
+        # Function to run the port scan workflow
+        function run_portscan() {
+            clear
+            ascii_banner_art
+            echo -e "${MAGENTA} Bash Socket Port Scanner ${RESET}"
+            subtitle
+
+            # Get user input for target
+            while true; do
+                echo -n "Enter target IP or domain: "
+                read -r target
+                validate_target "$target" && break
+            done
+
+            # Get user input for port range
+            echo -n "Enter start port (default: 1): "
+            read -r start_port
+            start_port=${start_port:-1}  # Default to 1 if empty
+
+            echo -n "Enter end port (default: 1024): "
+            read -r end_port
+            end_port=${end_port:-1024}  # Default to 1024 if empty
+
+            # Validate port numbers
+            if [[ ! "$start_port" =~ ^[0-9]+$ ]] || [[ ! "$end_port" =~ ^[0-9]+$ ]] || ((start_port > end_port)); then
+                echo -e "${RED}Error: Invalid port range. Please enter valid numbers.${RESET}"
+                return
+            fi
+
+            # Start the scan
+            perform_port_scan "$target" "$start_port" "$end_port"
+
+            # Return to main menu
+            echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
+            read -r 2>/dev/null
+            main_menu
+        }
+
+# Execute port scan function
+run_portscan
 
     # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
     function xii_comandos_uteis_linux(){
