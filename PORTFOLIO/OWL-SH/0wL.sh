@@ -1547,7 +1547,7 @@
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
             # Last Updated: 2025-01-25
-            # Version: 1.2
+            # Version: 1.3
             #
             # Notes:
             # - This script is intended for ethical testing only.
@@ -1640,7 +1640,7 @@
         # Execute port scan function
         run_portscan
     }
-    
+
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
     function xii_comandos_uteis_linux(){
