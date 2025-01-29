@@ -1553,6 +1553,11 @@
             # - This script is intended for ethical testing only.
             # - Use responsibly and ensure you have permission before scanning any target.
 
+        title="Bash Socket Port Scanner"  # Define the title for this operation
+        # Function to validate IPv4 address or hostname
+        LOG_DIR="./scan_logs"  # Directory for logs
+        mkdir -p "$LOG_DIR"  # Ensure log directory exists
+
         # Function to validate IPv4 address or hostname
         function validate_target() {
             local target="$1"
@@ -1566,61 +1571,62 @@
             fi
         }
 
-        # Function to scan a single port (with timeout)
+        # Function to scan a single port (with timeout) and log results
         function scan_port() {
             local target="$1"
             local port="$2"
+            local log_file="$3"
 
-            timeout 1 bash -c "exec 3<>/dev/tcp/$target/$port" 2>/dev/null \
-                && echo -e "${GREEN} [OPEN] Port $port ${RESET}" &
+            if timeout 1 bash -c "exec 3<>/dev/tcp/$target/$port" 2>/dev/null; then
+                echo -e "${GREEN} [OPEN] Port $port ${RESET}" | tee -a "$log_file"
+            fi
         }
 
-        # Function to perform port scanning with background job control
+        # Function to perform port scanning with logging
         function perform_port_scan() {
             local target="$1"
             local start_port="$2"
             local end_port="$3"
-            local max_parallel_jobs=50  # Limits simultaneous scans to prevent overload
+            local log_file="${LOG_DIR}/scan_${target}_$(date +%d%m%Y_%H%M%S).log"
+            local max_parallel_jobs=100  # Allow more parallel scans without freezing
 
-            echo -e "\nScanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
-            echo "-----------------------------------------------------"
+            echo -e " \nScanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
+            echo "${GREEN}-----------------------------------------------------${RESET}"
+            echo "${GREEN} Port scan log for ${YELLOW}$target (Scanned on $(date))${RESET}" > "$log_file"
 
             for ((port=start_port; port<=end_port; port++)); do
-                scan_port "$target" "$port"
+                scan_port "$target" "$port" "$log_file" &
 
-                # Limit background jobs to prevent system overload
+                # Control number of parallel jobs to prevent system overload
                 if (( $(jobs -p | wc -l) >= max_parallel_jobs )); then
                     wait -n  # Wait for at least one job to finish before spawning new ones
                 fi
             done
 
             wait  # Ensure all remaining jobs finish
-
-            echo -e "\n${CYAN}Scan complete.${RESET}"
+            echo -e "\n${CYAN} Scan complete. Log saved to: $log_file ${RESET}"
         }
 
         # Function to run the port scan workflow
         function run_portscan() {
             clear
-            ascii_banner_art
-            echo -e "${MAGENTA} Bash Socket Port Scanner ${RESET}"
-            subtitle
+            sub_menu
 
             # Get user input for target
             while true; do
-                echo -n "Enter target IP or domain: "
+                echo -n " Enter target IP or domain: "
                 read -r target
                 validate_target "$target" && break
             done
 
             # Get user input for port range
-            echo -n "Enter start port (default: 1): "
+            echo -n " Enter start port (default: 1): "
             read -r start_port
             start_port=${start_port:-1}  # Default to 1 if empty
 
-            echo -n "Enter end port (default: 1024): "
+            echo -n " Enter end port (default: 65535): "
             read -r end_port
-            end_port=${end_port:-1024}  # Default to 1024 if empty
+            end_port=${end_port:-65535}  # Default to 65535 if empty
 
             # Validate port numbers
             if [[ ! "$start_port" =~ ^[0-9]+$ ]] || [[ ! "$end_port" =~ ^[0-9]+$ ]] || ((start_port > end_port)); then
@@ -1632,9 +1638,7 @@
             perform_port_scan "$target" "$start_port" "$end_port"
 
             # Return to main menu
-            echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
-            read -r 2>/dev/null
-            main_menu
+            exit_to_main_menu;
         }
 
         # Execute port scan function
