@@ -230,23 +230,23 @@
             echo -e "${MAGENTA} 9 - MiTM (Man-in-the-Middle) ${RESET}"
             echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 11 - Reserved Option ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management"
-            echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command"
-            echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian)"
-            echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat)${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 16 - Quick Guide to Using Vim"
+            echo -e "${GRAY}${BG_BLACK} 12 - Useful Commands for Network Management ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 16 - Quick Guide to Using Vim ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks"
-            echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips"
+            echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks ${RESET}"
+            echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 21 - Reverse Shell for Windows ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 22 - RDP for Windows ${RESET}"
             echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
-            echo -e " ${GRAY} 0 - (zero) to exit${RESET}"
+            echo -e " ${GRAY} 0 - (zero) to exit ${RESET}"
             subtitle;
         }
 
-                # Validate user input
+        # Validate user input
         function validate_input() {
             local input="$1"  # User input
             shift  # Remove input from arguments list
