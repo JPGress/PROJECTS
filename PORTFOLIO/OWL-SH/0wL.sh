@@ -171,7 +171,7 @@
         fi
     }
     
-    function sub_menu(){
+    function display_banner(){
         clear;  # Clear the terminal screen for clean output
         ascii_banner_art;  # Display ASCII art banner
         echo -e "${MAGENTA} $title ${RESET}"
@@ -1284,7 +1284,7 @@
         # Main workflow for the reverse DNS lookup
         function reverse_dns_workflow() {
             
-            sub_menu;  # Display the sub-menu for Reverse DNS Lookup
+            display_banner;  # Display the sub-menu for Reverse DNS Lookup
             prompt_user_inputs  # Prompt the user for inputs
             prepare_output_file  # Prepare the output file
             perform_reverse_dns  # Perform reverse DNS lookups
@@ -1379,7 +1379,7 @@
 
         # Main workflow for DNS reconnaissance
         function dns_recon_workflow() {
-            sub_menu;
+            display_banner;
             load_wordlist || return  # Load the wordlist and validate its existence
             prompt_user_inputs  # Prompt the user for inputs
             prepare_output_file  # Prepare the output file
@@ -1519,7 +1519,7 @@
 
         # Function to run the full MiTM attack workflow
         function main_mitm() {
-            sub_menu                 # Call the header function
+            display_banner                 # Call the header function
             trap cleanup EXIT  # Ensure cleanup runs on script exit
             check_dependencies       # Verify required tools are installed
             identify_attack_environment  # Detect attack network and interface
@@ -1639,7 +1639,7 @@
         # Function to run the port scan workflow
         function portscan_workflow() {
             clear; # clear terminal
-            sub_menu; 
+            display_banner; 
             user_input;
             perform_port_scan "$target" "$start_port" "$end_port" # Start the scan
             exit_to_main_menu; # Return to main menu
@@ -1650,116 +1650,100 @@
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-    # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
-    function xii_comandos_uteis_linux(){
-        # limpa a tela
-        clear
+    function xii_useful_linux_commands() {
+        # Function: Display useful Linux networking commands
+            #
+            # Description:
+            # This script presents a collection of useful Linux commands for network management,
+            # including commands for checking ARP tables, network interfaces, active connections,
+            # and routing information.
+            #
+            # Dependencies:
+            # - Basic Linux utilities (arp, ifconfig, ip, netstat, ss, route)
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-25
+            # Version: 1.1
+            #
+            # Notes:
+            # - These commands are useful for system administrators and penetration testers.
+            # - Some commands require administrative privileges (sudo).
+            #
+            # Example usage:
+            # - Running this function will display categorized networking commands.
 
-        # exibe um cabeçalho
-        echo
-        echo ">>>>>>>>>> COMANDOS LINUX <<<<<<<<<<"
-        echo
+        title="Useful Linux Networking Commands"  # Define the title for this operation
 
-        # exibe uma seção com comandos para gerenciamento de rede
-        echo -e "${RED}# Comandos uteis na gerencia de redes${RESET}"
-        echo
+        # Function to display a section title
+        function display_section() {
+            local title="$1"
+            echo -e "${RED}# $title${RESET}"
+            echo
+        }
 
-        # exibe a sintaxe básica para os comandos
-        echo "Sintaxe -> comando (suite)"
-        echo
+        # Function to display command usage
+        function display_command() {
+            local description="$1"
+            local command="$2"
+            echo -e "${RED}## $description${RESET}"
+            echo
+            echo "$command"
+            echo
+        }
 
-        ### Listar tabela ARP
+        # Function to display useful network management commands
+        function network_management_commands() {
+            display_section "Useful Network Management Commands"
+            display_command "List ARP Table" "arp -a (Net-tools & IP route)"
+            display_command "Show Configured IPs" "ifconfig -a (Net-tools) \n ip addr (IP route)"
+            display_command "Enable/Disable Network Interface" "ifconfig eth0 up/down (Net-tools) \n ip link set eth0 up/down (IP route)"
+            echo -e "${GRAY}Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
+            echo
+        }
 
-        # exibe a seção para o comando arp
-        echo -e "${RED}## Listar tabela ARP${RESET}"
-        echo
+        # Function to display connection monitoring commands
+        function connection_monitoring_commands() {
+            display_section "Active Connections"
+            display_command "Show Active Connections" "netstat (Net-tools) \n ss (IP route)"
+            echo -e "${GRAY}Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
+            echo
+        }
 
-        # mostra como usar o comando arp (Net-tools & IP route) para listar a tabela ARP
-        echo "arp -a (Net-tools & IP route)"
-        echo
+        # Function to display routing-related commands
+        function routing_commands() {
+            display_section "Routing Information"
+            display_command "Show Routing Table" "route (Net-tools) \n ip route (IP route)"
+            echo
+        }
 
-        ### Exibir IPs configurados
+        # Function to display persistent network configuration information
+        function network_configuration_info() {
+            display_section "Persistent Network Configuration"
+            echo -e "In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
+            echo
+            echo -e "In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
+            echo
+        }
 
-        # exibe a seção para os comandos ifconfig e ip addr
-        echo -e "${RED}## Exibir Ips configurados${RESET}"
-        echo
+        # Main execution workflow
+        function useful_commands_workflow() {
+            display_banner
+            network_management_commands
+            connection_monitoring_commands
+            routing_commands
+            network_configuration_info
 
-        # mostra como usar o comando ifconfig (Net-tools) para exibir IPs configurados
-        echo "ifconfig -a (Net-tools)"
+            # Pause and return to the main menu
+            echo -e "${GRAY} Press ENTER to continue ${RESET}"
+            read -r 2> /dev/null
+            main_menu
+        }
 
-        # mostra como usar o comando ip addr (IP route) para exibir IPs configurados
-        echo "ip addr (IP route)"
-        echo
-
-        ### Ativar/Desativar uma interface
-
-        # exibe a seção para os comandos ifconfig e ip link
-        echo -e "${RED}## Ativar/Desativar uma interface${RESET}"
-        echo
-
-        # mostra como usar o comando ifconfig eth0 up/down (Net-tools) para ativar/desativar a interface eth0
-        echo "ifconfig eth0 up/down (Net-tools)"
-
-        # mostra como usar o comando ip link set eth0 up/down (IP route) para ativar/desativar a interface eth0
-        echo "ip link set eth0 up/down (IP route)"
-
-        # observação sobre a interface eth0
-        echo -e "${GRAY}ps: eth0 refere-se a sua interface de rede. Para saber qual as suas interfaces, execute um dos comandos em 'Exibir Ips configurados'${RESET}"
-        echo
-
-        ### Exibir conexões ativas
-
-        # exibe a seção para os comandos netstat e ss
-        echo -e "${RED}## Exibe conexões ativas${RESET}"
-        echo
-
-        # mostra como usar o comando netstat (Net-tools) para exibir conexões ativas
-        echo "netstat (Net-tools)"
-
-        # mostra como usar o comando ss (IP route) para exibir conexões ativas
-        echo "ss (IP route)"
-
-        # observação sobre o comando ss para detectar shells indesejadas
-        echo -e "${GRAY}ps: para (talvez) saber se o chineizinho tem uma shell no seu computador, execute o comando 'ss -lntp'${RESET}"
-        echo
-
-        ### Exibir Rotas
-
-        # exibe a seção para os comandos route e ip route
-        echo -e "${RED}## Exibe Rotas${RESET}"
-        echo
-
-        # mostra como usar o comando route (Net-tools) para exibir rotas
-        echo "route (Net-tools)"
-
-        # mostra como usar o comando ip route (IP route) para exibir rotas
-        echo "ip route (IP route)"
-        echo
-
-        # exibe uma seção com informações sobre configurações de placa de rede
-        echo -e "${RED}# Configurações de Placa de Rede${RESET}"
-        echo
-
-        ### Configurações de rede em Debian
-
-        # explica como configurar a rede de forma persistente em sistemas derivados do Debian
-        echo -e "Nos sistemas derivados do ${RED}Debian${RESET}, a configuração persistente de rede é feita no arquivo ${RED}/etc/network/interfaces${RESET}"
-        echo
-
-        ### Configurações de rede em Red Hat Linux
-
-        # explica como configurar a rede de forma persistente em sistemas derivados do Red Hat Linux
-        echo -e "Nos sistemas derivados do ${RED}Red Hat Linux${RESET}, a configuração persistente de rede é configurada nos arquivos encontrados no diretório ${RED}/etc/sysconfig/network-scripts${RESET}"
-        echo
-
-        # pausa o script até que o usuário pressione ENTER
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        # chama a função main_menu para retornar ao menu principal
-        main_menu;
+        # Execute workflow
+        useful_commands_workflow
     }
-    
+
     # Define a função xiii_exemplos_find para explicar sobre o comando find
     function xiii_exemplos_find(){
         # limpa a tela
