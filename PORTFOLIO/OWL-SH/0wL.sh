@@ -1674,31 +1674,7 @@
             # Example usage:
             # - Running this function will display categorized networking commands.
 
-        title="Useful Linux Networking Commands"  # Define the title for this operation
-
-        function system_enumeration() {
-            echo -e "${RED} >>> System information <<<${RESET}"
-                echo
-                uname -a
-                echo
-                subtitle; # Add a decorative subtitle
-            echo -e "${RED} >>> Network interfaces <<<${RESET}"
-                echo
-                ip -br a
-                echo
-                subtitle; # Add a decorative subtitle
-            echo -e "${RED} >>> Ports listening on the system <<<${RESET}"
-                echo
-                ss -lntp | head -10
-                echo
-                subtitle; # Add a decorative subtitle
-            echo -e "${RED} >>> Enumerated installed security network tools <<<${RESET}"
-                echo
-                dpkg -l | grep -E 'nmap|wireshark|metasploit'
-                echo
-                subtitle; # Add a decorative subtitle
-
-        }
+        title="System Enumeration & Useful Linux Networking Commands"  # Define the title for this operation
 
         # Function to display a section title
         function display_section() {
@@ -1719,6 +1695,32 @@
             local command="$1"
             echo -e "${GREEN} $ $command${RESET}"
             echo
+        }
+
+        function system_enumeration() {
+            display_section "SYSTEM AND NETWORK ENUMERATION"
+            display_description "System information"
+            uname -a
+            echo
+            subtitle; # Add a decorative subtitle
+            
+            echo -e "${RED} >>> Network interfaces <<<${RESET}"
+                echo
+                ip -br a
+                echo
+                subtitle; # Add a decorative subtitle
+            
+            echo -e "${RED} >>> Ports listening on the system <<<${RESET}"
+                echo
+                ss -lntp | head -10
+                echo
+                subtitle; # Add a decorative subtitle
+            
+            echo -e "${RED} >>> Enumerated installed security network tools <<<${RESET}"
+                echo
+                dpkg -l | grep -E 'nmap|wireshark|metasploit'
+                echo
+                subtitle; # Add a decorative subtitle
         }
 
         # Function to display useful network management commands
@@ -1763,7 +1765,6 @@
             display_command  "route"
             display_command "ip route"
             
-            echo
             subtitle;  # Add a decorative subtitle
         }
 
