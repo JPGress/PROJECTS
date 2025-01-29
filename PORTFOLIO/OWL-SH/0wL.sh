@@ -287,6 +287,7 @@
                 7) vii_rev_dns ;;  # Reverse DNS
                 8) viii_recon_dns ;;  # DNS Reconnaissance
                 9) ix_mitm ;;  # MiTM (Man-in-the-Middle)
+                10) x_portscan_bash_sockets ;;  # Port Scan (Bash Sockets)
                 12) xii_network_management_commands ;;  # Network Management Commands
                 13) xiii_find_command_examples ;;  # 'Find' Command Examples
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
@@ -1641,7 +1642,7 @@
         # Execute port scan function
         run_portscan
     }
-    
+
     # Define a função xii_comandos_uteis_linux para explicar sobre comandos úteis no linux
     function xii_comandos_uteis_linux(){
         # limpa a tela
