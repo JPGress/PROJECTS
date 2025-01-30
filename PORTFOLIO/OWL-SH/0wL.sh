@@ -1,6 +1,6 @@
 #!/bin/bash
 # TODO: ADD HEADER INFORMATION
-# TODO:Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
+# TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 #* VARIABLES ########################
 
