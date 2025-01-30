@@ -268,7 +268,7 @@
             echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
             echo -e "${MAGENTA} 11 - Useful Commands for Network Management ${RESET}"
             echo -e "${MAGENTA} 12 - System Information to Linux OS ${RESET}"
-            echo -e "${GRAY} 13 - Examples of the 'find' Command ${RESET}"
+            echo -e "${MAGENTA} 13 - attack_surface_analysis ${RESET}"
             echo -e "${GRAY} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
             echo -e "${GRAY} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
             echo -e "${GRAY} 16 - Quick Guide to Using Vim ${RESET}"
@@ -278,7 +278,7 @@
             echo -e "${GRAY} 20 - Create Scripts in .bat or .ps1 ${RESET}"
             echo -e "${GRAY} 21 - Reverse Shell for Windows ${RESET}"
             echo -e "${GRAY} 22 - RDP for Windows ${RESET}"
-            echo -e "${GRAY} 23 - Reserved Option ${RESET}"
+            echo -e "${GRAY} 23 - Examples of the 'find' Command ${RESET}"
             echo -e " ${GRAY} 0 - (zero) to exit ${RESET}"
             subtitle;
         }
