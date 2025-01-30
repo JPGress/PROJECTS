@@ -195,7 +195,7 @@
     function display_banner_inside_functions(){
         clear;  # Clear the terminal screen for clean output
         ascii_banner_art;  # Display ASCII art banner
-        echo -e "${MAGENTA}\t\t$title ${RESET}"
+        echo -e "${MAGENTA}\t\t\t$title ${RESET}"
         subtitle;  # Display a subtitle
     }
 
@@ -205,6 +205,28 @@
         read -r 2>/dev/null
         main_menu  # Return to the main menu
         exit 0  # Exit the script
+    }
+
+    # Function to display a section title
+    function display_section() {
+        local title="$1"
+        echo -e "${RED} #SECTION: $title${RESET}"
+        subtitle;  # Add a decorative subtitle
+        echo
+    }
+
+    # Function to display description usage
+    function display_description() {
+        local description="$1"
+        echo -e "${RED} Description: $description${RESET}"
+        echo
+    }
+
+    # Function to display command usage
+    function display_command(){
+        local command="$1"
+        echo -e "${GREEN} $ $command${RESET}"
+        echo
     }
 
 #* ====== MAIN MENU ======
@@ -251,7 +273,7 @@
             echo -e "${MAGENTA} 9 - MiTM (Man-in-the-Middle) ${RESET}"
             echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
             echo -e "${MAGENTA} 11 - Useful Commands for Network Management ${RESET}"
-            echo -e "${GRAY} 12 - Reserved Option ${RESET}"
+            echo -e "${MAGENTA} 12 - System Information to Linux OS ${RESET}"
             echo -e "${GRAY} 13 - Examples of the 'find' Command ${RESET}"
             echo -e "${GRAY} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
             echo -e "${GRAY} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
@@ -303,8 +325,8 @@
                 8) recon_dns ;;  # DNS Reconnaissance
                 9) mitm ;;  # MiTM (Man-in-the-Middle)
                 10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
-                11) sysinfo_useful_linux_commands ;; # Useful Linux commands
-                12) xii_network_management_commands ;;  # Network Management Commands
+                11) useful_linux_commands ;; # Useful Linux commands
+                12) linux_sysinfo ;;  # System info
                 13) xiii_find_command_examples ;;  # 'Find' Command Examples
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
                 16) xvi_vim_quick_guide ;;  # Vim Quick Guide
@@ -1670,7 +1692,7 @@
         portscan_workflow;
     }
 
-    function sysinfo_useful_linux_commands() {
+    function useful_linux_commands() {
         # Function: Display useful Linux networking commands
             #
             # Description:
@@ -1693,28 +1715,101 @@
             # Example usage:
             # - Running this function will display categorized networking commands.
 
-        title="System Information & Useful Linux Networking Commands"  # Define the title for this operation
+        title="Useful Linux Networking Commands"  # Define the title for this operation
 
-        # Function to display a section title
-        function display_section() {
-            local title="$1"
-            echo -e "${RED} #SECTION: $title${RESET}"
+        # Function to display useful network management commands
+        function network_management_commands() {
+            display_section "USEFUL NETOWRK MANAGEMENT COMMANDS"
+            
+                display_description "List ARP Table"
+                    display_command  "arp -a" 
+                    display_command "ip neigh show"
+            
+                display_description "Show Configured IPs" 
+                    display_command "ifconfig -a"
+                    display_command "ip addr"
+            
+                display_description "Enable/Disable Network Interface"
+                    display_command  "ifconfig eth0 up/down"
+                    display_command "ip link set eth0 up/down"
+            
+            echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
+            echo
             subtitle;  # Add a decorative subtitle
-            echo
         }
 
-        # Function to display command usage
-        function display_description() {
-            local description="$1"
-            echo -e "${RED} Description: $description${RESET}"
+        # Function to display connection monitoring commands
+        function connection_monitoring_commands() {
+            display_section " ACTIVE CONNECTIONS"
+            
+            display_description "Show Active Connections"
+            display_command "netstat"
+            display_command "ss"
+            
+            echo -e "${GRAY} Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
             echo
+            subtitle;  # Add a decorative subtitle
         }
 
-        function display_command(){
-            local command="$1"
-            echo -e "${GREEN} $ $command${RESET}"
-            echo
+        # Function to display routing-related commands
+        function routing_commands() {
+            display_section " ROUTING INFORMATION"
+            
+            display_description "Show Routing Table"
+            display_command  "route"
+            display_command "ip route"
+            
+            subtitle;  # Add a decorative subtitle
         }
+
+        # Function to display persistent network configuration information
+        function network_configuration_info() {
+            display_section "PERSISTENT NETWORK CONFIGURATION"
+            echo -e "${GRENN} In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
+            echo
+            echo -e "${GRENN} In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
+            echo
+            subtitle;  # Add a decorative subtitle
+        }
+
+        # Main execution workflow
+        function useful_commands_workflow() {
+            display_banner_inside_functions
+            network_management_commands
+            connection_monitoring_commands
+            routing_commands
+            network_configuration_info
+            exit_to_main_menu
+        }
+
+        # Execute workflow
+        useful_commands_workflow
+    }
+
+    function linux_sysinfo() {
+        # Function: Display useful Linux networking commands
+            #
+            # Description:
+            # This script presents a collection of useful Linux commands for network management,
+            # including commands for checking ARP tables, network interfaces, active connections,
+            # and routing information.
+            #
+            # Dependencies:
+            # - Basic Linux utilities (arp, ifconfig, ip, netstat, ss, route)
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-25
+            # Version: 1.1
+            #
+            # Notes:
+            # - These commands are useful for system administrators and penetration testers.
+            # - Some commands require administrative privileges (sudo).
+            #
+            # Example usage:
+            # - Running this function will display categorized networking commands.
+
+        title="Linux System Information"  # Define the title for this operation
 
         function system_enumeration() {
             display_section "SYSTEM AND NETWORK ENUMERATION"
@@ -1813,74 +1908,15 @@
         
         }
 
-        # Function to display useful network management commands
-        function network_management_commands() {
-            display_section "USEFUL NETOWRK MANAGEMENT COMMANDS"
-            
-                display_description "List ARP Table"
-                    display_command  "arp -a" 
-                    display_command "ip neigh show"
-            
-                display_description "Show Configured IPs" 
-                    display_command "ifconfig -a"
-                    display_command "ip addr"
-            
-                display_description "Enable/Disable Network Interface"
-                    display_command  "ifconfig eth0 up/down"
-                    display_command "ip link set eth0 up/down"
-            
-            echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
-            echo
-            subtitle;  # Add a decorative subtitle
-        }
-
-        # Function to display connection monitoring commands
-        function connection_monitoring_commands() {
-            display_section " ACTIVE CONNECTIONS"
-            
-            display_description "Show Active Connections"
-            display_command "netstat"
-            display_command "ss"
-            
-            echo -e "${GRAY} Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
-            echo
-            subtitle;  # Add a decorative subtitle
-        }
-
-        # Function to display routing-related commands
-        function routing_commands() {
-            display_section " ROUTING INFORMATION"
-            
-            display_description "Show Routing Table"
-            display_command  "route"
-            display_command "ip route"
-            
-            subtitle;  # Add a decorative subtitle
-        }
-
-        # Function to display persistent network configuration information
-        function network_configuration_info() {
-            display_section "PERSISTENT NETWORK CONFIGURATION"
-            echo -e "${GRENN} In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
-            echo
-            echo -e "${GRENN} In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
-            echo
-            subtitle;  # Add a decorative subtitle
-        }
-
         # Main execution workflow
-        function useful_commands_workflow() {
+        function sysinfo_workflow() {
             display_banner_inside_functions
             system_enumeration
-            network_management_commands
-            connection_monitoring_commands
-            routing_commands
-            network_configuration_info
             exit_to_main_menu
         }
 
         # Execute workflow
-        useful_commands_workflow
+        sysinfo_workflow
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
