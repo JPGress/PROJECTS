@@ -630,10 +630,10 @@
             # 5. Logs all search URLs and details to a file for reference and auditing.
             #
             # Improvements in Version 1.5:
-            # - **Fixed Logical Issue**: Browser queries now run in the background to prevent blocking subsequent searches.
-            # - **Enhanced Logging**: Debug logs added to track query progress and identify any potential bottlenecks.
-            # - **Simplified IP Verification**: Replaced interactive browser-based IP check with a lightweight `curl` request.
-            # - **Improved Stability**: Introduced better flow control and error handling for proxy execution.
+            # - Fixed Logical Issue: Browser queries now run in the background to prevent blocking subsequent searches.
+            # - Enhanced Logging: Debug logs added to track query progress and identify any potential bottlenecks.
+            # - Simplified IP Verification: Replaced interactive browser-based IP check with a lightweight `curl` request.
+            # - Improved Stability: Introduced better flow control and error handling for proxy execution.
             #
             # Dependencies:
             # - Firefox or a compatible browser (default: Firefox).
@@ -662,7 +662,7 @@
             # Notes:
             # - Ensure Firefox or the browser specified in the `SEARCH` variable is installed.
             # - Logs are saved as "<TARGET>_<timestamp>.log" in the current directory.
-        # - Designed for educational purposes only; respect applicable laws and ethics.
+            # - Designed for educational purposes only; respect applicable laws and ethics.
 
 
         # Default browser for search
@@ -1788,7 +1788,7 @@
         # linux_sysinfo - Comprehensive Linux System & Network Reconnaissance
             #
             # Description:
-            #   This script collects **detailed local system and network information** for reconnaissance.
+            #   This script collects detailed local system and network information for reconnaissance.
             #   It provides insights into:
             #   - OS details, active processes, services, kernel modules, and virtualization indicators.
             #   - Installed security & utility tools, package managers, and cron jobs.
@@ -1801,25 +1801,33 @@
             #
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
-            # Last Updated: 2025-01-30
-            # Version: 3.0
+            # Last Updated: 2025-02-02
+            # Version: 3.1
             #
             # Usage:
             #   Run this function to gather in-depth reconnaissance data on a system.
             #
             # Notes:
-            #   - **Pentesting:** Identify misconfigurations & attack surfaces.
-            #   - **Forensics:** Analyze system state after an incident.
-            #   - **Sysadmins:** Troubleshoot & monitor system health.
-            #   - **Requires root privileges for some commands.**
+            #   - Pentesting: Identify misconfigurations & attack surfaces.
+            #   - Forensics: Analyze system state after an incident.
+            #   - Sysadmins: Troubleshoot & monitor system health.
+            #   - Requires root privileges for some commands.
             #
             # Key Features:
-            #   ✅ System Information: OS, Kernel, Virtualization, Services
-            #   ✅ Network Information: Interfaces, Routing, ARP, Open Ports
-            #   ✅ Security Enumeration: Installed Tools, Firewall, SSH Sessions
-            #   ✅ User & Access Logs: Sudo Users, Failed Logins, Cron Jobs
-            #   ✅ Utility Detection: System Tools, Debugging, File Transfers
+            #   System Information: OS, Kernel, Virtualization, Services
+            #   Network Information: Interfaces, Routing, ARP, Open Ports
+            #   Security Enumeration: Installed Tools, Firewall, SSH Sessions
+            #   User & Access Logs: Sudo Users, Failed Logins, Cron Jobs
+            #   Utility Detection: System Tools, Debugging, File Transfers
+            #   Attack Surface Mapping: Highlights potential security risks
             #
+            #  Recent Updates:
+            #   - v3.1: Integrated Attack Surface Mapping for Red Team operations
+            #   - v3.0: Expanded User & Access Logs (sudo users, failed logins)
+            #   - v2.9: Added Firewall Enumeration & Virtualization Detection
+            #   - v2.8: Improved Network Recon (ARP, Routing, Open Ports)
+            #
+
 
 
         title="Linux System Enumeration"  # Define the title for this operation
@@ -2402,35 +2410,35 @@
         echo -e "${GREEN}============= LEMBRETE DE USO DO VIM =============${RESET}"
         echo
 
-        # **Inserção de texto**
+        # Inserção de texto
         echo -e "${YELLOW}Inserção de texto:${RESET}"
         echo -e "Pressione 'i' para entrar no modo de inserção."
 
-        # **Salvar e sair**
+        # Salvar e sair
         echo -e "\n${YELLOW}Salvar e sair:${RESET}"
         echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':wq' para salvar e sair."
 
-        # **Sair sem salvar**
+        # Sair sem salvar
         echo -e "\n${YELLOW}Sair sem salvar:${RESET}"
         echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':q!' para sair sem salvar."
 
-        # **Movimentação pelo texto**
+        # Movimentação pelo texto
         echo -e "\n${YELLOW}Movimentação pelo texto:${RESET}"
         echo -e "Use as teclas de seta ou as teclas 'h', 'j', 'k' e 'l' para mover o cursor."
 
-        # **Excluir texto**
+        # Excluir texto
         echo -e "\n${YELLOW}Excluir texto:${RESET}"
         echo -e "Pressione 'x' para excluir o caractere sob o cursor."
 
-        # **Desfazer e refazer**
+        # Desfazer e refazer
         echo -e "\n${YELLOW}Desfazer e Refazer:${RESET}"
         echo -e "Pressione 'u' para desfazer e 'Ctrl + r' para refazer."
 
-        # **Buscar e substituir**
+        # Buscar e substituir
         echo -e "\n${YELLOW}Buscar e Substituir:${RESET}"
         echo -e "Digite '/' para iniciar a busca. Para substituir, use ':s/palavra/nova_palavra/g'."
 
-        # **Ajuda**
+        # Ajuda
         echo -e "\n${YELLOW}Ajuda:${RESET}"
         echo -e "Digite ':help' para obter ajuda."
 
@@ -2594,17 +2602,17 @@
         
         # Função para executar configurações preliminares antes do ataque
         function pre_configuracoes(){
-            # **Descrição:** Desliga a interface 'mon0' do modo monitor.
+            # Descrição: Desliga a interface 'mon0' do modo monitor.
 
             airmon-ng stop mon0
 
-            # **Explicação:**
+            # Explicação:
 
             # O comando `airmon-ng stop mon0` desativa a interface 'mon0' do modo monitor. 
             # Isso é necessário para que a interface possa ser usada para outras finalidades, como se conectar a uma rede Wi-Fi.
             # É importante notar que este comando pode falhar se a interface 'mon0' não estiver ativa no modo monitor.
 
-            # **Observações:**
+            # Observações:
 
             # Certifique-se de que a interface 'mon0' esteja ativa no modo monitor antes de executar este comando.
             # Se o comando falhar, tente verificar o status da interface com o comando `airmon-ng check`.
