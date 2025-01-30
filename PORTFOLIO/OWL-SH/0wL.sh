@@ -1976,30 +1976,40 @@
                     log_and_display "=== Package Managers ===\n$(which apt yum dnf pacman zypper snap flatpak 2>/dev/null | sed 's/^/ - /')"
             }
 
-            # Function to call all the enumeration functions
             function all_sysenum_caller(){
+                ### SYSTEM INFORMATION ###
                 system_information
-                network_information
-                open_ports
-                active_process
-                installed_security_tools
-                routing_table
-                active_connections
-                arp_table
-                dns_servers
-                firewall_rules
-                users_list
                 cpu_memory_info
-                running_services
+                kernel_modules
+                virtualization_check
+            
+                ### USER & ACCESS CONTROL ###
+                users_list
                 sudo_users
                 active_ssh_sessions
                 failed_logins
-                kernel_modules
-                virtualization_check
-                cron_jobs
+            
+                ### NETWORK & CONNECTIVITY ###
+                network_information
+                open_ports
+                running_services
+                active_connections
+                firewall_rules
+                routing_table
+                arp_table
+                dns_servers
+            
+                ### HARDWARE & DEVICES ###
                 usb_devices
-                utilities_software
+            
+                ### TASK AUTOMATION & SCHEDULING ###
+                cron_jobs
+            
+                ### SECURITY TOOLS & UTILITIES ###
+                installed_security_tools
+                utilities_softwares
             }
+
 
             # Call all the enumeration functions
             all_sysenum_caller
