@@ -1679,7 +1679,8 @@
         # Execute port scan function
         portscan_workflow;
     }
-
+    
+    # Function: Show a list of useful Linux networking commands
     function useful_linux_commands() {
         # Function: Display useful Linux networking commands
             #
