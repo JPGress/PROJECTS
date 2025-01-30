@@ -198,7 +198,7 @@
 
     function display_section() {
         local title="$1"
-        echo -e "${RED} #SECTION: $title${RESET}" | tee -a "$LOG_FILE"
+        echo -e " #SECTION: $title" | tee -a "$LOG_FILE"
         subtitle | tee -a "$LOG_FILE"
         echo -e "" | tee -a "$LOG_FILE"
     }
@@ -1828,6 +1828,7 @@
                     log_and_display "System Uptime: $(uptime -p)"
             }
             system_information
+            
             #!DEPRECATED
                 #display_description "System information"
                 #    echo -e "${GREEN}$(uname -a)${RESET}"
