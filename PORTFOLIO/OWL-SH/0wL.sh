@@ -2045,7 +2045,7 @@
                     }
 
                     for category in "${!ATTACK_CATEGORIES[@]}"; do
-                        echo -e "\n=== $category ===" | tee -a "$LOG_FILE"
+                        echo -e "=== $category ===\n" | tee -a "$LOG_FILE"
 
                         case "$category" in
                             "Privilege Escalation")
@@ -2095,7 +2095,7 @@
         function log_info() {
             subtitle
             echo
-            echo -e "${CYAN}System enumeration log file as $LOG_FILE in $LOG_DIR${RESET}"
+            echo -e "${CYAN}System enumeration log file saved as ${GREEN} $LOG_FILE ${RESET}in ${GREEN} $LOG_DIR${RESET}"
             echo -e "${CYAN}Log file created at $(date).${RESET}"
             echo
             subtitle
