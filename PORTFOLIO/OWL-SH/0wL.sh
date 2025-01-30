@@ -2109,7 +2109,7 @@
         function log_info() {
             subtitle
             echo
-            echo -e "${CYAN}System enumeration log file saved as ${GREEN}$LOG_FILE${RESET}${CYAN}in ${GREEN}$LOG_DIR${RESET}"
+            echo -e "${CYAN}System enumeration log file saved as ${GREEN}$LOG_FILE${RESET}${CYAN} in ${GREEN}$LOG_DIR${RESET}"
             echo
             subtitle
         }
