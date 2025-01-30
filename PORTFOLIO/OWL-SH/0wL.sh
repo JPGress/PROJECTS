@@ -255,18 +255,18 @@
             echo -e "${MAGENTA} 9 - MiTM (Man-in-the-Middle) ${RESET}"
             echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
             echo -e "${MAGENTA} 11 - Useful Commands for Network Management ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 12 - Reserved Option ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 13 - Examples of the 'find' Command ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 16 - Quick Guide to Using Vim ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 17 - Escape Techniques for rbash (Testing) ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 18 - Wireless Network Attacks ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 19 - Windows Tips ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 20 - Create Scripts in .bat or .ps1 ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 21 - Reverse Shell for Windows ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 22 - RDP for Windows ${RESET}"
-            echo -e "${GRAY}${BG_BLACK} 23 - Reserved Option ${RESET}"
+            echo -e "${GRAY} 12 - Reserved Option ${RESET}"
+            echo -e "${GRAY} 13 - Examples of the 'find' Command ${RESET}"
+            echo -e "${GRAY} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
+            echo -e "${GRAY} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
+            echo -e "${GRAY} 16 - Quick Guide to Using Vim ${RESET}"
+            echo -e "${GRAY} 17 - Escape Techniques for rbash (Testing) ${RESET}"
+            echo -e "${GRAY} 18 - Wireless Network Attacks ${RESET}"
+            echo -e "${GRAY} 19 - Windows Tips ${RESET}"
+            echo -e "${GRAY} 20 - Create Scripts in .bat or .ps1 ${RESET}"
+            echo -e "${GRAY} 21 - Reverse Shell for Windows ${RESET}"
+            echo -e "${GRAY} 22 - RDP for Windows ${RESET}"
+            echo -e "${GRAY} 23 - Reserved Option ${RESET}"
             echo -e " ${GRAY} 0 - (zero) to exit ${RESET}"
             subtitle;
         }
@@ -297,17 +297,17 @@
             local option="$1"
             case $option in
                 0) exit_script ;;  # Exit the script
-                1) i_portscan ;;  # Perform a port scan
-                2) ii_parsing_html ;;  # Parse HTML
-                3) iii_google_hacking ;;  # Google Hacking
-                4) iv_metadata_analysis ;;  # Metadata Analysis
-                5) v_dns_zt ;;  # DNS Zone Transfer
-                6) vi_Subdomain_takeover ;;  # Subdomain Takeover
-                7) vii_rev_dns ;;  # Reverse DNS
-                8) viii_recon_dns ;;  # DNS Reconnaissance
-                9) ix_mitm ;;  # MiTM (Man-in-the-Middle)
-                10) x_portscan_bashsocket ;;  # Port Scan (Bash Sockets)
-                11) xi_useful_linux_commands ;; # Useful Linux commands
+                1) portscan ;;  # Perform a port scan
+                2) parsing_html ;;  # Parse HTML
+                3) google_hacking ;;  # Google Hacking
+                4) metadata_analysis ;;  # Metadata Analysis
+                5) dns_zt ;;  # DNS Zone Transfer
+                6) Subdomain_takeover ;;  # Subdomain Takeover
+                7) rev_dns ;;  # Reverse DNS
+                8) recon_dns ;;  # DNS Reconnaissance
+                9) mitm ;;  # MiTM (Man-in-the-Middle)
+                10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
+                11) useful_linux_commands ;; # Useful Linux commands
                 12) xii_network_management_commands ;;  # Network Management Commands
                 13) xiii_find_command_examples ;;  # 'Find' Command Examples
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
@@ -353,7 +353,7 @@
 
 #* SCRIPTS ########################
     # Function: Script to perform a port scan on a network using netcat
-    function i_portscan() {
+    function portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
             #
             # Description:
@@ -473,7 +473,7 @@
     }
 
     # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
-    function ii_parsing_html() {
+    function parsing_html() {
         # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
             #
             # Description:
@@ -603,7 +603,7 @@
     }
 
     # Function: Script to automate Google hacking queries for reconnaissance
-    function iii_google_hacking() {
+    function google_hacking() {
         # iii_google_hacking - Automates Google hacking queries for reconnaissance
             #
             # Description:
@@ -772,7 +772,7 @@
     }   
 
     # Function: Perform metadata analysis for files on specific domains
-    function iv_metadata_analysis() {
+    function metadata_analysis() {
         # Metadata Analysis - Perform metadata analysis for files on specific domains    
             # ==============================================================================
             # Metadata Analysis
@@ -1059,7 +1059,7 @@
     }
 
     # Function: Perform DNS Zone Transfer for reconnaissance
-    function v_dns_zt() {
+    function dns_zt() {
         # v_dns_zt - Perform DNS Zone Transfer for reconnaissance
             #
             # Description:
@@ -1146,7 +1146,7 @@
     }
 
     # Function: Perform a Subdomain Takeover check
-    function vi_Subdomain_takeover() {
+    function Subdomain_takeover() {
         # vi_Subdomain_takeover - Perform a Subdomain Takeover check
             #
             # Description:
@@ -1235,7 +1235,7 @@
     }
 
     # Function: Perform Reverse DNS Lookup for a specified range of IP addresses
-    function vii_rev_dns() {
+    function rev_dns() {
         # vii_rev_dns - Perform Reverse DNS Lookup for a specified range of IP addresses
             #
             # Description:
@@ -1322,7 +1322,7 @@
     }
     
     # Function: Perform DNS reconnaissance on a target domain using a subdomain wordlist
-    function viii_recon_dns() {
+    function recon_dns() {
         # viii_recon_dns - Perform DNS reconnaissance on a target domain using a subdomain wordlist
             #
             # Description:
@@ -1418,7 +1418,7 @@
     }
     
     # Function: Perform a Man-in-the-Middle (MiTM) attack
-    function ix_mitm() {
+    function mitm() {
         # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
             #
             # Description:
@@ -1559,7 +1559,7 @@
     }
 
     # Function: Perform a Bash-based TCP port scan
-    function x_portscan_bashsocket(){
+    function portscan_bashsocket(){
         # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
             #
             # Description:
