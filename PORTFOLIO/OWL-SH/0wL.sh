@@ -1828,7 +1828,7 @@
                     log_and_display "System Uptime: $(uptime -p)"
             }
 
-
+            #!DEPRECATED
                 #display_description "System information"
                 #    echo -e "${GREEN}$(uname -a)${RESET}"
                 #    echo
