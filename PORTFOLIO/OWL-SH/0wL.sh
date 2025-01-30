@@ -1964,7 +1964,7 @@
                     log_and_display "=== USB Devices ===\n$(lsusb || echo 'No USB devices found.')"
             }
 
-            function utilities_software() {
+            function utilities_softwares() {
                 display_section "INSTALLED UTILITY SOFTWARE"
                     log_and_display "=== Common System Utilities ===\n$(which curl wget nano vim tmux screen htop atop lsof strace tcpdump 2>/dev/null | sed 's/^/ - /')"
                     log_and_display "=== Compression & Archiving Tools ===\n$(which tar zip unzip gzip bzip2 7z 2>/dev/null | sed 's/^/ - /')"
@@ -1982,13 +1982,13 @@
                 cpu_memory_info
                 kernel_modules
                 virtualization_check
-            
+
                 ### USER & ACCESS CONTROL ###
                 users_list
                 sudo_users
                 active_ssh_sessions
                 failed_logins
-            
+
                 ### NETWORK & CONNECTIVITY ###
                 network_information
                 open_ports
@@ -1998,13 +1998,13 @@
                 routing_table
                 arp_table
                 dns_servers
-            
+
                 ### HARDWARE & DEVICES ###
                 usb_devices
-            
+
                 ### TASK AUTOMATION & SCHEDULING ###
                 cron_jobs
-            
+
                 ### SECURITY TOOLS & UTILITIES ###
                 installed_security_tools
                 utilities_softwares
