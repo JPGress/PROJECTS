@@ -1966,6 +1966,18 @@
                     log_and_display "=== USB Devices ===\n$(lsusb || echo 'No USB devices found.')"
             }
 
+            function utilities_software() {
+                display_section "INSTALLED UTILITY SOFTWARE"
+                    log_and_display "=== Common System Utilities ===\n$(which curl wget nano vim tmux screen htop atop lsof strace tcpdump 2>/dev/null | sed 's/^/ - /')"
+                    log_and_display "=== Compression & Archiving Tools ===\n$(which tar zip unzip gzip bzip2 7z 2>/dev/null | sed 's/^/ - /')"
+                    log_and_display "=== Programming Languages & Interpreters ===\n$(which python python3 perl ruby php gcc clang make 2>/dev/null | sed 's/^/ - /')"
+                    log_and_display "=== Debugging & Forensics Tools ===\n$(which gdb ldd objdump strings hexdump radare2 2>/dev/null | sed 's/^/ - /')"
+                    log_and_display "=== System Monitoring & Performance ===\n$(which top iotop iftop nload sar dstat vmstat sysstat 2>/dev/null | sed 's/^/ - /')"
+                    log_and_display "=== Network Diagnostic Tools ===\n$(which ping traceroute whois dig nslookup arp-scan netcat socat 2>/dev/null | sed 's/^/ - /')"
+                    log_and_display "=== File Transfer & Remote Access ===\n$(which rsync scp ssh ftp sftp smbclient rclone 2>/dev/null | sed 's/^/ - /')"
+                    log_and_display "=== Package Managers ===\n$(which apt yum dnf pacman zypper snap flatpak 2>/dev/null | sed 's/^/ - /')"
+            }
+
             # Function to call all the enumeration functions
             function all_sysenum_caller(){
                 system_information
@@ -1988,6 +2000,7 @@
                 virtualization_check
                 cron_jobs
                 usb_devices
+                utilities_software
             }
 
             # Call all the enumeration functions
