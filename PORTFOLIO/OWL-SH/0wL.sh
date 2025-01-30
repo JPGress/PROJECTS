@@ -78,7 +78,7 @@
         echo -e "\t\t ${RED} ╚═════╝  ╚══╝╚══╝ ╚══════╝   ╚═════╝ ╚═╝     ╚══════╝${RESET}"
         author_version;
     }
-#
+
     # Function: Display the menu header with the script name and author
     function author_version() {
         echo -e "${RED}                                                      0wL Operators Script sh.v $VERSION ${RESET}"
@@ -196,12 +196,11 @@
         exit 0  # Exit the script
     }
 
-    # Function to display a section title
     function display_section() {
         local title="$1"
-        echo -e "${RED} #SECTION: $title${RESET}"
-        subtitle;  # Add a decorative subtitle
-        echo
+        echo -e "${RED} #SECTION: $title${RESET}" | tee -a "$LOG_FILE"
+        subtitle | tee -a "$LOG_FILE"
+        echo -e "" | tee -a "$LOG_FILE"
     }
 
     # Function to display description usage
@@ -1774,32 +1773,58 @@
         # Execute workflow
         useful_commands_workflow
     }
-
+    # Function: Collects system & network reconnaissance data
     function linux_sysinfo() {
-        # Function: Display useful Linux networking commands
+        # linux_sysinfo - Collects system & network reconnaissance data
             #
             # Description:
-            # This script presents a collection of useful Linux commands for network management,
-            # including commands for checking ARP tables, network interfaces, active connections,
-            # and routing information.
+            #   This script gathers detailed system and network-related information, including:
+            #   - OS details, active processes, hostname, network interfaces, open ports
+            #   - Installed security tools
+            #   - Routing table, ARP cache, firewall rules, DNS servers
             #
-            # Dependencies:
-            # - Basic Linux utilities (arp, ifconfig, ip, netstat, ss, route)
+            # Output:
+            #   - Displays results on screen
+            #   - Saves results to a log file for later analysis
             #
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
             # Last Updated: 2025-01-25
-            # Version: 1.1
+            # Version: 2.0
+            #
+            # Usage:
+            #   Run this function to gather reconnaissance data from a system.
             #
             # Notes:
-            # - These commands are useful for system administrators and penetration testers.
-            # - Some commands require administrative privileges (sudo).
-            #
-            # Example usage:
-            # - Running this function will display categorized networking commands.
+            #   - This tool is useful for both **pentesters** and **forensics investigators**.
+            #   - Requires root privileges for some commands.
 
-        title="Linux System Information"  # Define the title for this operation
+        title="Linux System enumeration"  # Define the title for this operation
 
+        function create_log_file() {
+            LOG_DIR="./logs"
+            if [! -d "$LOG_DIR" ]; then
+                mkdir -p "$LOG_DIR"
+            fi
+            LOG_FILE="${LOG_DIR}/sysinfo_$(date +%d%m%Y_%H%M%S).log"
+            echo "System enumeration log file: $LOG_FILE" >> "$LOG_FILE"
+            echo "Reconnaissance started at: $(date)" >> "$LOG_FILE"
+            subtitle >> "$LOG_FILE"
+        }
+
+        function log_and_display() {
+            local message="$1"
+            echo -e "${GREEN}$message${RESET}" | tee -a "$LOG_FILE"
+            echo -e "" | tee -a "$LOG_FILE"
+        }
+
+        function display_section() {
+            local title="$1"
+            echo -e "${RED} #SECTION: $title${RESET}" | tee -a "$LOG_FILE"
+            subtitle
+            echo -e "" | tee -a "$LOG_FILE"
+        }
+        
         function system_enumeration() {
             display_section "SYSTEM AND NETWORK ENUMERATION"
                 
@@ -1900,6 +1925,7 @@
         # Main execution workflow
         function sysinfo_workflow() {
             display_banner_inside_functions
+            create_log_file
             system_enumeration
             exit_to_main_menu
         }
