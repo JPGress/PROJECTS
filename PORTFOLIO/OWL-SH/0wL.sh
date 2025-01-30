@@ -1815,11 +1815,11 @@
 
         function log_and_display() {
             local message="$1"
-            echo -e "${GREEN}$message${RESET}" | tee -a "$LOG_FILE"
+            echo -e "$message" | tee -a "$LOG_FILE"
             echo -e "" | tee -a "$LOG_FILE"
         }
         
-        function system_enumeration() {
+        function all_system_enumeration() {
             
             function system_information() {
                 display_section "SYSTEM INFORMATION"
@@ -1827,7 +1827,7 @@
                     log_and_display "OS Info: $(lsb_release -a 2>/dev/null || cat /etc/os-release)"
                     log_and_display "System Uptime: $(uptime -p)"
             }
-
+            system_information
             #!DEPRECATED
                 #display_description "System information"
                 #    echo -e "${GREEN}$(uname -a)${RESET}"
@@ -1927,8 +1927,7 @@
         function sysinfo_workflow() {
             display_banner_inside_functions
             create_log_file
-            #system_enumeration
-            system_information
+            all_system_enumeration
             exit_to_main_menu
         }
 
