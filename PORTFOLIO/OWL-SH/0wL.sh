@@ -111,6 +111,14 @@
         echo -e "" | tee -a "$LOG_FILE"
     }
 
+        # Function: Display section inside some functions WITH NO LOG
+    function display_section_no_log() {
+        local title="$1"
+        echo -e "# SECTION: $title" 
+        subtitle
+        echo -e ""
+    }
+
     # Function: Enable TOR routing for Proxychains
     function enable_proxychains() {
         clear; # Clear terminal screen
@@ -1716,7 +1724,7 @@
 
         # Function to display useful network management commands
         function network_management_commands() {
-            display_section "USEFUL NETOWRK MANAGEMENT COMMANDS"
+            display_section_no_log "USEFUL NETOWRK MANAGEMENT COMMANDS"
             
                 display_description "List ARP Table"
                     display_command  "arp -a" 
@@ -1737,7 +1745,7 @@
 
         # Function to display connection monitoring commands
         function connection_monitoring_commands() {
-            display_section " ACTIVE CONNECTIONS"
+            display_section_no_log " ACTIVE CONNECTIONS"
             
             display_description "Show Active Connections"
             display_command "netstat"
@@ -1750,7 +1758,7 @@
 
         # Function to display routing-related commands
         function routing_commands() {
-            display_section " ROUTING INFORMATION"
+            display_section_no_log " ROUTING INFORMATION"
             
             display_description "Show Routing Table"
             display_command  "route"
@@ -1761,7 +1769,7 @@
 
         # Function to display persistent network configuration information
         function network_configuration_info() {
-            display_section "PERSISTENT NETWORK CONFIGURATION"
+            display_section_no_log "PERSISTENT NETWORK CONFIGURATION"
             echo -e "${GRENN} In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
             echo
             echo -e "${GRENN} In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
