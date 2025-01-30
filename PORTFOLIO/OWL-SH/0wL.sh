@@ -106,7 +106,7 @@
     # Function: Display section inside some functions
     function display_section() {
         local title="$1"
-        echo -e " #SECTION: $title" | tee -a "$LOG_FILE"
+        echo -e "# SECTION: $title" | tee -a "$LOG_FILE"
         subtitle
         echo -e "" | tee -a "$LOG_FILE"
     }
