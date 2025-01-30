@@ -1870,14 +1870,19 @@
 
             function installed_security_tools() {
                 display_section "INSTALLED SECURITY TOOLS"
-                    if command -v dpkg &>/dev/null; then
-                        log_and_display "=== Security Tools ===\n$(dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
-                    elif command -v rpm &>/dev/null; then
-                        log_and_display "=== Security Tools ===\n$(rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
-                    else
-                        log_and_display "Package manager not found. Cannot list installed security tools."
-                    fi
+                if command -v dpkg &>/dev/null; then
+                    log_and_display "=== Security Tools (Debian-based) ===\n$(dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
+                elif command -v rpm &>/dev/null; then
+                    log_and_display "=== Security Tools (Red Hat-based) ===\n$(rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
+                elif command -v pacman &>/dev/null; then
+                    log_and_display "=== Security Tools (Arch-based) ===\n$(pacman -Q | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
+                elif command -v apk &>/dev/null; then
+                    log_and_display "=== Security Tools (Alpine-based) ===\n$(apk list --installed | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
+                else
+                    log_and_display "Package manager not found. Cannot list installed security tools."
+                fi
             }
+
 
             function routing_table() {
                 display_section "ROUTING TABLE"
