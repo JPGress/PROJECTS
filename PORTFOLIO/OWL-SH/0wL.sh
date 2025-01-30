@@ -2142,229 +2142,110 @@
         sysinfo_workflow
     }
 
-
-
-        function find_based_attack_surface_analysis() {
-            # find_based_attack_surface_analysis - Automates Attack Surface Discovery using 'find'
-                #
-                # Description:
-                #   Automates system reconnaissance by searching for sensitive files, privilege escalation paths,
-                #   and hidden persistence mechanisms using the 'find' command.
-                #
-                # Key Features:
-                #   - Detects SUID/SGID binaries for Privilege Escalation
-                #   - Identifies world-writable or unowned files for exploitation
-                #   - Finds SSH keys, password files, and sensitive data for credential theft
-                #   - Locates hidden files, unusual permissions, and suspicious cron jobs
-                #   - Logs findings for Red Team and Forensics investigations
-                #
-                # Output:
-                #   - Displays results on-screen
-                #   - Saves findings to a structured log file
-                #
-                # Author: R3v4N (w/GPT)
-                # Created on: 2025-01-25
-                # Last Updated: 2025-01-30
-                # Version: 2.0
-                #
-                # Usage:
-                #   Run this function to automatically scan a system for attack vectors or forensic analysis.
-                #
-                # Notes:
-                #   - Red Team: Helps identify misconfigurations & exploitation opportunities.
-                #   - Forensics: Helps detect persistence, exfiltration traces, and privilege abuse.
-                #   - Requires root privileges for full execution.
-                # Create log directory & file
-            function create_log_file() {
-                LOG_DIR="./logs"
-                mkdir -p "$LOG_DIR"
-                LOG_FILE="${LOG_DIR}/find_analysis_$(date +%d%m%Y_%H%M%S).log"
-                echo "Find-Based Attack Surface Analysis Log - $(date)" > "$LOG_FILE"
-                echo "===============================================" >> "$LOG_FILE"
-            }
-
-            # Helper function to display and log results
-            function log_and_display() {
-                local message="$1"
-                echo -e "$message" | tee -a "$LOG_FILE"
-                echo -e "" | tee -a "$LOG_FILE"
-            }
-
-            # Privilege Escalation Checks
-            function privilege_escalation_checks() {
-                log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
-                find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # World-Writable & Unowned Files
-            function world_writable_unowned_files() {
-                log_and_display "=== Searching for World-Writable Files ==="
-                find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-
-                log_and_display "=== Searching for Unowned Files ==="
-                find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Credential Discovery
-            function credential_discovery() {
-                log_and_display "=== Searching for SSH Keys ==="
-                find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
-
-                log_and_display "=== Searching for Password Files (Config files) ==="
-                find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" \) -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Persistence Mechanisms
-            function persistence_mechanisms() {
-                log_and_display "=== Searching for Suspicious Cron Jobs ==="
-                find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-
-                log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
-                find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Hidden Files & Anti-Forensics
-            function hidden_files_detection() {
-                log_and_display "=== Searching for Hidden Files ==="
-                find / -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
-
-                log_and_display "=== Searching for Files with Strange Timestamps ==="
-                find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Exfiltration Traces
-            function exfiltration_traces() {
-                log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
-                find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-
-                log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
-                find / -type f -atime -1 -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Automated Execution of All Checks
-            function run_find_based_analysis() {
-                create_log_file
-                privilege_escalation_checks
-                world_writable_unowned_files
-                credential_discovery
-                persistence_mechanisms
-                hidden_files_detection
-                exfiltration_traces
-                log_and_display "=== Analysis Complete! Results saved to: $LOG_FILE ==="
-            }
-
-            # Execute the workflow
-            run_find_based_analysis
+    # Function: Find-base attack surface analysis
+    function find_based_attack_surface_analysis() {
+        # find_based_attack_surface_analysis - Automates Attack Surface Discovery using 'find'
+            #
+            # Description:
+            #   Automates system reconnaissance by searching for sensitive files, privilege escalation paths,
+            #   and hidden persistence mechanisms using the 'find' command.
+            #
+            # Key Features:
+            #   - Detects SUID/SGID binaries for Privilege Escalation
+            #   - Identifies world-writable or unowned files for exploitation
+            #   - Finds SSH keys, password files, and sensitive data for credential theft
+            #   - Locates hidden files, unusual permissions, and suspicious cron jobs
+            #   - Logs findings for Red Team and Forensics investigations
+            #
+            # Output:
+            #   - Displays results on-screen
+            #   - Saves findings to a structured log file
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Usage:
+            #   Run this function to automatically scan a system for attack vectors or forensic analysis.
+            #
+            # Notes:
+            #   - Red Team: Helps identify misconfigurations & exploitation opportunities.
+            #   - Forensics: Helps detect persistence, exfiltration traces, and privilege abuse.
+            #   - Requires root privileges for full execution.
+            # Create log directory & file
+        title="Find-Based Attack Surface Analysis"  # Define the title for this operation
+        function create_log_file() {
+            LOG_DIR="./logs"
+            mkdir -p "$LOG_DIR"
+            LOG_FILE="${LOG_DIR}/find_analysis_$(date +%d%m%Y_%H%M%S).log"
+            echo "Find-Based Attack Surface Analysis Log - $(date)" > "$LOG_FILE"
+            echo "===============================================" >> "$LOG_FILE"
         }
-
+        # Helper function to display and log results
+        function log_and_display() {
+            local message="$1"
+            echo -e "$message" | tee -a "$LOG_FILE"
+            echo -e "" | tee -a "$LOG_FILE"
+        }
+        # Privilege Escalation Checks
+        function privilege_escalation_checks() {
+            log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
+            find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+        }
+        # World-Writable & Unowned Files
+        function world_writable_unowned_files() {
+            log_and_display "=== Searching for World-Writable Files ==="
+            find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for Unowned Files ==="
+            find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+        }
+        # Credential Discovery
+        function credential_discovery() {
+            log_and_display "=== Searching for SSH Keys ==="
+            find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for Password Files (Config files) ==="
+            find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" \) -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
+        }
+        # Persistence Mechanisms
+        function persistence_mechanisms() {
+            log_and_display "=== Searching for Suspicious Cron Jobs ==="
+            find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
+            find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+        }
+        # Hidden Files & Anti-Forensics
+        function hidden_files_detection() {
+            log_and_display "=== Searching for Hidden Files ==="
+            find / -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for Files with Strange Timestamps ==="
+            find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+        }
+        # Exfiltration Traces
+        function exfiltration_traces() {
+            log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
+            find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
+            find / -type f -atime -1 -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+        }
+        # Automated Execution of All Checks
+        function run_find_based_analysis() {
+            display_banner_inside_functions
+            create_log_file
+            privilege_escalation_checks
+            world_writable_unowned_files
+            credential_discovery
+            persistence_mechanisms
+            hidden_files_detection
+            exfiltration_traces
+            log_and_display "=== Analysis Complete! Results saved to: $LOG_FILE ==="
+        }
+        # Execute the workflow
+        run_find_based_analysis
+    }
 
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-    # Define a função xiii_exemplos_find para explicar sobre o comando find
-    function xiii_exemplos_find(){
-        # limpa a tela
-        clear
-
-        # exibe um cabeçalho
-        echo
-        echo ">>>>>>>>>> COMANDOS LINUX - FIND & SEUS EXEMPLOS <<<<<<<<<<"
-        echo
-
-        ### Listar todos os arquivos em um diretório
-
-        # exibe a descrição e o comando para listar todos os arquivos em um diretório
-        echo -e "${RED}# exibe uma lista com todos os arquivos localizados em um determinado diretório, incluindo os arquivos armazenados nos subdiretórios.${RESET}"
-        echo -e "$ find ."
-        echo
-
-        ### Buscar por arquivos com maxdepth
-
-        # exibe a descrição e o comando para buscar por arquivos com um nível máximo de subdiretórios (maxdepth)
-        echo -e "${RED}# Condição que define o nível de 'profundidade' na navegação dos subdiretórios por meio do maxdepth.${RESET}"
-        echo -e "$ find /etc -maxdepth 1 -name *.sh"
-        echo
-
-        ### Buscar por arquivos com nome específico
-
-        # exibe a descrição e o comando para buscar por arquivos com nome específico usando curingas
-        echo -e "${RED}# Pesquisa por arquivos${RESET}"
-        echo -e "$ find ./test -type f -name <arquivo*>"
-        echo
-
-        ### Buscar por diretórios com nome específico
-
-        # exibe a descrição e o comando para buscar por diretórios com nome específico usando curingas
-        echo -e "${RED}# Pesquisa por diretórios${RESET}"
-        echo -e "$ find ./test -type d -name <diretorio*>"
-        echo
-
-        ### Buscar por arquivos ocultos
-
-        # exibe a descrição e o comando para buscar por arquivos ocultos
-        echo -e "${RED}# Pesquisa por arquivos ocultos${RESET}"
-        echo -e "$ find ~ -type f -name ".*""
-        echo
-
-        ### Buscar por arquivos com permissões específicas
-
-        # exibe a descrição e o comando para buscar por arquivos com permissões específicas
-        echo -e "${RED}# Pesquisa por arquivos com determinadas permissões${RESET}"
-        echo -e "# find / -type f -perm 0740 -type f -exec ls -la {} 2>/dev/null \;"
-        echo
-        echo -e "${RED}# Pesquisa por arquivos com permissões SUID${RESET}"
-        echo -e "# find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;"
-        echo
-
-
-        ### Buscar por arquivos do usuário específico
-
-        # exibe a descrição e o comando para buscar por arquivos do usuário específico
-        echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin${RESET}"
-        echo -e "$ find . –user msfadmin"
-        echo
-
-        ### Buscar por arquivos do usuário específico com extensão específica
-
-        # exibe a descrição e o comando para buscar por arquivos do usuário específico com extensão específica
-        echo -e "${RED}# Pesquisa por arquivos do usuário msfadmin de extensão .txt${RESET}"
-        echo -e "$ find . –user msfadmin –name ‘*.txt’"
-        echo
-
-        ### Buscar por arquivos do grupo específico
-
-        # exibe a descrição e o comando para buscar por arquivos do grupo específico
-        echo -e "${RED}# Pesquisa por arquivos do grupo adm${RESET}"
-        echo -e "# find . –group adm"
-        echo
-
-        ### Buscar por arquivos modificados há N dias
-
-        # exibe a descrição e o comando para buscar por arquivos modificados há N dias
-        echo -e "${RED}# Pesquisa por arquivos modificados a N dias${RESET}"
-        echo -e "find / -mtime 5"
-        echo
-
-        ### Buscar por arquivos acessados há N dias
-
-        # exibe a descrição e o comando para buscar por arquivos acessados há N dias
-        echo -e "${RED}# Pesquisa por arquivos acessados a N dias${RESET}"
-        echo -e "# find / -atime 5"
-        echo
-
-        ### Buscar e executar comando com arquivos encontrados
-
-        # exibe a descrição e o comando para buscar por arquivos e executar um comando com cada um deles
-        echo -e "${RED}# Realiza a busca e executa comando com entradas encontradas.${RESET}"
-        echo -e "# find / -name "*.pdf" -type f -exec ls -lah {} \;"
-        echo
-
-        # pausa o script até que o usuário pressione ENTER
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        # chama a função main_menu para retornar ao menu principal
-        main_menu;
-    }
 
     # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no debian
     function xiv_debian_memento_troca_senha_root(){
