@@ -2009,8 +2009,83 @@
                 ### SECURITY TOOLS & UTILITIES ###
                 installed_security_tools
                 utilities_softwares
+                attack_surface_analysis
             }
 
+            # Function: attack_surface_analysis - Map Installed Tools to Attack Vectors
+            function attack_surface_analysis() {
+                # Define MITRE ATT&CK Categories
+                declare -A ATTACK_CATEGORIES=(
+                    ["Privilege Escalation"]="kernel exploits, SUID binaries, sudo misconfigs"
+                    ["Lateral Movement"]="SSH keys, SMB tools, RDP clients"
+                    ["Persistence"]="cron jobs, SSH backdoors, startup scripts"
+                    ["Defense Evasion"]="log tampering, anti-forensics tools"
+                    ["Exfiltration"]="scp, rsync, netcat, curl"
+                    ["Credential Dumping"]="Mimikatz, hashes, SAM extraction"
+                    ["Container & Cloud Exploits"]="Docker misconfigs, AWS CLI abuse"
+                    ["Network Reconnaissance"]="Nmap, Wireshark, Tcpdump, Gobuster"
+                )
+
+                # Check system for attack vectors
+                function analyze_attack_surface() {
+                
+                    # Function to check for installed tools
+                    function check_installed_tools() {
+                        local tools=("$@")
+                        local found_tools=""
+                        for tool in "${tools[@]}"; do
+                            if command -v "$tool" &>/dev/null; then
+                                found_tools+="$tool "
+                            fi
+                        done
+                        echo "$found_tools"
+                    }
+
+                    for category in "${!ATTACK_CATEGORIES[@]}"; do
+                        echo -e "\n === $category ===" | tee -a "$LOG_FILE"
+
+                        case "$category" in
+                            "Privilege Escalation")
+                                check_installed_tools "sudo" "gcc" "make" "setcap" "capsh" "pkexec" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                            "Lateral Movement")
+                                check_installed_tools "ssh" "smbclient" "rdesktop" "xfreerdp" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                            "Persistence")
+                                check_installed_tools "crontab" "systemctl" "rc.local" "init.d" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                            "Defense Evasion")
+                                check_installed_tools "shred" "wipe" "logrotate" "chattr" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                            "Exfiltration")
+                                check_installed_tools "scp" "rsync" "netcat" "curl" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                            "Credential Dumping")
+                                check_installed_tools "mimikatz" "john" "hashcat" "secretsdump.py" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                            "Container & Cloud Exploits")
+                                check_installed_tools "docker" "kubectl" "aws" "gcloud" "az" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                            "Network Reconnaissance")
+                                check_installed_tools "nmap" "wireshark" "tcpdump" "gobuster" "amass" \
+                                    | tee -a "$LOG_FILE"
+                                ;;
+                        esac
+                    done
+
+                    echo -e "\n **Attack Surface Analysis Completed.** Report saved: $LOG_FILE\n"
+                }
+
+                # Run the analysis
+                analyze_attack_surface
+            }
 
             # Call all the enumeration functions
             all_sysenum_caller
@@ -2036,88 +2111,6 @@
 
         # Execute workflow
         sysinfo_workflow
-    }
-    
-    # Function: attack_surface_analysis - Map Installed Tools to Attack Vectors
-    function attack_surface_analysis() {
-        # Define MITRE ATT&CK Categories
-        declare -A ATTACK_CATEGORIES=(
-            ["Privilege Escalation"]="kernel exploits, SUID binaries, sudo misconfigs"
-            ["Lateral Movement"]="SSH keys, SMB tools, RDP clients"
-            ["Persistence"]="cron jobs, SSH backdoors, startup scripts"
-            ["Defense Evasion"]="log tampering, anti-forensics tools"
-            ["Exfiltration"]="scp, rsync, netcat, curl"
-            ["Credential Dumping"]="Mimikatz, hashes, SAM extraction"
-            ["Container & Cloud Exploits"]="Docker misconfigs, AWS CLI abuse"
-            ["Network Reconnaissance"]="Nmap, Wireshark, Tcpdump, Gobuster"
-        )
-
-        # Create log file
-        LOG_FILE="./logs/attack_surface_$(date +%d%m%Y_%H%M%S).log"
-        mkdir -p "$(dirname "$LOG_FILE")"
-        echo "Attack Surface Report - Generated on $(date)" | tee -a "$LOG_FILE"
-        echo "--------------------------------------------------------" | tee -a "$LOG_FILE"
-
-        # Function to check for installed tools
-        function check_installed_tools() {
-            local tools=("$@")
-            local found_tools=""
-            for tool in "${tools[@]}"; do
-                if command -v "$tool" &>/dev/null; then
-                    found_tools+="$tool "
-                fi
-            done
-            echo "$found_tools"
-        }
-
-        # Check system for attack vectors
-        function analyze_attack_surface() {
-            echo -e "\n🔍 **Analyzing Attack Surface...**\n" | tee -a "$LOG_FILE"
-
-            for category in "${!ATTACK_CATEGORIES[@]}"; do
-                echo -e "\n⚡ **$category:** ${ATTACK_CATEGORIES[$category]}" | tee -a "$LOG_FILE"
-
-                case "$category" in
-                    "Privilege Escalation")
-                        check_installed_tools "sudo" "gcc" "make" "setcap" "capsh" "pkexec" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                    "Lateral Movement")
-                        check_installed_tools "ssh" "smbclient" "rdesktop" "xfreerdp" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                    "Persistence")
-                        check_installed_tools "crontab" "systemctl" "rc.local" "init.d" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                    "Defense Evasion")
-                        check_installed_tools "shred" "wipe" "logrotate" "chattr" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                    "Exfiltration")
-                        check_installed_tools "scp" "rsync" "netcat" "curl" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                    "Credential Dumping")
-                        check_installed_tools "mimikatz" "john" "hashcat" "secretsdump.py" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                    "Container & Cloud Exploits")
-                        check_installed_tools "docker" "kubectl" "aws" "gcloud" "az" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                    "Network Reconnaissance")
-                        check_installed_tools "nmap" "wireshark" "tcpdump" "gobuster" "amass" \
-                            | tee -a "$LOG_FILE"
-                        ;;
-                esac
-            done
-
-            echo -e "\n✅ **Attack Surface Analysis Completed.** Report saved: $LOG_FILE\n"
-        }
-
-        # Run the analysis
-        analyze_attack_surface
     }
 
 
