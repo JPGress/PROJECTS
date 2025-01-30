@@ -364,6 +364,7 @@
     }
 
 #* ====== SCRIPTS ======
+    #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
