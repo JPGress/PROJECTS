@@ -1818,13 +1818,6 @@
             echo -e "${GREEN}$message${RESET}" | tee -a "$LOG_FILE"
             echo -e "" | tee -a "$LOG_FILE"
         }
-
-        function display_section() {
-            local title="$1"
-            echo -e "${RED} #SECTION: $title${RESET}" | tee -a "$LOG_FILE"
-            subtitle
-            echo -e "" | tee -a "$LOG_FILE"
-        }
         
         function system_enumeration() {
             display_section "SYSTEM AND NETWORK ENUMERATION"
