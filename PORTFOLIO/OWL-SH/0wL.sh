@@ -1675,7 +1675,7 @@
     }
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-    function xi_useful_linux_commands() {
+    function useful_linux_commands() {
         # Function: Display useful Linux networking commands
             #
             # Description:
@@ -1779,9 +1779,9 @@
                     subtitle; # Add a decorative subtitle
                 display_description "Firewall Rules"
                     if command -v ufw &>/dev/null; then
-                        ufw status
+                        echo -e "${GREEN}$(ufw status)${RESET}"
                     else
-                        iptables -L -n -v
+                        echo -e "${GREEN}$(iptables -L -n -v)${RESET}"
                     fi
                     echo
                     subtitle; # Add a decorative subtitle
@@ -1807,11 +1807,11 @@
                     subtitle; # Add a decorative subtitle
                 display_description "Installed Security Network Tools"
                     if command -v dpkg &>/dev/null; then
-                        dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb'
+                        echo -e "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
                     elif command -v rpm &>/dev/null; then
-                        rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb'
+                        echo -e "${GREEN}$(rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
                     else
-                        echo "Package manager not found. Cannot list installed tools."
+                        echo -e "${GREEN}$(Package 'manager not found. Cannot list installed tools.')${RESET}"
                     fi
                     echo
                     subtitle; # Add a decorative subtitle
