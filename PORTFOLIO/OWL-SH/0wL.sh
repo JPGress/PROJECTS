@@ -2014,6 +2014,8 @@
 
             # Function: attack_surface_analysis - Map Installed Tools to Attack Vectors
             function attack_surface_analysis() {
+                display_section "ATTACK SURFACE ANALYSIS"
+
                 # Define MITRE ATT&CK Categories
                 declare -A ATTACK_CATEGORIES=(
                     ["Privilege Escalation"]="kernel exploits, SUID binaries, sudo misconfigs"
@@ -2042,7 +2044,7 @@
                     }
 
                     for category in "${!ATTACK_CATEGORIES[@]}"; do
-                        echo -e "\n === $category ===" | tee -a "$LOG_FILE"
+                        echo -e "\n=== $category ===" | tee -a "$LOG_FILE"
 
                         case "$category" in
                             "Privilege Escalation")
@@ -2079,8 +2081,6 @@
                                 ;;
                         esac
                     done
-
-                    echo -e "\n **Attack Surface Analysis Completed.** Report saved: $LOG_FILE\n"
                 }
 
                 # Run the analysis
