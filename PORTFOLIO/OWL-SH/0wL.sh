@@ -1883,7 +1883,6 @@
                 fi
             }
 
-
             function routing_table() {
                 display_section "ROUTING TABLE"
                     log_and_display "=== Routing Table ===\n$(route -n)"
@@ -1947,8 +1946,17 @@
 
             function failed_logins() {
                 display_section "FAILED LOGIN ATTEMPTS"
-                    log_and_display "=== Last 10 Failed Logins ===\n$(grep 'Failed password' /var/log/auth.log 2>/dev/null | tail -10 || echo 'No failed login attempts found.')"
-            }
+                
+                if [ -f /var/log/auth.log ]; then
+                    log_and_display "=== Failed Logins (Debian-based) ===\n$(grep 'Failed password' /var/log/auth.log | tail -20)"
+                elif [ -f /var/log/secure ]; then
+                    log_and_display "=== Failed Logins (Red Hat-based) ===\n$(grep 'Failed password' /var/log/secure | tail -20)"
+                elif command -v journalctl &>/dev/null; then
+                    log_and_display "=== Failed Logins (Systemd-based) ===\n$(journalctl -u sshd --no-pager | grep 'Failed password' | tail -20)"
+                else
+                    log_and_display "No logs found for failed login attempts."
+                fi
+            }    
 
             function kernel_modules() {
                 display_section "LOADED KERNEL MODULES"
