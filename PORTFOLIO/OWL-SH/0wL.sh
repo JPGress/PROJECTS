@@ -65,7 +65,7 @@
 
         # Countdown loop
         while [ $seconds -gt 0 ]; do
-            echo -ne "${GRAY} Starting in: $seconds \r${RESET}" # Display the countdown and overwrite the same line
+            echo -ne "${GRAY} >>> Starting in: $seconds \r${RESET}" # Display the countdown and overwrite the same line
             sleep 1 # Wait for 1 second
             ((seconds--)) # Decrease the countdown value
         done
