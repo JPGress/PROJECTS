@@ -71,49 +71,28 @@
 
     function ascii_banner_art() {
         
-        #!  ██████╗ ██╗    ██╗██╗         ██████╗ ███████╗███╗   ██╗████████╗███████╗███████╗████████╗    ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗
-        #! ██╔═████╗██║    ██║██║         ██╔══██╗██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝    ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝
-        #! ██║██╔██║██║ █╗ ██║██║         ██████╔╝█████╗  ██╔██╗ ██║   ██║   █████╗  ███████╗   ██║       ███████╗██║     ██████╔╝██║██████╔╝   ██║   
-        #! ████╔╝██║██║███╗██║██║         ██╔═══╝ ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ╚════██║   ██║       ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   
-        #! ╚██████╔╝╚███╔███╔╝███████╗    ██║     ███████╗██║ ╚████║   ██║   ███████╗███████║   ██║       ███████║╚██████╗██║  ██║██║██║        ██║   
-        #!  ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝       ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   
-                                                                                                                                                           
-        
-        echo -e "${RED} ██████╗ ██████╗ ███████╗${RESET}"
-        echo -e "${RED}██╔═══██╗██╔══██╗██╔════╝${RESET}"
-        echo -e "${RED}██║   ██║██████╔╝███████╗${RESET}"
-        echo -e "${RED}██║   ██║██╔═══╝ ╚════██║${RESET}"
-        echo -e "${RED}╚██████╔╝██║     ███████║${RESET}"
-        echo -e "${RED} ╚═════╝ ╚═╝     ╚══════╝${RESET}"
-        echo -e "${RED}\tOWL PENTEST SCRIPT${RESET}"
+            #! Banner full 
+                #!  ██████╗ ██╗    ██╗██╗         ██████╗ ███████╗███╗   ██╗████████╗███████╗███████╗████████╗    ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗
+                #! ██╔═████╗██║    ██║██║         ██╔══██╗██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝    ██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝
+                #! ██║██╔██║██║ █╗ ██║██║         ██████╔╝█████╗  ██╔██╗ ██║   ██║   █████╗  ███████╗   ██║       ███████╗██║     ██████╔╝██║██████╔╝   ██║   
+                #! ████╔╝██║██║███╗██║██║         ██╔═══╝ ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ╚════██║   ██║       ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   
+                #! ╚██████╔╝╚███╔███╔╝███████╗    ██║     ███████╗██║ ╚████║   ██║   ███████╗███████║   ██║       ███████║╚██████╗██║  ██║██║██║        ██║   
+                #!  ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝       ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   
+
+
+        echo
+        echo -e "\t\t ${RED} ██████╗ ██╗    ██╗██╗        ██████╗ ██████╗ ███████╗${RESET}"
+        echo -e "\t\t ${RED}██╔═████╗██║    ██║██║       ██╔═══██╗██╔══██╗██╔════╝${RESET}"
+        echo -e "\t\t ${RED}██║██╔██║██║ █╗ ██║██║       ██║   ██║██████╔╝███████╗${RESET}"
+        echo -e "\t\t ${RED}████╔╝██║██║███╗██║██║       ██║   ██║██╔═══╝ ╚════██║${RESET}"
+        echo -e "\t\t ${RED}╚██████╔╝╚███╔███╔╝███████╗  ╚██████╔╝██║     ███████║${RESET}"
+        echo -e "\t\t ${RED} ╚═════╝  ╚══╝╚══╝ ╚══════╝   ╚═════╝ ╚═╝     ╚══════╝${RESET}"
         author_version;
-
-        #echo -e ""
-        #echo -e "${RED} ██████╗ ██╗    ██╗██╗                                      ${RESET}"
-        #echo -e "${RED}██╔═══██╗██║    ██║██║                                      ${RESET}"
-        #echo -e "${RED}██║   ██║██║ █╗ ██║██║                                      ${RESET}"
-        #echo -e "${RED}██║   ██║██║███╗██║██║                                      ${RESET}"
-        #echo -e "${RED}╚██████╔╝╚███╔███╔╝███████╗                                 ${RESET}"
-        #echo -e "${RED} ╚═════╝  ╚══╝╚══╝ ╚══════╝                                 ${RESET}"
-        #echo -e "${RED}██████╗ ███████╗███╗   ██╗████████╗███████╗███████╗████████╗${RESET}"
-        #echo -e "${RED}██╔══██╗██╔════╝████╗  ██║╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝${RESET}"
-        #echo -e "${RED}██████╔╝█████╗  ██╔██╗ ██║   ██║   █████╗  ███████╗   ██║   ${RESET}"
-        #echo -e "${RED}██╔═══╝ ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ╚════██║   ██║   ${RESET}"
-        #echo -e "${RED}██║     ███████╗██║ ╚████║   ██║   ███████╗███████║   ██║   ${RESET}"
-        #echo -e "${RED}╚═╝     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝   ${RESET}"
-        #echo -e "${RED}███████╗ ██████╗██████╗ ██╗██████╗ ████████╗                ${RESET}"
-        #echo -e "${RED}██╔════╝██╔════╝██╔══██╗██║██╔══██╗╚══██╔══╝                ${RESET}"
-        #echo -e "${RED}███████╗██║     ██████╔╝██║██████╔╝   ██║                   ${RESET}"
-        #echo -e "${RED}╚════██║██║     ██╔══██╗██║██╔═══╝    ██║                   ${RESET}"
-        #echo -e "${RED}███████║╚██████╗██║  ██║██║██║        ██║                   ${RESET}"
-        #echo -e "${RED}╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝                   ${RESET}"
-        #author_version;
-        
     }
-
+#
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "${RED}                                                                           sh v $VERSION ${RESET}"
+        echo -e "${RED}                                                      0wL Operators Script sh.v $VERSION ${RESET}"
         echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
         echo -e "${GRAY}+                          Created by $AUTHOR                       +${RESET}"
         subtitle;
@@ -213,7 +192,7 @@
         fi
     }
     
-    function display_banner(){
+    function display_banner_inside_functions(){
         clear;  # Clear the terminal screen for clean output
         ascii_banner_art;  # Display ASCII art banner
         echo -e "${MAGENTA}\t\t$title ${RESET}"
@@ -1326,7 +1305,7 @@
         # Main workflow for the reverse DNS lookup
         function reverse_dns_workflow() {
             
-            display_banner;  # Display the sub-menu for Reverse DNS Lookup
+            display_banner_inside_functions;  # Display the sub-menu for Reverse DNS Lookup
             prompt_user_inputs  # Prompt the user for inputs
             prepare_output_file  # Prepare the output file
             perform_reverse_dns  # Perform reverse DNS lookups
@@ -1421,7 +1400,7 @@
 
         # Main workflow for DNS reconnaissance
         function dns_recon_workflow() {
-            display_banner;
+            display_banner_inside_functions;
             load_wordlist || return  # Load the wordlist and validate its existence
             prompt_user_inputs  # Prompt the user for inputs
             prepare_output_file  # Prepare the output file
@@ -1561,7 +1540,7 @@
 
         # Function to run the full MiTM attack workflow
         function main_mitm() {
-            display_banner                 # Call the header function
+            display_banner_inside_functions                 # Call the header function
             trap cleanup EXIT  # Ensure cleanup runs on script exit
             check_dependencies       # Verify required tools are installed
             identify_attack_environment  # Detect attack network and interface
@@ -1681,7 +1660,7 @@
         # Function to run the port scan workflow
         function portscan_workflow() {
             clear; # clear terminal
-            display_banner; 
+            display_banner_inside_functions; 
             user_input;
             perform_port_scan "$target" "$start_port" "$end_port" # Start the scan
             exit_to_main_menu; # Return to main menu
@@ -1891,7 +1870,7 @@
 
         # Main execution workflow
         function useful_commands_workflow() {
-            display_banner
+            display_banner_inside_functions
             system_enumeration
             network_management_commands
             connection_monitoring_commands
