@@ -363,7 +363,7 @@
         main_menu_workflow
     }
 
-#* ====== SCRIPTS ======
+#* ====== SCRIPTS (A-Z) ======
     #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
@@ -1807,7 +1807,7 @@
             #   - This tool is useful for both **pentesters** and **forensics investigators**.
             #   - Requires root privileges for some commands.
 
-        title="Linux System enumeration"  # Define the title for this operation
+        title="Linux System Enumeration"  # Define the title for this operation
 
         function create_log_file() {
             LOG_DIR="./logs"
@@ -1816,7 +1816,7 @@
             fi
             LOG_FILE="${LOG_DIR}/sysinfo_$(date +%d%m%Y_%H%M%S).log"
             echo "System enumeration log file: $LOG_FILE" >> "$LOG_FILE"
-            echo "Reconnaissance started at: $(date)" >> "$LOG_FILE"
+            echo "Reconnaissance recorded at: $(date)" >> "$LOG_FILE"
             echo "===========================================================">> "$LOG_FILE"
         }
 
@@ -1848,6 +1848,8 @@
                 system_information
                 network_information
             }
+
+            # Call all the enumeration functions
             all_sysenum_caller
             #!DEPRECATED
                 #display_description "System information"
