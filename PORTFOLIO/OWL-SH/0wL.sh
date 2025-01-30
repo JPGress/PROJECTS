@@ -2,7 +2,7 @@
 # TODO: ADD HEADER INFORMATION
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
-#* VARIABLES ########################
+#* ====== VARIABLES ======
 
     # Color definitions
     BLACK="\e[30m"
@@ -28,7 +28,7 @@
     # Author
     AUTHOR="JPGress a.k.a R3v4N||0wL"
 
-#* SUPPORT FUNCTIONS ########################
+#* ====== SUPPORT FUNCTIONS ======
     # Function: Enable Proxychains
     function enable_proxychains() {
         clear; # Clear terminal screen
@@ -209,7 +209,7 @@
         exit 0  # Exit the script
     }
 
-#* MAIN MENU ########################
+#* ====== MAIN MENU ======
     # Function: Main menu
     function main_menu() {
         # main_menu - Display the main menu and handle user input
@@ -349,7 +349,7 @@
         main_menu_workflow
     }
 
-#* SCRIPTS ########################
+#* ====== SCRIPTS ======
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
@@ -2836,7 +2836,7 @@
     #
 
 
-#* CHECAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ########
+#* ====== CHECAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ======
     # Verifica se o número de argumentos passados para o script é diferente de zero.
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
