@@ -1804,13 +1804,13 @@
 
         function create_log_file() {
             LOG_DIR="./logs"
-            if [! -d "$LOG_DIR" ]; then
+            if [ ! -d "$LOG_DIR" ]; then
                 mkdir -p "$LOG_DIR"
             fi
             LOG_FILE="${LOG_DIR}/sysinfo_$(date +%d%m%Y_%H%M%S).log"
             echo "System enumeration log file: $LOG_FILE" >> "$LOG_FILE"
             echo "Reconnaissance started at: $(date)" >> "$LOG_FILE"
-            subtitle >> "$LOG_FILE"
+            echo "===========================================================">> "$LOG_FILE"
         }
 
         function log_and_display() {
@@ -1820,99 +1820,106 @@
         }
         
         function system_enumeration() {
-            display_section "SYSTEM AND NETWORK ENUMERATION"
-                
-                display_description "System information"
-                    echo -e "${GREEN}$(uname -a)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
+            
+            function system_information() {
+                display_section "SYSTEM INFORMATION"
+                    log_and_display "Kernel: $(uname -r)"
+                    log_and_display "OS Info: $(lsb_release -a 2>/dev/null || cat /etc/os-release)"
+                    log_and_display "System Uptime: $(uptime -p)"
+            }
 
-                display_description "Network interfaces"
-                    echo -e "$(ip -br a)"
-                    echo
-                    subtitle; # Add a decorative subtitle
 
-                display_description "Ports listening on the system (Top 10)"
-                    echo -e "${GREEN}$(ss -lntp | head -10)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-
-                display_description "Enumerated installed security network tools"
-                    echo -e "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit')${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-
-                display_description "Process (Top 10)"
-                    echo -e "${GREEN}$(ps -ef | head -10)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-
-                display_description "Hostname & Domain"
-                    echo -e "${GREEN} Hostname: $(hostname)${RESET}"
-                    echo -e "${GREEN} Domain: $(hostname -d 2>/dev/null || echo 'N/A')${RESET}"
-                    echo
-                    subtitle
-
-                display_description "Current Routing Table"
-                    echo -e "${GREEN}$(route -n)${RESET}"
-                    echo
-                    echo -e "${GREEN}$(ip route show)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-
-                display_description "Active TCP & UDP Connections (Top 10)"
-                    echo -e "${GREEN}$(ss -tunap | head -25)${RESET}"
-                    echo
-                    subtitle
-
-                display_description "Current DNS Servers"
-                    echo -e "${GREEN}$(cat /etc/resolv.conf | grep nameserver)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "ARP TABLE"
-                    echo -e "${GREEN}$(arp -a)${RESET}"
-                    echo
-                    echo -e "${GREEN}$(ip neigh show)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "Firewall Rules"
-                    if command -v ufw &>/dev/null; then
-                        echo -e "${GREEN}$(ufw status)${RESET}"
-                    else
-                        echo -e "${GREEN}$(iptables -L -n -v)${RESET}"
-                    fi
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "Linux Distro Info"
-                    echo -e "${GREEN}$(lsb_release -a)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "Kernel Information"
-                    echo -e "${GREEN}$(uname -r)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "System Uptime"
-                    echo -e "${GREEN}$(uptime)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "System Memory Usage"
-                    echo -e "${GREEN}$(free -h)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "Disk Usage"
-                    echo -e "${GREEN}$(df -h)${RESET}"
-                    echo
-                    subtitle; # Add a decorative subtitle
-                display_description "Installed Security Network Tools"
-                    if command -v dpkg &>/dev/null; then
-                        echo -e "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
-                    elif command -v rpm &>/dev/null; then
-                        echo -e "${GREEN}$(rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
-                    else
-                        echo -e "${GREEN}$(Package 'manager not found. Cannot list installed tools.')${RESET}"
-                    fi
-                    echo
-                    subtitle; # Add a decorative subtitle
+                #display_description "System information"
+                #    echo -e "${GREEN}$(uname -a)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #
+                #display_description "Network interfaces"
+                #    echo -e "$(ip -br a)"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #
+                #display_description "Ports listening on the system (Top 10)"
+                #    echo -e "${GREEN}$(ss -lntp | head -10)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #
+                #display_description "Enumerated installed security network tools"
+                #    echo -e "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit')${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #
+                #display_description "Process (Top 10)"
+                #    echo -e "${GREEN}$(ps -ef | head -10)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #
+                #display_description "Hostname & Domain"
+                #    echo -e "${GREEN} Hostname: $(hostname)${RESET}"
+                #    echo -e "${GREEN} Domain: $(hostname -d 2>/dev/null || echo 'N/A')${RESET}"
+                #    echo
+                #    subtitle
+                #
+                #display_description "Current Routing Table"
+                #    echo -e "${GREEN}$(route -n)${RESET}"
+                #    echo
+                #    echo -e "${GREEN}$(ip route show)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #
+                #display_description "Active TCP & UDP Connections (Top 10)"
+                #    echo -e "${GREEN}$(ss -tunap | head -25)${RESET}"
+                #    echo
+                #    subtitle
+                #
+                #display_description "Current DNS Servers"
+                #    echo -e "${GREEN}$(cat /etc/resolv.conf | grep nameserver)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "ARP TABLE"
+                #    echo -e "${GREEN}$(arp -a)${RESET}"
+                #    echo
+                #    echo -e "${GREEN}$(ip neigh show)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "Firewall Rules"
+                #    if command -v ufw &>/dev/null; then
+                #        echo -e "${GREEN}$(ufw status)${RESET}"
+                #    else
+                #        echo -e "${GREEN}$(iptables -L -n -v)${RESET}"
+                #    fi
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "Linux Distro Info"
+                #    echo -e "${GREEN}$(lsb_release -a)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "Kernel Information"
+                #    echo -e "${GREEN}$(uname -r)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "System Uptime"
+                #    echo -e "${GREEN}$(uptime)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "System Memory Usage"
+                #    echo -e "${GREEN}$(free -h)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "Disk Usage"
+                #    echo -e "${GREEN}$(df -h)${RESET}"
+                #    echo
+                #    subtitle; # Add a decorative subtitle
+                #display_description "Installed Security Network Tools"
+                #    if command -v dpkg &>/dev/null; then
+                #        echo -e "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
+                #    elif command -v rpm &>/dev/null; then
+                #        echo -e "${GREEN}$(rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
+                #    else
+                #        echo -e "${GREEN}$(Package 'manager not found. Cannot list installed tools.')${RESET}"
+                #    fi
+                #    echo
+                #    subtitle; # Add a decorative subtitle
         
         }
 
@@ -1920,7 +1927,8 @@
         function sysinfo_workflow() {
             display_banner_inside_functions
             create_log_file
-            system_enumeration
+            #system_enumeration
+            system_information
             exit_to_main_menu
         }
 
