@@ -269,7 +269,7 @@
             echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
             echo -e "${MAGENTA} 11 - Useful Commands for Network Management ${RESET}"
             echo -e "${MAGENTA} 12 - System Information to Linux OS ${RESET}"
-            echo -e "${MAGENTA} 13 - attack_surface_analysis ${RESET}"
+            echo -e "${MAGENTA} 13 - Reserved Option ${RESET}"
             echo -e "${GRAY} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
             echo -e "${GRAY} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
             echo -e "${GRAY} 16 - Quick Guide to Using Vim ${RESET}"
@@ -322,7 +322,7 @@
                 10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
                 11) useful_linux_commands ;; # Useful Linux commands
                 12) linux_sysinfo ;;  # System info
-                13) attack_surface_analysis ;;  # attack surface analysis
+                13) disabled ;; # Disabled
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
                 16) xvi_vim_quick_guide ;;  # Vim Quick Guide
                 18) xviii_wifi_attacks ;;  # Wireless Network Attacks
