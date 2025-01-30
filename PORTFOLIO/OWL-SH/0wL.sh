@@ -321,7 +321,7 @@
                 10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
                 11) useful_linux_commands ;; # Useful Linux commands
                 12) linux_sysinfo ;;  # System info
-                13) xiii_find_command_examples ;;  # 'Find' Command Examples
+                13) attack_surface_analysis ;;  # attack surface analysis
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
                 16) xvi_vim_quick_guide ;;  # Vim Quick Guide
                 18) xviii_wifi_attacks ;;  # Wireless Network Attacks
