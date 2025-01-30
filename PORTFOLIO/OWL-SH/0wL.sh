@@ -1840,13 +1840,81 @@
                     log_and_display "=== Hostname ===\n$(hostname)"
                     log_and_display "=== Domain ===\n$(hostname -d 2>/dev/null || echo 'N/A')"
                     log_and_display "=== Network Interfaces ===\n$(ip -br a)"
-                    log_and_display "=== Routing Table ===\n$(ip route show)"
-                    log_and_display "=== DNS Servers ===\n$(cat /etc/resolv.conf | grep nameserver)"
             }
 
+            function open_ports() {
+                display_section "OPEN PORTS"
+                    log_and_display "=== Top 10 Listening Ports ===\n$(ss -lntp | head -10)"
+            }
+
+            function active_process(){
+                display_section "ACTIVE PROCESSES"
+                    log_and_display "=== Top 10 Processes ===\n$(ps -ef | head -10)"
+            }
+
+            function installed_security_tools() {
+                display_section "INSTALLED SECURITY TOOLS"
+                    if command -v dpkg &>/dev/null; then
+                        log_and_display "=== Security Tools ===\n$(dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
+                    elif command -v rpm &>/dev/null; then
+                        log_and_display "=== Security Tools ===\n$(rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')"
+                    else
+                        log_and_display "Package manager not found. Cannot list installed security tools."
+                    fi
+            }
+
+            function routing_table() {
+                display_section "ROUTING TABLE"
+                    log_and_display "=== Routing Table ===\n$(route -n)"
+                    log_and_display "=== IP Route ===\n$(ip route show)"
+            }
+
+            function active_connections() {
+                display_section "ACTIVE CONNECTIONS"
+                    log_and_display "=== Top 25 TCP & UDP Connections ===\n$(ss -tunap | head -25)"
+            }
+
+            function arp_table(){
+                display_section "ARP TABLE"
+                    log_and_display "=== ARP Table ===\n$(arp -a)"
+                    log_and_display "=== IP Neighbors ===\n$(ip neigh show)"
+            }
+
+            function dns_servers(){
+                display_section "DNS SERVERS"
+                    log_and_display "=== DNS Servers ===\n$(cat /etc/resolv.conf | grep nameserver)"
+                    log_and_display "=== Current DNS Servers ===\n$(grep nameserver /etc/resolv.conf)"
+            }
+
+            function firewall_rules(){
+                display_section "FIREWALL RULES"
+                    if command -v iptables &>/dev/null; then
+                        log_and_display "=== Firewall Rules ===\n$(iptables -L -n -v)"
+                    elif command -v ufw &>/dev/null; then
+                        log_and_display "=== Firewall Rules ===\n$(ufw status)"
+                    else
+                        log_and_display "Firewall management tool not found."
+                    fi
+            }
+
+            function users_list(){
+                display_section "USERS LIST"
+                    log_and_display "=== Users List ===\n$(cat /etc/passwd)"
+            }
+
+            # Function to call all the enumeration functions
             function all_sysenum_caller(){
                 system_information
                 network_information
+                open_ports
+                active_process
+                installed_security_tools
+                routing_table
+                active_connections
+                arp_table
+                dns_servers
+                firewall_rules
+                users_list
             }
 
             # Call all the enumeration functions
