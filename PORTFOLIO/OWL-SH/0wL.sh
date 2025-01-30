@@ -1829,11 +1829,23 @@
             
             function system_information() {
                 display_section "SYSTEM INFORMATION"
-                    log_and_display "Kernel: $(uname -r)"
-                    log_and_display "OS Info: $(lsb_release -a 2>/dev/null || cat /etc/os-release)"
-                    log_and_display "System Uptime: $(uptime -p)"
+                    log_and_display "Kernel:\n $(uname -r)"
+                    log_and_display "OS Info:\n $(lsb_release -a 2>/dev/null || cat /etc/os-release)"
+                    log_and_display "System Uptime:\n $(uptime -p)"
             }
+
+            function network_information() {
+                display_section "NETWORK INFORMATION"
+                    log_and_display "Hostname:\n $(hostname)"
+                    log_and_display "Domain:\n $(hostname -d 2>/dev/null || echo 'N/A')"
+                    log_and_display "Network Interfaces:\n$(ip -br a)"
+                    log_and_display "Routing Table:\n $(ip route show)"
+                    log_and_display "DNS Servers:\n $(cat /etc/resolv.conf | grep nameserver)"
+            }
+
+            
             system_information
+            network_information
             
             #!DEPRECATED
                 #display_description "System information"
