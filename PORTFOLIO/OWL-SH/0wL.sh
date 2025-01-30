@@ -240,7 +240,7 @@
         function display_main_menu() {
             clear; # Clears the terminal screen
             ascii_banner_art; # Call ASCII banner art
-            echo -e "${WHITE} Select an option by entering the corresponding number.${RESET}"
+            echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
             subtitle; # Display a subtitle
             
             # Display numbered menu options
