@@ -1783,13 +1783,13 @@
     }
     # Function: Collects system & network reconnaissance data
     function linux_sysinfo() {
-        # linux_sysinfo - Collects system & network reconnaissance data
+        # Function: linux_sysinfo - Collects system & network reconnaissance data
             #
             # Description:
             #   This script gathers detailed system and network-related information, including:
             #   - OS details, active processes, hostname, network interfaces, open ports
-            #   - Installed security tools
-            #   - Routing table, ARP cache, firewall rules, DNS servers
+            #   - Installed security tools, user accounts, DNS configurations
+            #   - Routing table, ARP cache, firewall rules, and active connections
             #
             # Output:
             #   - Displays results on screen
@@ -1798,14 +1798,29 @@
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
             # Last Updated: 2025-01-25
-            # Version: 2.0
+            # Version: 2.1
             #
             # Usage:
             #   Run this function to gather reconnaissance data from a system.
             #
             # Notes:
             #   - This tool is useful for both **pentesters** and **forensics investigators**.
-            #   - Requires root privileges for some commands.
+            #   - Some commands require administrative privileges (sudo).
+            #   - Ensure logging is enabled for a detailed report.
+            #
+            # Categories of Information Gathered:
+            #   1️⃣ System Information
+            #   2️⃣ Network Information
+            #   3️⃣ Open Ports & Active Connections
+            #   4️⃣ Security Tools Enumeration
+            #   5️⃣ User & Privilege Information
+            #   6️⃣ Firewall & Routing Table
+            #   7️⃣ DNS & ARP Table Analysis
+            #
+            # Improvements:
+            #   - Organized data collection into modular functions.
+            #   - Saves logs for post-exploitation analysis or forensic use.
+            #   - Optimized execution to prevent performance issues on large outputs.
 
         title="Linux System Enumeration"  # Define the title for this operation
 
@@ -1902,6 +1917,55 @@
                     log_and_display "=== Users List ===\n$(cat /etc/passwd)"
             }
 
+            function cpu_memory_info() {
+                display_section "CPU & MEMORY INFO"
+                    log_and_display "=== CPU Information ===\n$(lscpu | grep 'Model name\|CPU MHz')"
+                    log_and_display "=== Memory Usage ===\n$(free -h)"
+            }
+
+            function running_services() {
+                display_section "ACTIVE SERVICES"
+                    log_and_display "=== Running Systemd Services ===\n$(systemctl list-units --type=service --state=running | head -15)"
+            }
+
+            function sudo_users() {
+                display_section "USERS WITH SUDO PRIVILEGES"
+                    log_and_display "=== Sudo-Enabled Users ===\n$(grep '^sudo:.*$' /etc/group | cut -d: -f4)"
+                    log_and_display "=== Root-owned User Accounts ===\n$(awk -F: '$3 == 0 {print $1}' /etc/passwd)"
+            }
+
+            function active_ssh_sessions() {
+                display_section "ACTIVE SSH SESSIONS"
+                    log_and_display "=== SSH Users ===\n$(who | grep 'pts' || echo 'No active SSH sessions.')"
+            }
+
+            function failed_logins() {
+                display_section "FAILED LOGIN ATTEMPTS"
+                    log_and_display "=== Last 10 Failed Logins ===\n$(grep 'Failed password' /var/log/auth.log 2>/dev/null | tail -10 || echo 'No failed login attempts found.')"
+            }
+
+            function kernel_modules() {
+                display_section "LOADED KERNEL MODULES"
+                    log_and_display "=== Active Kernel Modules ===\n$(lsmod | head -15)"
+            }
+
+            function virtualization_check() {
+                display_section "VIRTUALIZATION & CONTAINER DETECTION"
+                    log_and_display "=== Virtualization Type ===\n$(systemd-detect-virt 2>/dev/null || echo 'No virtualization detected.')"
+                    log_and_display "=== Running Inside Docker? ===\n$(cat /proc/1/cgroup | grep -i docker || echo 'Not inside a Docker container.')"
+            }
+
+            function cron_jobs() {
+                display_section "SCHEDULED TASKS & CRON JOBS"
+                    log_and_display "=== User Cron Jobs ===\n$(crontab -l 2>/dev/null || echo 'No user crontabs found.')"
+                    log_and_display "=== System-Wide Cron Jobs ===\n$(ls -la /etc/cron* 2>/dev/null)"
+            }
+
+            function usb_devices() {
+                display_section "CONNECTED USB DEVICES"
+                    log_and_display "=== USB Devices ===\n$(lsusb || echo 'No USB devices found.')"
+            }
+
             # Function to call all the enumeration functions
             function all_sysenum_caller(){
                 system_information
@@ -1915,103 +1979,19 @@
                 dns_servers
                 firewall_rules
                 users_list
+                cpu_memory_info
+                running_services
+                sudo_users
+                active_ssh_sessions
+                failed_logins
+                kernel_modules
+                virtualization_check
+                cron_jobs
+                usb_devices
             }
 
             # Call all the enumeration functions
             all_sysenum_caller
-            #!DEPRECATED
-                #display_description "System information"
-                #    echo -e "${GREEN}$(uname -a)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #
-                #display_description "Network interfaces"
-                #    echo -e "$(ip -br a)"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #
-                #display_description "Ports listening on the system (Top 10)"
-                #    echo -e "${GREEN}$(ss -lntp | head -10)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #
-                #display_description "Enumerated installed security network tools"
-                #    echo -e "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit')${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #
-                #display_description "Process (Top 10)"
-                #    echo -e "${GREEN}$(ps -ef | head -10)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #
-                #display_description "Hostname & Domain"
-                #    echo -e "${GREEN} Hostname: $(hostname)${RESET}"
-                #    echo -e "${GREEN} Domain: $(hostname -d 2>/dev/null || echo 'N/A')${RESET}"
-                #    echo
-                #    subtitle
-                #
-                #display_description "Current Routing Table"
-                #    echo -e "${GREEN}$(route -n)${RESET}"
-                #    echo
-                #    echo -e "${GREEN}$(ip route show)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #
-                #display_description "Active TCP & UDP Connections (Top 10)"
-                #    echo -e "${GREEN}$(ss -tunap | head -25)${RESET}"
-                #    echo
-                #    subtitle
-                #
-                #display_description "Current DNS Servers"
-                #    echo -e "${GREEN}$(cat /etc/resolv.conf | grep nameserver)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "ARP TABLE"
-                #    echo -e "${GREEN}$(arp -a)${RESET}"
-                #    echo
-                #    echo -e "${GREEN}$(ip neigh show)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "Firewall Rules"
-                #    if command -v ufw &>/dev/null; then
-                #        echo -e "${GREEN}$(ufw status)${RESET}"
-                #    else
-                #        echo -e "${GREEN}$(iptables -L -n -v)${RESET}"
-                #    fi
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "Linux Distro Info"
-                #    echo -e "${GREEN}$(lsb_release -a)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "Kernel Information"
-                #    echo -e "${GREEN}$(uname -r)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "System Uptime"
-                #    echo -e "${GREEN}$(uptime)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "System Memory Usage"
-                #    echo -e "${GREEN}$(free -h)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "Disk Usage"
-                #    echo -e "${GREEN}$(df -h)${RESET}"
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-                #display_description "Installed Security Network Tools"
-                #    if command -v dpkg &>/dev/null; then
-                #        echo -e "${GREEN}$(dpkg -l | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
-                #    elif command -v rpm &>/dev/null; then
-                #        echo -e "${GREEN}$(rpm -qa | grep -E 'nmap|wireshark|metasploit|tcpdump|aircrack-ng|john|hydra|hashcat|tshark|amass|recon-ng|theharvester|dirb|gobuster|nikto|burpsuite|sqlmap|ettercap|bettercap|kismet|reaver|radare2|ghidra|exploitdb')${RESET}"
-                #    else
-                #        echo -e "${GREEN}$(Package 'manager not found. Cannot list installed tools.')${RESET}"
-                #    fi
-                #    echo
-                #    subtitle; # Add a decorative subtitle
-        
         }
 
         # Main execution workflow
