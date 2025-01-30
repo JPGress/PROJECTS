@@ -305,7 +305,7 @@
                 8) recon_dns ;;  # DNS Reconnaissance
                 9) mitm ;;  # MiTM (Man-in-the-Middle)
                 10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
-                11) useful_linux_commands ;; # Useful Linux commands
+                11) sysinfo_useful_linux_commands ;; # Useful Linux commands
                 12) xii_network_management_commands ;;  # Network Management Commands
                 13) xiii_find_command_examples ;;  # 'Find' Command Examples
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
@@ -1672,7 +1672,7 @@
         portscan_workflow;
     }
 
-    function useful_linux_commands() {
+    function sysinfo_useful_linux_commands() {
         # Function: Display useful Linux networking commands
             #
             # Description:
@@ -1695,7 +1695,7 @@
             # Example usage:
             # - Running this function will display categorized networking commands.
 
-        title="System Enumeration & Useful Linux Networking Commands"  # Define the title for this operation
+        title="System Information & Useful Linux Networking Commands"  # Define the title for this operation
 
         # Function to display a section title
         function display_section() {
