@@ -28,36 +28,8 @@
     # Author
     AUTHOR="JPGress a.k.a R3v4N||0wL"
 
-#* ====== SUPPORT FUNCTIONS ======
+#* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
-    function enable_proxychains() {
-        clear; # Clear terminal screen
-        ascii_banner_art; # Call ASCII banner art
-        
-        # Check if proxychains is installed
-        if ! command -v proxychains &> /dev/null; then
-            echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
-            exit 1
-        fi
-
-        # Check if the proxychains configuration file exists
-        if [[ ! -f /etc/proxychains.conf ]]; then
-            echo -e "${RED} >>> ERROR: Proxychains configuration file not found. Make sure /etc/proxychains.conf exists. <<< ${RESET}"
-            exit 1
-        fi
-
-        # Test proxychains by attempting a simple network request
-        echo -e "${MAGENTA} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
-        if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
-            echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
-            countdown; # Wait for 5 seconds before continuing
-            export PROXYCHAINS=1
-        else
-            echo -e "${RED} >>> WARNING: Proxychains test failed. Please verify your proxychains configuration. <<< ${RESET}"
-            export PROXYCHAINS=0
-        fi
-    }
-
     function ascii_banner_art() {
         
             #! Banner full 
@@ -87,8 +59,16 @@
         subtitle;
     }
 
-    function subtitle() {
-        echo -e "${GRAY}+====================================================================================+${RESET}"
+    # Function: 3-second countdown
+    function countdown() {
+        local seconds=3 # Number of seconds for the countdown
+
+        # Countdown loop
+        while [ $seconds -gt 0 ]; do
+            echo -ne "${GRAY} Starting in: $seconds \r${RESET}" # Display the countdown and overwrite the same line
+            sleep 1 # Wait for 1 second
+            ((seconds--)) # Decrease the countdown value
+        done
     }
 
     # Function: Disabled
@@ -100,14 +80,64 @@
         read -r
         main_menu
     }
+    
+    # Function: Display banner inside functions
+    function display_banner_inside_functions(){
+        clear;  # Clear the terminal screen for clean output
+        ascii_banner_art;  # Display ASCII art banner
+        echo -e "${MAGENTA}\t\t\t$title ${RESET}"
+        subtitle;  # Display a subtitle
+    }
+    
+    # Function: display command usage
+    function display_command(){
+        local command="$1"
+        echo -e "${GREEN} $ $command${RESET}"
+        echo
+    }
+    
+    # Function to display description usage
+    function display_description() {
+        local description="$1"
+        echo -e "${RED} Description: $description${RESET}"
+        echo
+    }
 
-    # Function: Error message for non-root users
-    function error_not_root() {
-        clear
-        echo ""
-        echo -e "${BG_BLACK}${RED} >>>>> YOU MUST BE ROOT TO RUN THIS SCRIPT! <<<<< ${RESET}"
-        echo ""
-        exit 1
+    # Function: Display section inside some functions
+    function display_section() {
+        local title="$1"
+        echo -e " #SECTION: $title" | tee -a "$LOG_FILE"
+        subtitle | tee -a "$LOG_FILE"
+        echo -e "" | tee -a "$LOG_FILE"
+    }
+
+    # Function: Enable TOR routing for Proxychains
+    function enable_proxychains() {
+        clear; # Clear terminal screen
+        ascii_banner_art; # Call ASCII banner art
+        
+        # Check if proxychains is installed
+        if ! command -v proxychains &> /dev/null; then
+            echo -e "${RED} >>> ERROR: proxychains is not installed. Please install it before running the script. <<< ${RESET}"
+            exit 1
+        fi
+
+        # Check if the proxychains configuration file exists
+        if [[ ! -f /etc/proxychains.conf ]]; then
+            echo -e "${RED} >>> ERROR: Proxychains configuration file not found. Make sure /etc/proxychains.conf exists. <<< ${RESET}"
+            exit 1
+        fi
+
+        # Test proxychains by attempting a simple network request
+        echo -e "${MAGENTA} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
+        if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
+            echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
+            countdown; # Wait for 5 seconds before continuing
+            export PROXYCHAINS=1
+        else
+            echo -e "${RED} >>> WARNING: Proxychains test failed. Please verify your proxychains configuration. <<< ${RESET}"
+            export PROXYCHAINS=0
+        fi
     }
 
     # Function: Error message for invalid usage
@@ -118,6 +148,24 @@
         echo ""
         echo -e "${BG_BLACK}${RED} Usage: $0 ${RESET}"
         exit 1
+    }
+
+    # Function: Error message for non-root users
+    function error_not_root() {
+        clear
+        echo ""
+        echo -e "${BG_BLACK}${RED} >>>>> YOU MUST BE ROOT TO RUN THIS SCRIPT! <<<<< ${RESET}"
+        echo ""
+        exit 1
+    }
+
+    # Function: Exit to main menu
+    function exit_to_main_menu(){
+        # Wait for the user to press ENTER before returning to the main menu
+        echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+        read -r 2>/dev/null
+        main_menu  # Return to the main menu
+        exit 0  # Exit the script
     }
 
     # Function: Invalid option
@@ -136,16 +184,25 @@
         main_menu
     }
 
-    # Function: 3-second countdown
-    function countdown() {
-        local seconds=3 # Number of seconds for the countdown
+    # Function to restart the Tor service for IP rotation
+    function restart_tor() {
+        echo ""
+        echo -e "${MAGENTA} Restarting Tor to rotate IP.${RESET}"
+        echo -e "${GRAY} Please wait...${RESET}"
+        if sudo systemctl restart tor; then
+            echo -e "${GREEN} =====================================================${RESET}"
+            echo -e "${GREEN} Tor restarted successfully. New IP circuit activated!${RESET}"
+            echo ""
+            sleep 4  # Allow time for the new circuit to establish
+        else
+            echo -e "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
+            exit 1
+        fi
+    }
 
-        # Countdown loop
-        while [ $seconds -gt 0 ]; do
-            echo -ne "${GRAY} Starting in: $seconds \r${RESET}" # Display the countdown and overwrite the same line
-            sleep 1 # Wait for 1 second
-            ((seconds--)) # Decrease the countdown value
-        done
+    #! TODO: RENAME THIS FUNCTION TO A BETTER NAME
+    function subtitle() {
+        echo -e "${GRAY}+====================================================================================+${RESET}"
     }
 
     # Function: Validate user input for the main menu
@@ -165,57 +222,6 @@
         return 1 # Input is invalid
     }
 
-    # Function to restart the Tor service for IP rotation
-    function restart_tor() {
-        echo ""
-        echo -e "${MAGENTA} Restarting Tor to rotate IP.${RESET}"
-        echo -e "${GRAY} Please wait...${RESET}"
-        if sudo systemctl restart tor; then
-            echo -e "${GREEN} =====================================================${RESET}"
-            echo -e "${GREEN} Tor restarted successfully. New IP circuit activated!${RESET}"
-            echo ""
-            sleep 4  # Allow time for the new circuit to establish
-        else
-            echo -e "${RED}Failed to restart Tor. Check your Tor configuration or service status.${RESET}"
-            exit 1
-        fi
-    }
-    
-    function display_banner_inside_functions(){
-        clear;  # Clear the terminal screen for clean output
-        ascii_banner_art;  # Display ASCII art banner
-        echo -e "${MAGENTA}\t\t\t$title ${RESET}"
-        subtitle;  # Display a subtitle
-    }
-
-    function exit_to_main_menu(){
-        # Wait for the user to press ENTER before returning to the main menu
-        echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-        read -r 2>/dev/null
-        main_menu  # Return to the main menu
-        exit 0  # Exit the script
-    }
-
-    function display_section() {
-        local title="$1"
-        echo -e " #SECTION: $title" | tee -a "$LOG_FILE"
-        subtitle | tee -a "$LOG_FILE"
-        echo -e "" | tee -a "$LOG_FILE"
-    }
-
-    # Function to display description usage
-    function display_description() {
-        local description="$1"
-        echo -e "${RED} Description: $description${RESET}"
-        echo
-    }
-
-    # Function to display command usage
-    function display_command(){
-        local command="$1"
-        echo -e "${GREEN} $ $command${RESET}"
-        echo
-    }
 
 #* ====== MAIN MENU ======
     # Function: Main menu
