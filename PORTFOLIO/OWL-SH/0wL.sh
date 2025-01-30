@@ -129,7 +129,8 @@
         fi
 
         # Test proxychains by attempting a simple network request
-        echo -e "${MAGENTA} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'... ${RESET}"
+        echo -e "${MAGENTA} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'<<< ${RESET}"
+        echo -e "${GRAY} >>> Please wait a moment... <<< ${RESET}"
         if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
             echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
             countdown; # Wait for 5 seconds before continuing
