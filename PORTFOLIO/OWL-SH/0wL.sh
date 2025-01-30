@@ -1783,44 +1783,42 @@
     }
     # Function: Collects system & network reconnaissance data
     function linux_sysinfo() {
-        # Function: linux_sysinfo - Collects system & network reconnaissance data
+        # linux_sysinfo - Comprehensive Linux System & Network Reconnaissance
             #
             # Description:
-            #   This script gathers detailed system and network-related information, including:
-            #   - OS details, active processes, hostname, network interfaces, open ports
-            #   - Installed security tools, user accounts, DNS configurations
-            #   - Routing table, ARP cache, firewall rules, and active connections
+            #   This script collects **detailed local system and network information** for reconnaissance.
+            #   It provides insights into:
+            #   - OS details, active processes, services, kernel modules, and virtualization indicators.
+            #   - Installed security & utility tools, package managers, and cron jobs.
+            #   - Network interfaces, open ports, routing table, DNS servers, firewall status.
+            #   - Active SSH sessions, sudo users, failed logins, and USB device history.
             #
             # Output:
-            #   - Displays results on screen
-            #   - Saves results to a log file for later analysis
+            #   - Displays results on-screen.
+            #   - Saves results to a structured log file for later analysis.
             #
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
-            # Last Updated: 2025-01-25
-            # Version: 2.1
+            # Last Updated: 2025-01-30
+            # Version: 3.0
             #
             # Usage:
-            #   Run this function to gather reconnaissance data from a system.
+            #   Run this function to gather in-depth reconnaissance data on a system.
             #
             # Notes:
-            #   - This tool is useful for both **pentesters** and **forensics investigators**.
-            #   - Some commands require administrative privileges (sudo).
-            #   - Ensure logging is enabled for a detailed report.
+            #   - **Pentesting:** Identify misconfigurations & attack surfaces.
+            #   - **Forensics:** Analyze system state after an incident.
+            #   - **Sysadmins:** Troubleshoot & monitor system health.
+            #   - **Requires root privileges for some commands.**
             #
-            # Categories of Information Gathered:
-            #   1️⃣ System Information
-            #   2️⃣ Network Information
-            #   3️⃣ Open Ports & Active Connections
-            #   4️⃣ Security Tools Enumeration
-            #   5️⃣ User & Privilege Information
-            #   6️⃣ Firewall & Routing Table
-            #   7️⃣ DNS & ARP Table Analysis
+            # Key Features:
+            #   ✅ System Information: OS, Kernel, Virtualization, Services
+            #   ✅ Network Information: Interfaces, Routing, ARP, Open Ports
+            #   ✅ Security Enumeration: Installed Tools, Firewall, SSH Sessions
+            #   ✅ User & Access Logs: Sudo Users, Failed Logins, Cron Jobs
+            #   ✅ Utility Detection: System Tools, Debugging, File Transfers
             #
-            # Improvements:
-            #   - Organized data collection into modular functions.
-            #   - Saves logs for post-exploitation analysis or forensic use.
-            #   - Optimized execution to prevent performance issues on large outputs.
+
 
         title="Linux System Enumeration"  # Define the title for this operation
 
