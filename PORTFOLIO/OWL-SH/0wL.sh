@@ -58,7 +58,7 @@
         fi
     }
 
-    # Function: Display the menu header with the script name and author
+    
     function ascii_banner_art() {
         echo -e ""
         echo -e "${RED} ██████╗     ██████╗ ██╗    ██╗██╗         ███████╗ ██████╗██████╗ ██╗██████╗ ████████╗${RESET}"
@@ -70,6 +70,7 @@
         author_version;
     }
 
+    # Function: Display the menu header with the script name and author
     function author_version() {
         echo -e "${RED}                                                                           sh v $VERSION ${RESET}"
         echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
