@@ -57,7 +57,6 @@
             export PROXYCHAINS=0
         fi
     }
-
     
     function ascii_banner_art_bkp() {
         echo -e ""
@@ -119,7 +118,7 @@
     function error_not_root() {
         clear
         echo ""
-        echo -e "${BG_BLACK}${RED} >>> YOU MUST BE ROOT TO RUN THIS SCRIPT! <<< ${RESET}"
+        echo -e "${BG_BLACK}${RED} >>>>> YOU MUST BE ROOT TO RUN THIS SCRIPT! <<<<< ${RESET}"
         echo ""
         exit 1
     }
@@ -137,7 +136,7 @@
     # Function: Invalid option
     function invalid_option() {
         echo ""
-        echo -e "${BLACK} ${BG_RED}INVALID OPTION!${RESET}${RED} - Please run the script again and choose a valid option.${RESET}"
+        echo -e "${BLACK} ${BG_RED}\t\tINVALID OPTION!${RESET}${RED} - Please run the script again and choose a valid option.${RESET}"
         echo -e "${GRAY} Press ENTER to continue ${RESET}"
         read -r
         main_menu
@@ -209,7 +208,6 @@
         main_menu  # Return to the main menu
         exit 0  # Exit the script
     }
-
 
 #* MAIN MENU ########################
     # Function: Main menu
@@ -1674,7 +1672,6 @@
         portscan_workflow;
     }
 
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     function useful_linux_commands() {
         # Function: Display useful Linux networking commands
             #
@@ -1888,6 +1885,7 @@
         useful_commands_workflow
     }
 
+#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
     # Define a função xiii_exemplos_find para explicar sobre o comando find
     function xiii_exemplos_find(){
         # limpa a tela
