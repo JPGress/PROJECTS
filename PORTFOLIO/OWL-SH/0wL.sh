@@ -1727,7 +1727,7 @@
                     subtitle; # Add a decorative subtitle
 
                 display_description "Network interfaces"
-                    ip -br a
+                    echo -e "$(ip -br a)"
                     echo
                     subtitle; # Add a decorative subtitle
 
