@@ -197,7 +197,7 @@
     function display_banner(){
         clear;  # Clear the terminal screen for clean output
         ascii_banner_art;  # Display ASCII art banner
-        echo -e "${MAGENTA} $title ${RESET}"
+        echo -e "${MAGENTA}\t\t$title ${RESET}"
         subtitle;  # Display a subtitle
     }
 
