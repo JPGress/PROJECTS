@@ -2015,11 +2015,21 @@
             all_sysenum_caller
         }
 
+        function log_info() {
+            subtitle
+            echo
+            echo -e "${CYAN}System enumeration log file as $LOG_FILE in $LOG_DIR${RESET}"
+            echo -e "${CYAN}Log file created at $(date).${RESET}"
+            echo
+            subtitle
+        }
+
         # Main execution workflow
         function sysinfo_workflow() {
             display_banner_inside_functions
             create_log_file
             all_system_enumeration
+            log_info
             exit_to_main_menu
         }
 
