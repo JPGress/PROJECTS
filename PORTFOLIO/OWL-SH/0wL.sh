@@ -2041,11 +2041,11 @@
                                 found_tools+="$tool "
                             fi
                         done
-                        echo "$found_tools"
+                        echo -e "$found_tools\n"
                     }
 
                     for category in "${!ATTACK_CATEGORIES[@]}"; do
-                        echo -e "=== $category ===\n" | tee -a "$LOG_FILE"
+                        echo -e "=== $category ===" | tee -a "$LOG_FILE"
 
                         case "$category" in
                             "Privilege Escalation")
