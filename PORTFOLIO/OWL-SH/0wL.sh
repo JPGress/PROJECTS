@@ -39,8 +39,6 @@
                 #! ████╔╝██║██║███╗██║██║         ██╔═══╝ ██╔══╝  ██║╚██╗██║   ██║   ██╔══╝  ╚════██║   ██║       ╚════██║██║     ██╔══██╗██║██╔═══╝    ██║   
                 #! ╚██████╔╝╚███╔███╔╝███████╗    ██║     ███████╗██║ ╚████║   ██║   ███████╗███████║   ██║       ███████║╚██████╗██║  ██║██║██║        ██║   
                 #!  ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝       ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   
-
-
         echo
         echo -e "\t\t ${RED} ██████╗ ██╗    ██╗██╗        ██████╗ ██████╗ ███████╗${RESET}"
         echo -e "\t\t ${RED}██╔═████╗██║    ██║██║       ██╔═══██╗██╔══██╗██╔════╝${RESET}"
@@ -277,7 +275,7 @@
             echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
             echo -e "${MAGENTA} 11 - Useful Commands for Network Management ${RESET}"
             echo -e "${MAGENTA} 12 - System Information to Linux OS ${RESET}"
-            echo -e "${MAGENTA} 13 - Reserved Option ${RESET}"
+            echo -e "${MAGENTA} 13 - Attack Surface Analysis (find Based) ${RESET}"
             echo -e "${GRAY} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
             echo -e "${GRAY} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
             echo -e "${GRAY} 16 - Quick Guide to Using Vim ${RESET}"
@@ -330,7 +328,7 @@
                 10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
                 11) useful_linux_commands ;; # Useful Linux commands
                 12) linux_sysinfo ;;  # System info
-                13) disabled ;; # Disabled
+                13) find_based_attack_surface_analysis ;; # Disabled
                 14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
                 16) xvi_vim_quick_guide ;;  # Vim Quick Guide
                 18) xviii_wifi_attacks ;;  # Wireless Network Attacks
@@ -2143,6 +2141,122 @@
         # Execute workflow
         sysinfo_workflow
     }
+
+
+
+        function find_based_attack_surface_analysis() {
+            # find_based_attack_surface_analysis - Automates Attack Surface Discovery using 'find'
+                #
+                # Description:
+                #   Automates system reconnaissance by searching for sensitive files, privilege escalation paths,
+                #   and hidden persistence mechanisms using the 'find' command.
+                #
+                # Key Features:
+                #   - Detects SUID/SGID binaries for Privilege Escalation
+                #   - Identifies world-writable or unowned files for exploitation
+                #   - Finds SSH keys, password files, and sensitive data for credential theft
+                #   - Locates hidden files, unusual permissions, and suspicious cron jobs
+                #   - Logs findings for Red Team and Forensics investigations
+                #
+                # Output:
+                #   - Displays results on-screen
+                #   - Saves findings to a structured log file
+                #
+                # Author: R3v4N (w/GPT)
+                # Created on: 2025-01-25
+                # Last Updated: 2025-01-30
+                # Version: 2.0
+                #
+                # Usage:
+                #   Run this function to automatically scan a system for attack vectors or forensic analysis.
+                #
+                # Notes:
+                #   - Red Team: Helps identify misconfigurations & exploitation opportunities.
+                #   - Forensics: Helps detect persistence, exfiltration traces, and privilege abuse.
+                #   - Requires root privileges for full execution.
+                # Create log directory & file
+            function create_log_file() {
+                LOG_DIR="./logs"
+                mkdir -p "$LOG_DIR"
+                LOG_FILE="${LOG_DIR}/find_analysis_$(date +%d%m%Y_%H%M%S).log"
+                echo "Find-Based Attack Surface Analysis Log - $(date)" > "$LOG_FILE"
+                echo "===============================================" >> "$LOG_FILE"
+            }
+
+            # Helper function to display and log results
+            function log_and_display() {
+                local message="$1"
+                echo -e "$message" | tee -a "$LOG_FILE"
+                echo -e "" | tee -a "$LOG_FILE"
+            }
+
+            # Privilege Escalation Checks
+            function privilege_escalation_checks() {
+                log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
+                find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # World-Writable & Unowned Files
+            function world_writable_unowned_files() {
+                log_and_display "=== Searching for World-Writable Files ==="
+                find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+
+                log_and_display "=== Searching for Unowned Files ==="
+                find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Credential Discovery
+            function credential_discovery() {
+                log_and_display "=== Searching for SSH Keys ==="
+                find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
+
+                log_and_display "=== Searching for Password Files (Config files) ==="
+                find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" \) -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Persistence Mechanisms
+            function persistence_mechanisms() {
+                log_and_display "=== Searching for Suspicious Cron Jobs ==="
+                find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+
+                log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
+                find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Hidden Files & Anti-Forensics
+            function hidden_files_detection() {
+                log_and_display "=== Searching for Hidden Files ==="
+                find / -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
+
+                log_and_display "=== Searching for Files with Strange Timestamps ==="
+                find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Exfiltration Traces
+            function exfiltration_traces() {
+                log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
+                find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+
+                log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
+                find / -type f -atime -1 -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Automated Execution of All Checks
+            function run_find_based_analysis() {
+                create_log_file
+                privilege_escalation_checks
+                world_writable_unowned_files
+                credential_discovery
+                persistence_mechanisms
+                hidden_files_detection
+                exfiltration_traces
+                log_and_display "=== Analysis Complete! Results saved to: $LOG_FILE ==="
+            }
+
+            # Execute the workflow
+            run_find_based_analysis
+        }
+
 
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
