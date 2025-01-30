@@ -1837,7 +1837,7 @@
 
         function log_and_display() {
             local message="$1"
-            echo -e "$(date '+[%Y-%m-%d %H:%M:%S]') $message" | tee -a "$LOG_FILE"
+            echo -e "$message \n$(date '+[%Y-%m-%d %H:%M:%S]')" | tee -a "$LOG_FILE"
             echo -e "" | tee -a "$LOG_FILE"
         }
 
