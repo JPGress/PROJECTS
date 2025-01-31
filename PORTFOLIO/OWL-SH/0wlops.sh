@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.26"
+VERSION="0.21.27"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3066,7 +3066,7 @@ RELEASE="ANAKIN"
             fi
             LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
             echo -e " Starting Nmap Scan on $NETWORK..."
-            nmap -sn "$NETWORK" -oX "$LOG_FILE"  # Ping scan
+            nmap -sn "$NETWORK" -oS "$LOG_FILE"  # Ping scan
             echo -e " Scan completed. Results saved in: $LOG_FILE"
         }
 
