@@ -2457,6 +2457,8 @@
 
             echo "======================" >> "$file"
             echo "File saved to: $file"
+
+            cat /tmp/root_reset_steps.txt
             exit_to_main_menu
         }
 
@@ -2486,7 +2488,7 @@
             clear
             display_banner_inside_functions
             echo
-            echo -e "${MAGENTA} [0] Show Instructions${RESET}"
+            echo -e "${MAGENTA} [0] Generate Instructions${RESET}"
             echo -e "${MAGENTA} [1] Generate QR Code${RESET}"
             echo -e "${MAGENTA} [2] Print Instructions${RESET}"
             echo -e "${MAGENTA} [3] Exit to Main Menu${RESET}"
@@ -2494,7 +2496,7 @@
             echo -ne "${GREEN} Choose an option: ${RESET}"
             read -r option
             case $option in
-                0) cat /tmp/root_reset_steps.txt ;;
+                0) generate_reset_steps ;;
                 1) generate_qr_code ;;
                 2) print_instructions ;;
                 3) main ;;
