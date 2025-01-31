@@ -57,6 +57,7 @@
         echo -e "${MAGENTA} [00] Exit ${RESET}"
         subtitle;
     }
+
     # Function: Main menu
     function main_menu() {
         # main_menu - Display the main menu and handle user input
@@ -167,8 +168,6 @@
         main_menu_workflow
     }
 
-        
-
 #* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
     function ascii_banner_art() {
@@ -192,7 +191,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "${RED}                                                      0wL Operators Script sh.v $VERSION ${RESET}"
+        echo -e "${RED}                                                    0wL Operators Script .sh v $VERSION ${RESET}"
         echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
         echo -e "${GRAY}+                          Created by $AUTHOR                       +${RESET}"
         subtitle;
