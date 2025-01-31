@@ -250,11 +250,6 @@
         exit 0
     }
 
-# 🚀 Check for Help Flag
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    show_help
-fi
-
 
     #! TODO: RENAME THIS FUNCTION TO A BETTER NAME
     function subtitle() {
@@ -3289,12 +3284,13 @@ fi
     if [ "$(id -u)" != "0" ]; then
         error_not_root;
         # Check if the correct number of arguments is provided 
-        # If not, display a usage message and exit with a non-zero status code 
-        elif [ "$#" -ne 0 ]; then
-            msg_erro_arquivo;
+        # Check for Help Flag 
+        elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+            show_help;
         else
             ######### Executa a função principal ########
             enable_proxychains; # Call the function to enable proxychains at script start
             main_menu;
     fi
+
 
