@@ -2399,8 +2399,7 @@
     function linux_root_password_reset() {
 
         title="\tLinux Root Password Reset via GRUB"  # Define the title for this operation
-        function display_grub_reset_section() {
-            local title="$1"
+
         # Define Reset Instructions for Each OS
         function generate_reset_steps() {
             local file="/tmp/root_reset_steps.txt"
@@ -2458,6 +2457,7 @@
 
             echo "======================" >> "$file"
             echo "File saved to: $file"
+            submenu_linux_root_password_reset
         }
 
         # Generate a QR Code with Steps
@@ -2482,9 +2482,9 @@
         }
 
         # Display Instructions on Screen
-        function display_instructions() {
+        function submenu_linux_root_password_reset() {
             clear
-            display_banner_main_menu
+            display_banner_inside_functions
             echo
             echo -e "${MAGENTA}[0] Show Instructions${RESET}"
             echo -e "${MAGENTA}[1] Generate QR Code${RESET}"
@@ -2503,8 +2503,8 @@
 
         # Main Execution
         generate_reset_steps
-        display_instructions
-    }
+        submenu_linux_root_password_reset
+        }
 
 
 
