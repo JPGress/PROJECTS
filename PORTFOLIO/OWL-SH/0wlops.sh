@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.20.4"
+VERSION="0.21.0"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -330,7 +330,7 @@ RELEASE="ANAKIN"
         echo -e "${GREEN} [17] Rbash Escape Techniques (Linux OS)${RESET}"
         echo -e "${GREEN} [18] Wireless Penetration Testing Toolkit ${RESET}"
         echo -e "${GREEN} [19] Windows Basic Commands (Quick Ref) (Win OS)${RESET}"
-        echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
+        echo -e "${GREEN} [20] Network Discovery (Nmap) ${RESET}"
         echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
         echo -e "${GRAY} [22] RDP for Windows ${RESET}"
         echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
@@ -384,7 +384,8 @@ RELEASE="ANAKIN"
                 16) vim_quick_reference ;;
                 17) rbash_escape_methods ;;  
                 18) wireless_pentest ;;  
-                19) windows_basic_commands ;;  
+                19) windows_basic_commands ;;
+                20) nmap_network_discovery ;;  
                 21) xxi_sgt_domingues_scanning_script ;;  
                 22) xxii_nmap_network_discovery ;;  
                 *) invalid_option ;;  
@@ -3006,17 +3007,74 @@ RELEASE="ANAKIN"
         main_windows_reference
     }
 
+    # Function: Nmap Network Discovery
+    function nmap_network_discovery() {
+        # nmap_network_discovery - Interactive Network Discovery using Nmap
+            #
+            # Description:
+            #   Automates network discovery using Nmap with user-selected network.
+            #
+            # Features:
+            #   - Allows the operator to choose the network instead of auto-selection.
+            #   - Uses Nmap scripts (-sC), service/version detection (-sV), OS detection (-O).
+            #   - Saves results to a structured log file.
+            #
+            # Usage:
+            #   Run this function to scan a network for live hosts and open services.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-30
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Notes:
+            #   - Designed for **Red Team reconnaissance & infrastructure mapping**.
+            #   - Requires root privileges to execute certain Nmap features.
+
+        title="NMAP NETWORK DISCOVERY"
+
+        function select_network() {
+            log_and_display "=== Available Network Interfaces ==="
+            ip -br a | awk '{print NR ") " $1 " - " $3}'
+            echo ""
+
+            read -r -p "Enter the number of the interface to scan: " interface_num
+            selected_network=$(ip -br a | awk "NR==$interface_num {print \$3}")
+
+            if [[ -z "$selected_network" ]]; then
+                log_and_display "Invalid selection. Exiting..."
+                exit 1
+            fi
+
+            NETWORK=$(ipcalc -n -b "$selected_network" | awk '/Network/ {print $2}')
+            log_and_display "Selected Network: $NETWORK"
+        }
+
+        function execute_nmap_scan() {
+            local output_dir="/home/kali/nmap_logs"
+            mkdir -p "$output_dir"
+            local log_file="${output_dir}/nmap_$(date +%d%m%Y_%H%M%S).txt"
+
+            log_and_display "Starting Nmap Scan on $NETWORK..."
+            cd /usr/share/nmap/scripts || exit
+            nmap -sC -sV -O -vv "$NETWORK" | tee "$log_file"
+
+            log_and_display "Scan completed. Results saved in: $log_file"
+        }
+
+        function nmap_discovery_workflow() {
+            display_banner_inside_functions
+            select_network
+            execute_nmap_scan
+            exit_to_main_menu
+        }
+
+        nmap_discovery_workflow
+    }
+
+
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-
-    #
-    function xxii_nmap_descoberta_de_rede(){
-        local rede
-        rede="$(ipcalc -n -b -n -b "$(ip -br a | grep tap | head -n 1 | awk '{print $3}')" | awk '/Network/ {print $2}')"
-        cd /usr/share/nmap/scripts && nmap -sC -sV -vv -O $rede | tee /home/kali/nmap.txt
-        echo ""
-        pausa_script;
-    }
 
     #
     function xxiii_nmap(){
