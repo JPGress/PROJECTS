@@ -2893,7 +2893,7 @@ RELEASE="ANAKIN"
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-26
             # Last Updated: 2025-01-30
-            # Version: 2.0
+            # Version: 2.4
             #
             # Notes:
             #   - This is a **quick reference**, not an in-depth tutorial.
