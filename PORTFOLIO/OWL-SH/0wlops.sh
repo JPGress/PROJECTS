@@ -23,7 +23,7 @@
     RESET="\e[0m"
 
     # Version
-    VERSION="0.16.0"
+    VERSION="0.16.1"
 
     # Darth Release
     RELEASE="ANAKIN"
