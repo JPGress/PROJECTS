@@ -29,18 +29,17 @@
     AUTHOR="JPGress a.k.a R3v4N||0wL"
 
 #* ====== MAIN MENU ======
-    # Function: Main menu
     # Display numbered menu options
     function display_numbered_menu_options() {
-        echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
-        echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
-        echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
-        echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
-        echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
-        echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
-        echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
-        echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
-        echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
+        echo -e "${MAGENTA}  [1] Portscan (netcat) ${RESET}" 
+        echo -e "${MAGENTA}  [2] Parsing HTML ${RESET}" 
+        echo -e "${MAGENTA}  [3] Google Hacking for people OSINT ${RESET}" 
+        echo -e "${MAGENTA}  [4] Metadata Analysis ${RESET}" 
+        echo -e "${MAGENTA}  [5] DNS Zone Transfer ${RESET}" 
+        echo -e "${MAGENTA}  [6] Subdomain Takeover ${RESET}" 
+        echo -e "${MAGENTA}  [7] Reverse DNS ${RESET}" 
+        echo -e "${MAGENTA}  [8] DNS Reconnaissance ${RESET}"
+        echo -e "${MAGENTA}  [9] MiTM (Man-in-the-Middle) ${RESET}"
         echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
         echo -e "${MAGENTA} [11] Useful Commands for Network Management ${RESET}"
         echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
@@ -58,7 +57,7 @@
         echo -e "${MAGENTA} [00] Exit ${RESET}"
         subtitle;
     }
-    
+    # Function: Main menu
     function main_menu() {
         # main_menu - Display the main menu and handle user input
             #
@@ -119,46 +118,40 @@
             esac
         }
 
-        # Validate user input
-        function validate_input() {
-            local input="$1"  # User input
-            shift  # Remove input from arguments list
-            local valid_options=("$@")  # Remaining arguments are valid options
-
-            # Check if input is in the list of valid options
-            for option in "${valid_options[@]}"; do
-                if [[ "$input" == "$option" ]]; then
-                    return 0  # Input is valid
-                fi
-            done
-            return 1  # Input is invalid
-        }
-
         # Exit the script gracefully
         function exit_script() {
             echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
             exit 0
         }
+        
+        # Function: Validate user input against allowed menu options
+        function validate_input() {
+            local input="$1"
+            local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
+            
+            # Remove invalid option 23
+            valid_options=("${valid_options[@]/23}")
 
-        # Main workflow
-        function main_menu_workflow() {
-            display_banner_main_menu;
-            display_numbered_menu_options;
-
-            # Define valid menu options dynamically
-            valid_options=()
-            for i in {0..25}; do
-                if [[ "$i" -ne 23 ]]; then
-                    valid_options+=("$i")  # Exclude option 23
+            # Check if input is in the list of valid options
+            for valid in "${valid_options[@]}"; do
+                if [[ "$input" == "$valid" ]]; then
+                    return 0  # Valid input
                 fi
             done
+            return 1  # Invalid input
+        }
+
+        function main_menu_workflow() {
+            display_banner_main_menu
+            display_numbered_menu_options
 
             # Prompt the user for input
             echo -ne "${CYAN} Enter the option number: ${RESET}"
             read -r MENU_OPTION  # Read user input
+            MENU_OPTION=$(echo "$MENU_OPTION" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
 
             # Validate the input
-            if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
+            if ! validate_input "$MENU_OPTION"; then
                 invalid_option  # Handle invalid input
                 main_menu_workflow  # Restart the menu
                 return
@@ -170,6 +163,7 @@
 
         # Execute the main menu workflow
         main_menu_workflow
+
     }
 #* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
@@ -363,7 +357,8 @@
         echo -e "  ./0wl.sh [option]       # Run a specific function"
         echo -e "  ./0wl.sh -h | --help    # Show this help menu"
         echo
-        display_numbered_menu_options;
+        echo -e "${GRAY}Available Functions:${RESET}"
+        echo -e "$(display_numbered_menu_options;)"
         echo
         echo -e "${GRAY}Example Usage:${RESET}"
         echo -e "  ./0wl.sh 12       # Instantly run Linux System Information"
@@ -393,8 +388,6 @@
         echo -e "${RED} >>> Invalid option: $input. Please choose a valid menu option. <<< ${RESET}"
         return 1 # Input is invalid
     }
-
-
 
 #* ====== MAIN SCRIPTS (A-Z) ======
     #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
