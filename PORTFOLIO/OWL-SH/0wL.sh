@@ -184,6 +184,13 @@
         main_menu
     }
 
+    function log_and_display() {
+        local message="$1"
+        echo -e "$(date '+[%Y-%m-%d %H:%M:%S]')" | tee -a "$LOG_FILE"
+        echo -e "$message" | tee -a "$LOG_FILE"
+        echo -e "" | tee -a "$LOG_FILE"
+    }
+
     # Function: Pause the script
     function pause_script() {
         echo -e "${GRAY} Press ENTER to continue ${RESET}"
@@ -228,7 +235,6 @@
         echo -e "${RED} >>> Invalid option: $input. Please choose a valid menu option. <<< ${RESET}"
         return 1 # Input is invalid
     }
-
 
 #* ====== MAIN MENU ======
     # Function: Main menu
@@ -1849,14 +1855,6 @@
             echo "===========================================================">> "$LOG_FILE"
         }
 
-        function log_and_display() {
-            local message="$1"
-            echo -e "$(date '+[%Y-%m-%d %H:%M:%S]')" | tee -a "$LOG_FILE"
-            echo -e "$message" | tee -a "$LOG_FILE"
-            echo -e "" | tee -a "$LOG_FILE"
-        }
-
-        
         function all_system_enumeration() {
             
             function system_information() {
