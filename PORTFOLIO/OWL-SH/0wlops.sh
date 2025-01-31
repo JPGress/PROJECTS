@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.21.134"
+VERSION="0.22.100"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -409,6 +409,7 @@ RELEASE="ANAKIN"
         echo
         echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & DISCOVERY (TA0008) ${RESET}"
             echo -e "\t${RED} [20] Network Discovery (Nmap) ${RESET}"
+            echo -e "\t${RED} [21] ARP Network Scan ${RESET}"
         echo
         echo -e "${GRAY} [00] Exit ${RESET}"
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
@@ -441,29 +442,35 @@ RELEASE="ANAKIN"
         function process_menu_option() {
             local option="$1"
             case $option in
-                0) exit_script ;;  
-                1) portscan ;;  
-                2) parsing_html ;;  
-                3) google_hacking ;;  
-                4) metadata_analysis ;;  
-                5) dns_zt ;;  
-                6) Subdomain_takeover ;;  
-                7) rev_dns ;;  
-                8) recon_dns ;;  
-                9) mitm ;;  
-                10) portscan_bashsocket ;;  
-                11) useful_linux_commands ;;  
-                12) linux_sysinfo ;;  
-                13) find_based_attack_surface_analysis ;;  
-                14) find_command_examples ;;
-                15) linux_root_password_reset ;; 
-                16) vim_quick_reference ;;
-                17) rbash_escape_methods ;;  
-                18) wireless_pentest ;;  
-                19) windows_basic_commands ;;
-                20) nmap_network_discovery ;;  
-                21) xxi_sgt_domingues_scanning_script ;;  
-                22) xxii_nmap_network_discovery ;;  
+            # [+] RECONNAISSANCE & OSINT (TA0043)       
+                1) portscan ;; # Portscan (Netcat)
+                2) parsing_html ;; # Parsing HTML
+                3) google_hacking ;; # Google Hacking for OSINT  
+                4) metadata_analysis ;; # Metadata analysis
+                5) dns_zt ;; # DNS Zone Transfer  
+                6) Subdomain_takeover ;; # Subdomain Takeover  
+                7) rev_dns ;; # Reverse DNS Lookup   
+                8) recon_dns ;; # DNS Reconnaissance
+            # [+] INITIAL ACCESS (TA0001)
+                9) mitm ;; # MiTM (Man-in-the-Middle)  
+                10) portscan_bashsocket ;; # Portscan (Bash sockets)  
+                11) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
+                12) linux_sysinfo ;; # System Information (Linux OS)
+            # [+] ATTACK SURFACE & PRIVILEGE ESCALATION (TA0004)
+                13) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
+                14) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
+                15) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
+            # [+] DEFENSE EVASION & PERSISTENCE (TA0005 | TA0003)
+                16) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
+                17) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
+            # [+] NETWORK & SYSTEM EXPLOITATION (TA0002)
+                18) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
+                19) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
+            # [+] LATERAL MOVEMENT & DISCOVERY (TA0008)
+                20) nmap_network_discovery ;; # Network Discovery (Nmap)  
+                21) arp_network_scan ;; # ARP Network Scan
+            # [+] EXIT
+                0) exit_script ;;
                 *) invalid_option ;;  
             esac
         }
@@ -510,6 +517,93 @@ RELEASE="ANAKIN"
 
 #* ====== MAIN SCRIPTS (A-Z) ======
     #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
+    
+    # Function: ARP Network Scan
+    function arp_network_scan() {
+        # arp_network_scan - Fast LAN Discovery using ARP
+            #
+            # Description:
+            #   This module performs ARP-based network scanning for fast local subnet discovery.
+            #
+            # Features:
+            #   - Identifies active devices on the local network.
+            #   - Works even if ICMP is blocked (unlike Nmap ping scans).
+            #   - Saves results to a structured log file.
+            #
+            # Usage:
+            #   Run this function to detect live hosts on the local subnet.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-31
+            # Last Updated: 2025-01-31
+            # Version: 1.0
+            #
+            # Notes:
+            #   - Requires root privileges.
+            #   - If `arp-scan` is not available, falls back to Bash-only scanning.
+
+        title="ARP NETWORK SCAN"
+
+        function select_network_interface() {
+            echo -e " === Available Network Interfaces ==="
+            echo
+            ip -br a | awk '{print NR ") " $1 " - " $3}'
+            echo
+
+            read -r -p "Enter the number of the interface to scan: " interface_num
+            total_interfaces=$(ip -br a | wc -l)
+
+            # Validate user input
+            if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
+                echo -e "Invalid interface number. Please try again."
+                pause_script
+                arp_scan_workflow
+            fi
+
+            selected_interface=$(ip -br a | awk "NR==$interface_num {print \$1}")
+
+            if [[ -z "$selected_interface" ]]; then
+                echo -e "Failed to retrieve network details. Exiting..."
+                exit 1
+            fi
+        }
+
+        function execute_arp_scan() {
+            LOG_DIR="./logs"
+            if [ ! -d "$LOG_DIR" ]; then
+                mkdir -p "$LOG_DIR"
+            fi
+            LOG_FILE="${LOG_DIR}/arp_scan_$(date +%d%m%Y_%H%M%S).log"
+
+            echo -e "Starting ARP Scan on interface: $selected_interface..."
+            echo
+
+            if command -v arp-scan &>/dev/null; then
+                arp-scan --interface="$selected_interface" --localnet | tee "$LOG_FILE"
+            else
+                echo -e "'arp-scan' not found. Falling back to Bash-only ARP scan..."
+                ip -br a show "$selected_interface" | awk '{print $3}' | grep -Eo '([0-9]+\.[0-9]+\.[0-9]+)\.' | while read -r subnet; do
+                    for i in {1..254}; do
+                        (ping -c 1 -W 1 "${subnet}${i}" | grep "bytes from" &) 2>/dev/null
+                    done
+                done | tee "$LOG_FILE"
+            fi
+
+            echo
+            echo -e " Scan completed. Results saved in: $LOG_FILE"
+        }
+
+        function arp_scan_workflow() {
+            display_banner_inside_functions
+            select_network_interface
+            execute_arp_scan
+            exit_to_main_menu
+        }
+
+        arp_scan_workflow
+    }
+
+    
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
