@@ -51,7 +51,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script (0wLOpS) v$VERSION ${GRAY}by $AUTHOR ${RESET}"
+        echo -e "\t\t ${BG_BLACK}${MAGENTA} 0wL Operators Script (0wLOpS) v$VERSION ${GRAY}by $AUTHOR ${RESET}"
         subtitle;
     }
 
