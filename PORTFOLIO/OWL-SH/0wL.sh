@@ -2,7 +2,7 @@
 # TODO: ADD HEADER INFORMATION
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
-#* ====== VARIABLES ======
+#* ====== CONSTANTS ======
 
     # Color definitions
     BLACK="\e[30m"
@@ -23,7 +23,7 @@
     RESET="\e[0m"
 
     # Version
-    VERSION="0.9.3"
+    VERSION="0.10.1"
 
     # Author
     AUTHOR="JPGress a.k.a R3v4N||0wL"
