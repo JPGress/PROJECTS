@@ -2218,7 +2218,7 @@
             log_and_display "=== Searching for Hidden Files ==="
                 find / \( -path /proc -o -path /sys -o -path /dev -o -path /run -o -path /snap -o -path /var/lib/docker \) -prune -o -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
             log_and_display "=== Searching for Files with Strange Timestamps ==="
-            find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                timeout 600s find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
         # Exfiltration Traces
         function exfiltration_traces() {
