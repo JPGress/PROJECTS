@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.201"
+VERSION="0.22.202"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -454,22 +454,22 @@ RELEASE="ANAKIN"
                 8) recon_dns ;; # DNS Reconnaissance
                 9) arp_scan ;; # ARP Network Scan
             #* [+] VULNERABILITY ANALYSI*
-                9) mitm ;; # MiTM (Man-in-the-Middle)  
-                10) portscan_bashsocket ;; # Portscan (Bash sockets)  
-                11) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
-                12) linux_sysinfo ;; # System Information (Linux OS)
+                10) mitm ;; # MiTM (Man-in-the-Middle)  
+                11) portscan_bashsocket ;; # Portscan (Bash sockets)  
+                12) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
+                13) linux_sysinfo ;; # System Information (Linux OS)
             #* [+] EXPLOITATION & PRIVIL*GE ESCALATION
-                13) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
-                14) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
-                15) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
+                14) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
+                15) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
+                16) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
             #* [+] POST-EXPLOITATION & P*RSISTENCE
-                16) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
-                17) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
+                17) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
+                18) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
             #* [+] NETWORK & SYSTEM EXPL*ITATION
-                18) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
-                19) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
+                19) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
+                20) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
             #* [+] LATERAL MOVEMENT & NE*WORK DISCOVERY
-                20) nmap_network_discovery ;; # Network Discovery (Nmap)  
+                21) nmap_network_discovery ;; # Network Discovery (Nmap)  
             #* [+] EXIT
                 0) exit_script ;;
             #* Invalid option
