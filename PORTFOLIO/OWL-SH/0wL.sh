@@ -55,7 +55,7 @@
         echo -e "${GRAY} [22] RDP for Windows ${RESET}"
         echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
         echo -e "${MAGENTA} [00] Exit ${RESET}"
-        subtitle;
+        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
     }
 
     # Function: Main menu
@@ -191,8 +191,8 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "${RED}                                                    0wL Operators Script .sh v $VERSION ${RESET}"
-        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
+        echo -e "${RED}                                           0wL Operators Script (0wLOpS) .sh v $VERSION ${RESET}"
+        subtitle;
         echo -e "${GRAY}+                          Created by $AUTHOR                       +${RESET}"
         subtitle;
     }
