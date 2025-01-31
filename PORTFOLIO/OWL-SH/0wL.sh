@@ -41,10 +41,10 @@
         echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
         echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
         echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
-        echo -e "${MAGENTA} [11] Useful Commands for Network Management ${RESET}"
+        echo -e "${MAGENTA} [11] Useful Commands for Network Management - Quick Ref ${RESET}"
         echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
         echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
-        echo -e "${MAGENTA} [14] Quick Ref for finding and manipulating texts (Linux OS) ${RESET}"
+        echo -e "${MAGENTA} [14] 'find' Examples - Quick Ref (Linux OS) ${RESET}"
         echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
         echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
         echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
@@ -2302,6 +2302,7 @@
         find_based_analysis_workflow
     }
 
+    # Function: Find command examples
     function find_command_examples() {
 
         # find_command_examples - Display examples of the 'find' command for reconnaissance & automation
