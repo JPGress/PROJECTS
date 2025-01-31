@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.29"
+VERSION="0.21.30"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3009,27 +3009,31 @@ RELEASE="ANAKIN"
 
     # Function: Nmap Network Discovery
     function nmap_network_discovery() {
-        # nmap_network_discovery - Interactive Network Discovery using Nmap
+        # Function: Nmap Network Discovery  
             #
             # Description:
-            #   Automates network discovery using Nmap with user-selected network.
+            #   This script automates active network reconnaissance using Nmap.
+            #   It enables the operator to select a network interface, scan all ports,  
+            #   and save results for further analysis.
             #
             # Features:
-            #   - Allows the operator to choose the network instead of auto-selection.
-            #   - Uses Nmap scripts (-sC), service/version detection (-sV), OS detection (-O).
-            #   - Saves results to a structured log file.
+            #   - **Interactive Interface Selection**: Choose the target network dynamically.
+            #   - **Comprehensive Scanning**: Full TCP scan (-sS -p-), aggressive timing (-T5).
+            #   - **Automated Logging**: Stores scan results in structured logs.
             #
             # Usage:
-            #   Run this function to scan a network for live hosts and open services.
+            #   Run this function to map the attack surface of a target network.
             #
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-30
             # Last Updated: 2025-01-31
-            # Version: 2.1
+            # Version: 2.2
             #
             # Notes:
-            #   - Designed for **Red Team reconnaissance & infrastructure mapping**.
-            #   - Requires root privileges to execute certain Nmap features.
+            #   - **Red Team Focused**: Ideal for network reconnaissance & footprinting.
+            #   - **Requires root privileges** for full Nmap functionality.
+            #   - **Stealth considerations**: The aggressive timing (-T5) may trigger IDS/IPS.
+
 
         title="NMAP NETWORK DISCOVERY"
 
