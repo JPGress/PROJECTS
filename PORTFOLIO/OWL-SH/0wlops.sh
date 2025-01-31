@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.19.0"
+VERSION="0.20.0"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -2868,6 +2868,118 @@ RELEASE="ANAKIN"
         wireless_pentest_workflow
     }
 
+    # Function: Windows Basic Commands Quick Reference
+    function windows_basic_commands() {
+        # windows_basic_commands - Quick Reference for Essential Windows Commands
+            #
+            # Description:
+            #   Provides a structured quick reference for essential Windows commands,
+            #   covering file operations, system management, process handling, and more.
+            #
+            # Features:
+            #   - Covers command-line navigation, file/directory management, and user controls.
+            #   - Includes enumeration techniques, service management, and registry interactions.
+            #   - Saves reference output to a text file for offline access.
+            #
+            # Usage:
+            #   Run this function to display a categorized list of important Windows CLI commands.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Notes:
+            #   - This is a **quick reference**, not an in-depth tutorial.
+            #   - Useful for **Red Team ops**, **forensics**, and **Windows administration**.
+
+        title="WINDOWS COMMANDS QUICK REFERENCE"
+
+        function display_windows_commands_header() {
+            display_banner_inside_functions
+        }
+
+        function basic_commands() {
+            log_and_display "=== Basic Commands ==="
+            log_and_display "help          # List available commands."
+            log_and_display "help <cmd>    # Show help for a specific command."
+            log_and_display "cls          # Clear terminal screen."
+        }
+
+        function file_directory_operations() {
+            log_and_display "=== File & Directory Operations ==="
+            log_and_display "dir          # List files in the current directory."
+            log_and_display "dir /a       # List files, including hidden ones."
+            log_and_display "cd <dir>     # Change directory."
+            log_and_display "cd ..        # Move up one directory level."
+            log_and_display "mkdir <dir>  # Create a directory."
+            log_and_display "rmdir /s <dir> # Delete a directory (recursive)."
+            log_and_display "del <file>   # Delete a file."
+            log_and_display "move <src> <dst> # Move or rename a file/directory."
+        }
+
+        function file_search_and_enumeration() {
+            log_and_display "=== File Search & Enumeration ==="
+            log_and_display "dir /s /b *pass* == *cred* == *config*  # Find sensitive files."
+            log_and_display "findstr /spin /c:\"password\" *.* 2>nul  # Search for credentials."
+        }
+
+        function process_management() {
+            log_and_display "=== Process Management ==="
+            log_and_display "tasklist     # List running processes."
+            log_and_display "tasklist /M  # Show DLLs used by each process."
+            log_and_display "taskkill /PID <pid> /F # Terminate a process."
+        }
+
+        function user_management() {
+            log_and_display "=== User Management ==="
+            log_and_display "net user     # List local users."
+            log_and_display "net user <user> /active:yes  # Enable a user account."
+            log_and_display "net user <user> <password>   # Change user password."
+        }
+
+        function network_and_firewall() {
+            log_and_display "=== Network & Firewall ==="
+            log_and_display "netstat -ano  # Show active connections & listening ports."
+            log_and_display "netsh advfirewall show currentprofile  # Check firewall status."
+            log_and_display "netsh advfirewall set allprofiles state off  # Disable Windows Firewall."
+        }
+
+        function service_management() {
+            log_and_display "=== Service Management ==="
+            log_and_display "sc query     # List running services."
+            log_and_display "sc stop <service>  # Stop a service."
+            log_and_display "sc delete <service>  # Remove a service."
+        }
+
+        function registry_interaction() {
+            log_and_display "=== Windows Registry Interaction ==="
+            log_and_display "reg query HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run  # List startup programs."
+            log_and_display "reg add HKLM\\Software\\Test /v TestValue /t REG_SZ /d \"Data Here\" # Add a registry key."
+        }
+
+        function dump_windows_reference() {
+            main_windows_reference | tee windows_commands.txt
+            log_and_display "Windows command reference saved to windows_commands.txt."
+        }
+
+        function main_windows_reference() {
+            display_windows_commands_header
+            basic_commands
+            file_directory_operations
+            file_search_and_enumeration
+            process_management
+            user_management
+            network_and_firewall
+            service_management
+            registry_interaction
+            dump_windows_reference
+            exit_to_main_menu
+        }
+
+        main_windows_reference
+    }
+
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
 
@@ -3172,7 +3284,6 @@ RELEASE="ANAKIN"
 
         # Chamada da função principal do menu principal após pressionar ENTER
         main_menu;
-
 
     }
 
