@@ -23,7 +23,7 @@
     RESET="\e[0m"
 
     # Version
-    VERSION="0.10.2"
+    VERSION="0.15.2"
 
     # Author (jpgress@gmail.com)
     AUTHOR="R3v4N's 0wL"
@@ -311,7 +311,7 @@
         }
 
         # Process menu selection
-        function process_menu_option_bkp() {
+        function process_menu_option() {
             local option="$1"
             case $option in
                 0) exit_script ;;  
@@ -338,7 +338,7 @@
             esac
         }
 
-        function process_menu_option() {
+        function process_menu_option_bkp() {
             local option="$1"
             option=$((10#$option))  # Convert to proper integer
 
@@ -371,7 +371,7 @@
         }
 
 
-        function validate_input_bkp() {
+        function validate_input() {
             local input="$1"
             local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
             valid_options=("${valid_options[@]/23}")  # Remove invalid option 23
@@ -383,7 +383,7 @@
             return 1  
         }
 
-        function validate_input() {
+        function validate_input_bkp() {
             local input="$1"
             local valid_options=( $(seq 0 22) )  # Create a list of valid options (0-22)
             
@@ -401,7 +401,7 @@
 
 
         function prompt_user_inputs() {
-            echo -ne "${CYAN} Enter the option number: ${RESET}"
+            echo -ne "${GREEN} Enter the option number: ${RESET}"
             read -r MENU_OPTION
             if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" ]] ; then
                     exit_script
