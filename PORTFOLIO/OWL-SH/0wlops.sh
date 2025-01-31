@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.15"
+VERSION="0.21.24"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3033,26 +3033,17 @@ RELEASE="ANAKIN"
 
         title="NMAP NETWORK DISCOVERY"
 
-        function setup_logging() {
-            LOG_DIR="./logs"
-            if [ ! -d "$LOG_DIR" ]; then
-                mkdir -p "$LOG_DIR"
-            fi
-            LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
-            touch "$LOG_FILE"
-        }
-
         function select_network() {
-            log_and_display_no_date "=== Available Network Interfaces ==="
+            echo -e " === Available Network Interfaces ==="
             ip -br a | awk '{print NR ") " $1 " - " $3}'
             echo ""
 
-            read -r -p "Enter the number of the interface to scan: " interface_num
+            read -r -p " Enter the number of the interface to scan: " interface_num
             total_interfaces=$(ip -br a | wc -l)
 
             # Validate user input
             if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
-                log_and_display_no_date " Invalid interface number. Please try again."
+                echo -e " Invalid interface number. Please try again."
                 pause_script
                 nmap_discovery_workflow
             fi
@@ -3060,23 +3051,27 @@ RELEASE="ANAKIN"
             selected_network=$(ip -br a | awk "NR==$interface_num {print \$3}")
 
             if [[ -z "$selected_network" ]]; then
-                log_and_display_no_date "Failed to retrieve network details. Exiting..."
+                echo -e " Failed to retrieve network details. Exiting..."
                 exit 1
             fi
 
             NETWORK=$(ipcalc -n -b "$selected_network" | awk '/Network/ {print $2}')
-            log_and_display_no_date "Selected Network: $NETWORK"
+            echo -e " Selected Network: $NETWORK"
         }
 
         function execute_nmap_scan() {
-            echo -e "Starting Nmap Scan on $NETWORK..."
+            LOG_DIR="./logs"
+            if [ ! -d "$LOG_DIR" ]; then
+                mkdir -p "$LOG_DIR"
+            fi
+            LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
+            echo -e " Starting Nmap Scan on $NETWORK..."
             cd /usr/share/nmap/scripts || exit
             nmap -sn "$NETWORK" >> "$LOG_FILE"
-            log_and_display_no_date "Scan completed. Results saved in: $LOG_FILE"
+            echo -e " Scan completed. Results saved in: $LOG_FILE"
         }
 
         function nmap_discovery_workflow() {
-            setup_logging
             display_banner_inside_functions
             select_network
             execute_nmap_scan
