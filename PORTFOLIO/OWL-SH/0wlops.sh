@@ -2918,62 +2918,62 @@ RELEASE="ANAKIN"
         function all_win_cmds() {
             
             function basic_commands() {
-                log_and_display "=== Basic Commands ==="
-                log_and_display "help          # List available commands."
-                log_and_display "help <cmd>    # Show help for a specific command."
-                log_and_display "cls          # Clear terminal screen."
+                log_and_display_no_date "=== Basic Commands ==="
+                log_and_display_no_date "help          # List available commands."
+                log_and_display_no_date "help <cmd>    # Show help for a specific command."
+                log_and_display_no_date "cls          # Clear terminal screen."
             }
 
             function file_directory_operations() {
-                log_and_display "=== File & Directory Operations ==="
-                log_and_display "dir          # List files in the current directory."
-                log_and_display "dir /a       # List files, including hidden ones."
-                log_and_display "cd <dir>     # Change directory."
-                log_and_display "cd ..        # Move up one directory level."
-                log_and_display "mkdir <dir>  # Create a directory."
-                log_and_display "rmdir /s <dir> # Delete a directory (recursive)."
-                log_and_display "del <file>   # Delete a file."
-                log_and_display "move <src> <dst> # Move or rename a file/directory."
+                log_and_display_no_date "=== File & Directory Operations ==="
+                log_and_display_no_date "dir          # List files in the current directory."
+                log_and_display_no_date "dir /a       # List files, including hidden ones."
+                log_and_display_no_date "cd <dir>     # Change directory."
+                log_and_display_no_date "cd ..        # Move up one directory level."
+                log_and_display_no_date "mkdir <dir>  # Create a directory."
+                log_and_display_no_date "rmdir /s <dir> # Delete a directory (recursive)."
+                log_and_display_no_date "del <file>   # Delete a file."
+                log_and_display_no_date "move <src> <dst> # Move or rename a file/directory."
             }
 
             function file_search_and_enumeration() {
-                log_and_display "=== File Search & Enumeration ==="
-                log_and_display "dir /s /b *pass* == *cred* == *config*  # Find sensitive files."
-                log_and_display "findstr /spin /c:\"password\" *.* 2>nul  # Search for credentials."
+                log_and_display_no_date "=== File Search & Enumeration ==="
+                log_and_display_no_date "dir /s /b *pass* == *cred* == *config*  # Find sensitive files."
+                log_and_display_no_date "findstr /spin /c:\"password\" *.* 2>nul  # Search for credentials."
             }
 
             function process_management() {
-                log_and_display "=== Process Management ==="
-                log_and_display "tasklist     # List running processes."
-                log_and_display "tasklist /M  # Show DLLs used by each process."
-                log_and_display "taskkill /PID <pid> /F # Terminate a process."
+                log_and_display_no_date "=== Process Management ==="
+                log_and_display_no_date "tasklist     # List running processes."
+                log_and_display_no_date "tasklist /M  # Show DLLs used by each process."
+                log_and_display_no_date "taskkill /PID <pid> /F # Terminate a process."
             }
 
             function user_management() {
-                log_and_display "=== User Management ==="
-                log_and_display "net user     # List local users."
-                log_and_display "net user <user> /active:yes  # Enable a user account."
-                log_and_display "net user <user> <password>   # Change user password."
+                log_and_display_no_date "=== User Management ==="
+                log_and_display_no_date "net user     # List local users."
+                log_and_display_no_date "net user <user> /active:yes  # Enable a user account."
+                log_and_display_no_date "net user <user> <password>   # Change user password."
             }
 
             function network_and_firewall() {
-                log_and_display "=== Network & Firewall ==="
-                log_and_display "netstat -ano  # Show active connections & listening ports."
-                log_and_display "netsh advfirewall show currentprofile  # Check firewall status."
-                log_and_display "netsh advfirewall set allprofiles state off  # Disable Windows Firewall."
+                log_and_display_no_date "=== Network & Firewall ==="
+                log_and_display_no_date "netstat -ano  # Show active connections & listening ports."
+                log_and_display_no_date "netsh advfirewall show currentprofile  # Check firewall status."
+                log_and_display_no_date "netsh advfirewall set allprofiles state off  # Disable Windows Firewall."
             }
 
             function service_management() {
-                log_and_display "=== Service Management ==="
-                log_and_display "sc query     # List running services."
-                log_and_display "sc stop <service>  # Stop a service."
-                log_and_display "sc delete <service>  # Remove a service."
+                log_and_display_no_date "=== Service Management ==="
+                log_and_display_no_date "sc query     # List running services."
+                log_and_display_no_date "sc stop <service>  # Stop a service."
+                log_and_display_no_date "sc delete <service>  # Remove a service."
             }
 
             function registry_interaction() {
-                log_and_display "=== Windows Registry Interaction ==="
-                log_and_display "reg query HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run  # List startup programs."
-                log_and_display "reg add HKLM\\Software\\Test /v TestValue /t REG_SZ /d \"Data Here\" # Add a registry key."
+                log_and_display_no_date "=== Windows Registry Interaction ==="
+                log_and_display_no_date "reg query HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run  # List startup programs."
+                log_and_display_no_date "reg add HKLM\\Software\\Test /v TestValue /t REG_SZ /d \"Data Here\" # Add a registry key."
             }
 
             # Call function for each section
