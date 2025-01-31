@@ -2598,7 +2598,7 @@
         title="VIM QUICK REFERENCE" # Title
 
         function display_vim_header() {
-            display_banner_inside_functions()
+            display_banner_inside_functions
         }
 
         function vim_text_insertion() {
