@@ -23,10 +23,10 @@
     RESET="\e[0m"
 
     # Version
-    VERSION="0.15.2"
+    VERSION="0.16.0"
 
     # Darth Release
-    RELEASE="VADER"
+    RELEASE="ANAKIN"
 
     # Author (jpgress@gmail.com)
     AUTHOR="R3v4N's 0wL"
