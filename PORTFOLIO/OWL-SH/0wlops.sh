@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.203"
+VERSION="0.22.303"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -379,39 +379,39 @@ RELEASE="ANAKIN"
     # Display numbered menu options
     function display_numbered_menu_options() {
         echo -e "${BRIGHT_GREEN} [+] INTELLIGENCE GATHERING (RECON & OSINT) ${RESET}"
-            echo -e "\t${RED} [01] Portscan (Netcat) ${RESET}" 
-            echo -e "\t${RED} [02] Parsing HTML ${RESET}" 
-            echo -e "\t${RED} [03] Google Hacking for OSINT ${RESET}" 
-            echo -e "\t${RED} [04] Metadata Analysis ${RESET}" 
-            echo -e "\t${RED} [05] DNS Zone Transfer ${RESET}" 
-            echo -e "\t${RED} [06] Subdomain Takeover ${RESET}" 
-            echo -e "\t${RED} [07] Reverse DNS Lookup ${RESET}" 
-            echo -e "\t${RED} [08] DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [09] ARP Network Scan ${RESET}"
+            echo -e "\t${RED} [100] Portscan (Netcat) ${RESET}" 
+            echo -e "\t${RED} [101] Parsing HTML ${RESET}" 
+            echo -e "\t${RED} [102] Google Hacking for OSINT ${RESET}" 
+            echo -e "\t${RED} [103] Metadata Analysis ${RESET}" 
+            echo -e "\t${RED} [104] DNS Zone Transfer ${RESET}" 
+            echo -e "\t${RED} [105] Subdomain Takeover ${RESET}" 
+            echo -e "\t${RED} [106] Reverse DNS Lookup ${RESET}" 
+            echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
+            echo -e "\t${RED} [108] ARP Network Scan ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
-            echo -e "\t${RED} [10] MiTM (Man-in-the-Middle) ${RESET}"
-            echo -e "\t${RED} [11] Portscan (Bash sockets) ${RESET}"
-            echo -e "\t${RED} [12] Useful Network Commands (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [13] System Information (Linux OS) ${RESET}"
+            echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
+            echo -e "\t${RED} [201] Portscan (Bash sockets) ${RESET}"
+            echo -e "\t${RED} [202] Useful Network Commands (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [203] System Information (Linux OS) ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] EXPLOITATION & PRIVILEGE ESCALATION ${RESET}"
-            echo -e "\t${RED} [14] Attack Surface Analysis (find Based) ${RESET}"
-            echo -e "\t${RED} [15] File Discovery & Enumeration (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [16] Root Password Reset Guide (Linux OS) ${RESET}"
+            echo -e "\t${RED} [300] Attack Surface Analysis (find Based) ${RESET}"
+            echo -e "\t${RED} [301] File Discovery & Enumeration (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [302] Root Password Reset Guide (Linux OS) ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] POST-EXPLOITATION & PERSISTENCE ${RESET}"
-            echo -e "\t${RED} [17] Vim Escape Techniques (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [18] Rbash Escape Techniques (Linux OS)${RESET}"
+            echo -e "\t${RED} [400] Vim Escape Techniques (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [401] Rbash Escape Techniques (Linux OS)${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] NETWORK & SYSTEM EXPLOITATION ${RESET}"
-            echo -e "\t${RED} [19] Wireless Penetration Testing Toolkit ${RESET}"
-            echo -e "\t${RED} [20] Windows Basic Commands (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [500] Wireless Penetration Testing Toolkit ${RESET}"
+            echo -e "\t${RED} [501] Windows Basic Commands (Quick Ref) ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & NETWORK DISCOVERY ${RESET}"
-            echo -e "\t${RED} [21] Nmap Network Scan ${RESET}"
+            echo -e "\t${RED} [600] Nmap Network Scan ${RESET}"
         echo
-        echo -e "\t${GRAY} [00] Exit ${RESET}"
+        echo -e "\t${GRAY} [000] Exit ${RESET}"
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
     }
 
@@ -478,7 +478,14 @@ RELEASE="ANAKIN"
 
         function validate_input() {
             local input="$1"
-            local valid_options=( $(seq 0 21) )  # Create a list of valid options (0-25)
+            local valid_options=(
+                                $(seq 100 108) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
+                                $(seq 200 203) # [+] VULNERABILITY ANALYSIS
+                                $(seq 300 302) # [+] EXPLOITATION & PRIVILEGE ESCALATION
+                                $(seq 400 401) # [+] POST-EXPLOITATION & PERSISTENCE
+                                $(seq 500 501) # [+] NETWORK & SYSTEM EXPLOITATION
+                                $(seq 600 600) # [+] LATERAL MOVEMENT & NETWORK DISCOVERY
+                                )  # Create a list of valid options
             valid_options=("${valid_options[@]}")
             for valid in "${valid_options[@]}"; do
                 if [[ "$input" == "$valid" ]]; then
@@ -491,7 +498,7 @@ RELEASE="ANAKIN"
         function prompt_user_inputs() {
             echo -ne "${GREEN} Enter the option number: ${RESET}"
             read -r MENU_OPTION
-            if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" ]] ; then
+            if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" || "$MENU_OPTION" == "000" ]] ; then
                     exit_script
                     return 0
                 else
