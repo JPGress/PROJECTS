@@ -178,7 +178,7 @@
     # Function: Invalid option
     function invalid_option() {
         echo ""
-        echo -e "${BLACK} ${BG_RED}\t\tINVALID OPTION!${RESET}${RED} - Please run the script again and choose a valid option.${RESET}"
+        echo -e "${BLACK} ${BG_RED} INVALID OPTION!${RESET}${RED} - Please run the script again and choose a valid option.${RESET}"
         echo -e "${GRAY} Press ENTER to continue ${RESET}"
         read -r
         main_menu
