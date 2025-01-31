@@ -118,12 +118,6 @@
             esac
         }
 
-        # Exit the script gracefully
-        function exit_script() {
-            echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
-            exit 0
-        }
-
         # Function: Validate user input against allowed menu options
         function validate_input() {
             local input="$1"
@@ -313,6 +307,13 @@
         exit 1
     }
 
+    # Exit the script gracefully
+    function exit_script() {
+        echo
+        echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
+        exit 0
+    }
+    
     # Function: Exit to main menu
     function exit_to_main_menu(){
         # Wait for the user to press ENTER before returning to the main menu
