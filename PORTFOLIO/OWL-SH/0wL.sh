@@ -25,7 +25,7 @@
     # Version
     VERSION="0.10.2"
 
-    # Author
+    # Author (jpgress@gmail.com)
     AUTHOR="R3v4N's 0wL"
 
 
