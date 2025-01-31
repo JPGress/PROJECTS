@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.21.31"
+VERSION="0.21.32"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -272,9 +272,14 @@ RELEASE="ANAKIN"
 
     # Exit the script gracefully
     function exit_script() {
+        title="\t${RED}WE HUNT IN THE SHADOWS${RESET}"
+        display_banner_inside_functions
         echo
-        echo -e "${CYAN} May be the force be with you! Bye! ${RESET}"
+        echo -e "${RED} Exiting... Happy hunting!${RESET}"
+        sleep 3
+        clear
         exit 0
+        
         # 0wL OPS shutting down. Remember: There is no patch for human stupidity.
     }
 
