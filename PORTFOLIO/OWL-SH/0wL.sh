@@ -123,6 +123,7 @@
             echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
             exit 0
         }
+
         
         # Function: Validate user input against allowed menu options
         function validate_input() {
@@ -148,7 +149,12 @@
             # Prompt the user for input
             echo -ne "${CYAN} Enter the option number: ${RESET}"
             read -r MENU_OPTION  # Read user input
-            MENU_OPTION=$(echo "$MENU_OPTION" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+            if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" ]] ; then
+                exit_script
+                return 0
+            else
+                MENU_OPTION=$(echo "$MENU_OPTION" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+            fi
 
             # Validate the input
             if ! validate_input "$MENU_OPTION"; then
