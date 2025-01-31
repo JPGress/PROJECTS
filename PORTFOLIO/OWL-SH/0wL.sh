@@ -25,6 +25,9 @@
     # Version
     VERSION="0.15.2"
 
+    # Darth Release
+    RELEASE="VADER"
+
     # Author (jpgress@gmail.com)
     AUTHOR="R3v4N's 0wL"
 
@@ -51,7 +54,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script (0wLOpS) v$VERSION ${GRAY}by $AUTHOR ${RESET}"
+        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script - v$VERSION ($RELEASE) by $AUTHOR ${RESET}"
         subtitle;
     }
 
