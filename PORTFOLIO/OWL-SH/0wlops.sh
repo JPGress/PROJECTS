@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.18.0"
+VERSION="0.18.1"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -2766,136 +2766,6 @@ RELEASE="ANAKIN"
 
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-
-    # Definição da função principal xvii_tec_esc_rbash
-    function xvii_tec_esc_rbash(){
-
-        # Definição da função vim_escape_rbash
-        function vim_escape_rbash(){
-            # Comando do Vim para escapar do rbash
-            local vim_comando="vim.tiny -E -c :\!/bin/sh"
-
-            # Verificar se o konsole está instalado
-            if command -v konsole &> /dev/null; then
-                    # KDE (Konsole)
-                    konsole --hold -e "${vim_comando}"
-            else
-                # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
-                if command -v gnome-terminal &> /dev/null; then
-                    # Ubuntu (Gnome Terminal)
-                    gnome-terminal -- "${vim_comando}"
-                elif command -v xfce4-terminal &> /dev/null; then
-                    # Xubuntu (Xfce Terminal)
-                    xfce4-terminal --execute "${vim_comando}"
-                elif command -v tilix &> /dev/null; then
-                    # Tilix está instalado
-                    tilix --action=app-new-window "${vim_comando}"
-                elif command -v xterm &> /dev/null; then
-                    # Terminal genérico (xterm)
-                    xterm -e "${vim_comando}"
-                else
-                    # Nenhum terminal padrão encontrado
-                    echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
-                    exit 1
-                fi
-            fi
-        }
-
-        # Definição da função find_escape_rbash
-        function find_escape_rbash(){
-            # Comando find para escapar do rbash
-            local find_comando="find . -exec /bin/sh \; -quit"
-
-            # Verificar se o Tilix está instalado
-            if command -v tilix &> /dev/null; then
-                # Tilix está instalado, abrir uma nova sessão do Tilix
-                tilix --action=app-new-window "${find_comando}"
-            else
-                # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
-                if command -v gnome-terminal &> /dev/null; then
-                    # Ubuntu (Gnome Terminal)
-                    gnome-terminal -- "${find_comando}"
-                elif command -v xfce4-terminal &> /dev/null; then
-                    # Xubuntu (Xfce Terminal)
-                    xfce4-terminal --execute "${find_comando}"
-                elif command -v konsole &> /dev/null; then
-                    # KDE (Konsole)
-                    konsole --hold -e "${find_comando}"
-                elif command -v xterm &> /dev/null; then
-                    # Terminal genérico (xterm)
-                    xterm -e "${find_comando}"
-                else
-                    # Nenhum terminal padrão encontrado
-                    echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
-                    exit 1
-                fi
-            fi
-        }
-
-        # Definição da função man_escape_rbash
-        function man_escape_rbash(){
-            # Comando man para escapar do rbash
-            local man_comando="echo 'Para escapar do rbash, logo apos o man iniciar, digite \!sh. Para continuar, aperte enter' && read && man man"
-
-            # Verificar se o Tilix está instalado
-            if command -v tilix &> /dev/null; then
-                # Tilix está instalado, abrir uma nova sessão do Tilix
-                tilix --action=app-new-window "${man_comando}"
-            else
-                # Tilix não está instalado, verificar a distribuição Linux e abrir um terminal padrão
-                if command -v gnome-terminal &> /dev/null; then
-                    # Ubuntu (Gnome Terminal)
-                    gnome-terminal -- "${man_comando}"
-                elif command -v xfce4-terminal &> /dev/null; then
-                    # Xubuntu (Xfce Terminal)
-                    xfce4-terminal --execute "${man_comando}"
-                elif command -v konsole &> /dev/null; then
-                    # KDE (Konsole)
-                    konsole --hold -e "${man_comando}"
-                elif command -v xterm &> /dev/null; then
-                    # Terminal genérico (xterm)
-                    xterm -e "${man_comando}"
-                else
-                    # Nenhum terminal padrão encontrado
-                    echo "Nenhum terminal padrão encontrado. Este script não pode escapar do rbash."
-                    exit 1
-                fi
-            fi
-        }
-
-        # Definição da função verifica_comandos_instalados
-        function verifica_comandos_instalados () {
-            # Verificar se o Vim está instalado e acessível
-            if command -v vim &> /dev/null; then
-                # Executar função para escapar do rbash com Vim
-                vim_escape_rbash;
-            else
-                # Verificar se o Find está instalado e acessível
-                if command -v find &> /dev/null; then
-                    # Executar função para escapar do rbash com Find
-                    find_escape_rbash;
-                # Verificar se o Man está instalado e acessível
-                elif command -v man &> /dev/null; then
-                    # Executar função para escapar do rbash com Man
-                    man_escape_rbash;
-                else
-                    # Nenhum dos comandos necessários está instalado
-                    echo "O script não é capaz de sair do rbash"    
-                fi
-            fi   
-        }
-
-        # Definição da função principal main_tec_esc_rbash
-        function main_tec_esc_rbash(){
-            # Chamar função para verificar comandos instalados e escapar do rbash
-            verifica_comandos_instalados;
-            pausa_script;
-        }
-
-        # Chamar função principal
-        main_tec_esc_rbash
-
-    }
 
     # Este script realiza testes de penetração em redes wireless
     function xviii_wifi_atk(){
