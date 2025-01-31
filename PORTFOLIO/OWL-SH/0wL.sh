@@ -294,17 +294,17 @@
     # Function: Main menu with Fast Mode execution
     function main() {
         # Description:
-        # This function handles both interactive menu navigation and fast mode execution.
-        #
-        # Features:
-        # - If a valid function number is passed as an argument, it runs that function instantly.
-        # - If no argument is provided, it launches the interactive menu.
-        # - If '-h' or '--help' is provided, it shows the help menu.
-        #
-        # Example usage:
-        # ./0wl.sh           # Interactive menu
-        # ./0wl.sh 12        # Instantly run Linux System Info
-        # ./0wl.sh -h        # Show help menu
+            # This function handles both interactive menu navigation and fast mode execution.
+            #
+            # Features:
+            # - If a valid function number is passed as an argument, it runs that function instantly.
+            # - If no argument is provided, it launches the interactive menu.
+            # - If '-h' or '--help' is provided, it shows the help menu.
+            #
+            # Example usage:
+            # ./0wl.sh           # Interactive menu
+            # ./0wl.sh 12        # Instantly run Linux System Info
+            # ./0wl.sh -h        # Show help menu
 
         # If no argument is provided, launch interactive menu
         function display_banner_main_menu(){    
@@ -392,7 +392,7 @@
             local valid_options=( $(seq 0 22) )  # Create a list of valid options (0-22)
             
             # Convert to integer (Remove leading zeros safely)
-            input=$((10#$input))
+            #input=$((10#$input))
         
             # Check if input is in the valid list
             for valid in "${valid_options[@]}"; do
