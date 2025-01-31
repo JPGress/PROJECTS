@@ -28,6 +28,154 @@
     # Author
     AUTHOR="JPGress a.k.a R3v4N||0wL"
 
+#* ====== MAIN MENU ======
+    # Function: Main menu
+    function main_menu() {
+        # main_menu - Display the main menu and handle user input
+            #
+            # Description:
+            # This function displays the main menu, validates the user's selection, and calls the appropriate script or feature based on the input.
+            # It performs the following operations:
+            # 1. Displays the main menu with valid options.
+            # 2. Validates user input against available options.
+            # 3. Calls the respective function for the selected option.
+            #
+            # Notes:
+            # - Invalid inputs will prompt the user to re-enter their choice.
+            # - Disabled options are marked in the menu and cannot be selected.
+            #
+            # Example usage:
+            # - Input: Option number (e.g., 1 for Port Scan).
+            # - Output: Calls the selected function or feature.
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.1
+            #
+            # Author: R3v4N (w/GPT)
+            #
+        
+        function display_main_menu() {
+
+            function display_banner_main_menu(){    
+                clear; # Clears the terminal screen
+                ascii_banner_art; # Call ASCII banner art
+                echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
+                subtitle; # Display a subtitle
+            }
+
+            # Display numbered menu options
+            function display_numbered_menu_options() {
+                echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
+                echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
+                echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
+                echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
+                echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
+                echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
+                echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
+                echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
+                echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
+                echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
+                echo -e "${MAGENTA} [11] Useful Commands for Network Management ${RESET}"
+                echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
+                echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
+                echo -e "${MAGENTA} [14] Quick Ref for finding and manipulating texts (Linux OS) ${RESET}"
+                echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
+                echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
+                echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
+                echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
+                echo -e "${GRAY} [19] Windows Tips ${RESET}"
+                echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
+                echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
+                echo -e "${GRAY} [22] RDP for Windows ${RESET}"
+                echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
+                echo -e "${MAGENTA} [00] Exit ${RESET}"
+                subtitle;
+            }
+
+            display_banner_main_menu;
+            display_numbered_menu_options;
+        }
+
+        # Process the menu option selected by the user
+        function process_menu_option() {
+            local option="$1"
+            case $option in
+                00|0) exit_script ;;  # Exit the script
+                01|1) portscan ;;  # Perform a port scan
+                02|2) parsing_html ;;  # Parse HTML
+                03|3) google_hacking ;;  # Google Hacking
+                04|4) metadata_analysis ;;  # Metadata Analysis
+                05|5) dns_zt ;;  # DNS Zone Transfer
+                06|6) Subdomain_takeover ;;  # Subdomain Takeover
+                07|7) rev_dns ;;  # Reverse DNS
+                08|8) recon_dns ;;  # DNS Reconnaissance
+                09|9) mitm ;;  # MiTM (Man-in-the-Middle)
+                10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
+                11) useful_linux_commands ;; # Useful Linux commands
+                12) linux_sysinfo ;;  # System info
+                13) find_based_attack_surface_analysis ;; # Disabled
+                14) find_command_examples ;;  # find command examples
+                16) xvi_vim_quick_guide ;;  # Vim Quick Guide
+                18) xviii_wifi_attacks ;;  # Wireless Network Attacks
+                19) xix_windows_basic_commands ;;  # Basic Windows Commands
+                21) xxi_sgt_domingues_scanning_script ;;  # Sgt Domingues' Scanning Script
+                22) xxii_nmap_network_discovery ;;  # NMAP Network Discovery
+                *) invalid_option ;;  # Fallback case for unexpected values
+            esac
+        }
+
+        # Validate user input
+        function validate_input() {
+            local input="$1"  # User input
+            shift  # Remove input from arguments list
+            local valid_options=("$@")  # Remaining arguments are valid options
+
+            # Check if input is in the list of valid options
+            for option in "${valid_options[@]}"; do
+                if [[ "$input" == "$option" ]]; then
+                    return 0  # Input is valid
+                fi
+            done
+            return 1  # Input is invalid
+        }
+
+        # Exit the script gracefully
+        function exit_script() {
+            echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
+            exit 0
+        }
+
+        # Main workflow
+        function main_menu_workflow() {
+            display_main_menu  # Display the menu
+
+            # Define valid menu options dynamically
+            valid_options=()
+            for i in {0..25}; do
+                if [[ "$i" -ne 23 ]]; then
+                    valid_options+=("$i")  # Exclude option 23
+                fi
+            done
+
+            # Prompt the user for input
+            echo -ne "${CYAN} Enter the option number: ${RESET}"
+            read -r MENU_OPTION  # Read user input
+
+            # Validate the input
+            if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
+                invalid_option  # Handle invalid input
+                main_menu_workflow  # Restart the menu
+                return
+            fi
+
+            # Process the valid menu option
+            process_menu_option "$MENU_OPTION"
+        }
+
+        # Execute the main menu workflow
+        main_menu_workflow
+    }
 #* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
     function ascii_banner_art() {
@@ -251,154 +399,7 @@
         return 1 # Input is invalid
     }
 
-#* ====== MAIN MENU ======
-    # Function: Main menu
-    function main_menu() {
-        # main_menu - Display the main menu and handle user input
-            #
-            # Description:
-            # This function displays the main menu, validates the user's selection, and calls the appropriate script or feature based on the input.
-            # It performs the following operations:
-            # 1. Displays the main menu with valid options.
-            # 2. Validates user input against available options.
-            # 3. Calls the respective function for the selected option.
-            #
-            # Notes:
-            # - Invalid inputs will prompt the user to re-enter their choice.
-            # - Disabled options are marked in the menu and cannot be selected.
-            #
-            # Example usage:
-            # - Input: Option number (e.g., 1 for Port Scan).
-            # - Output: Calls the selected function or feature.
-            #
-            # Created on: 2025-01-26
-            # Last Updated: 2025-01-26
-            # Version: 1.1
-            #
-            # Author: R3v4N (w/GPT)
-            #
-        
-        function display_main_menu() {
 
-            function display_banner_main_menu(){    
-                clear; # Clears the terminal screen
-                ascii_banner_art; # Call ASCII banner art
-                echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
-                subtitle; # Display a subtitle
-            }
-
-            # Display numbered menu options
-            function display_numbered_menu_options() {
-                echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
-                echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
-                echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
-                echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
-                echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
-                echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
-                echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
-                echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
-                echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
-                echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
-                echo -e "${MAGENTA} [11] Useful Commands for Network Management ${RESET}"
-                echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
-                echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
-                echo -e "${MAGENTA} [14] Quick Ref for finding and manipulating texts (Linux OS) ${RESET}"
-                echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
-                echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
-                echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
-                echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
-                echo -e "${GRAY} [19] Windows Tips ${RESET}"
-                echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
-                echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
-                echo -e "${GRAY} [22] RDP for Windows ${RESET}"
-                echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
-                echo -e "${MAGENTA} [00] Exit ${RESET}"
-                subtitle;
-            }
-
-            display_banner_main_menu;
-            display_numbered_menu_options;
-        }
-
-        # Process the menu option selected by the user
-        function process_menu_option() {
-            local option="$1"
-            case $option in
-                00|0) exit_script ;;  # Exit the script
-                01|1) portscan ;;  # Perform a port scan
-                02|2) parsing_html ;;  # Parse HTML
-                03|3) google_hacking ;;  # Google Hacking
-                04|4) metadata_analysis ;;  # Metadata Analysis
-                05|5) dns_zt ;;  # DNS Zone Transfer
-                06|6) Subdomain_takeover ;;  # Subdomain Takeover
-                07|7) rev_dns ;;  # Reverse DNS
-                08|8) recon_dns ;;  # DNS Reconnaissance
-                09|9) mitm ;;  # MiTM (Man-in-the-Middle)
-                10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
-                11) useful_linux_commands ;; # Useful Linux commands
-                12) linux_sysinfo ;;  # System info
-                13) find_based_attack_surface_analysis ;; # Disabled
-                14) find_command_examples ;;  # find command examples
-                16) xvi_vim_quick_guide ;;  # Vim Quick Guide
-                18) xviii_wifi_attacks ;;  # Wireless Network Attacks
-                19) xix_windows_basic_commands ;;  # Basic Windows Commands
-                21) xxi_sgt_domingues_scanning_script ;;  # Sgt Domingues' Scanning Script
-                22) xxii_nmap_network_discovery ;;  # NMAP Network Discovery
-                *) invalid_option ;;  # Fallback case for unexpected values
-            esac
-        }
-
-        # Validate user input
-        function validate_input() {
-            local input="$1"  # User input
-            shift  # Remove input from arguments list
-            local valid_options=("$@")  # Remaining arguments are valid options
-
-            # Check if input is in the list of valid options
-            for option in "${valid_options[@]}"; do
-                if [[ "$input" == "$option" ]]; then
-                    return 0  # Input is valid
-                fi
-            done
-            return 1  # Input is invalid
-        }
-
-        # Exit the script gracefully
-        function exit_script() {
-            echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
-            exit 0
-        }
-
-        # Main workflow
-        function main_menu_workflow() {
-            display_main_menu  # Display the menu
-
-            # Define valid menu options dynamically
-            valid_options=()
-            for i in {0..25}; do
-                if [[ "$i" -ne 23 ]]; then
-                    valid_options+=("$i")  # Exclude option 23
-                fi
-            done
-
-            # Prompt the user for input
-            echo -ne "${CYAN} Enter the option number: ${RESET}"
-            read -r MENU_OPTION  # Read user input
-
-            # Validate the input
-            if ! validate_input "$MENU_OPTION" "${valid_options[@]}"; then
-                invalid_option  # Handle invalid input
-                main_menu_workflow  # Restart the menu
-                return
-            fi
-
-            # Process the valid menu option
-            process_menu_option "$MENU_OPTION"
-        }
-
-        # Execute the main menu workflow
-        main_menu_workflow
-    }
 
 #* ====== SCRIPTS (A-Z) ======
     #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
