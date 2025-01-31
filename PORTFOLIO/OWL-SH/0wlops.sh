@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.202"
+VERSION="0.22.203"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -411,7 +411,7 @@ RELEASE="ANAKIN"
         echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & NETWORK DISCOVERY ${RESET}"
             echo -e "\t${RED} [21] Nmap Network Scan ${RESET}"
         echo
-        echo -e "${GRAY} [00] Exit ${RESET}"
+        echo -e "\t${GRAY} [00] Exit ${RESET}"
         echo
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
     }
