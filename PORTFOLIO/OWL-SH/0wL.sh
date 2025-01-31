@@ -54,7 +54,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE) ${RESET}"
+        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE)${RESET}"
         subtitle;
     }
 
@@ -139,7 +139,7 @@
         echo -e "${GRAY} >>> Testing proxychains with 'proxychains curl -I https://dnsleaktest.com'<<< ${RESET}"
         echo -e "${GRAY} >>> Please wait a moment... <<< ${RESET}"
         if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
-            echo -e "${GREEN} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
+            echo -e "${GRAY} >>> Proxychains is working correctly. All traffic will be routed through it. <<< ${RESET}"
             countdown; # Wait for 5 seconds before continuing
             export PROXYCHAINS=1
         else
