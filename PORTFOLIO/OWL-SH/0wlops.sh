@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.305"
+VERSION="0.23.000"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -610,6 +610,28 @@ RELEASE="ANAKIN"
         }
 
         arp_scan_workflow
+    }
+
+    # Function: Deploy ARP Recon Daemon (Base64 Decoded)
+    function deploy_arp_recon_daemon() {
+        local target_dir="/opt/arp_recon"
+        local daemon_file="${target_dir}/arp_recon_daemon.sh"
+        
+        # Ensure target directory exists
+        mkdir -p "$target_dir"
+
+        # Base64-encoded ARP Recon Daemon
+        local base64_script="<PASTE YOUR BASE64 ENCODED CONTENT HERE>"
+
+        # Decode and write the script back
+        echo "$base64_script" | base64 -d > "$daemon_file"
+        
+        # Set permissions
+        chmod +x "$daemon_file"
+
+        echo "[+] ARP Recon Daemon deployed to: $daemon_file"
+        echo "[*] Configure NETWORK_RANGE, INTERFACE, and other settings before running."
+        echo "[*] To start manually, use: $daemon_file &"
     }
 
     # Function: Script to perform a port scan on a network using netcat
