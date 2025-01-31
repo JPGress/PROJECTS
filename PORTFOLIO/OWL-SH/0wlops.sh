@@ -2456,10 +2456,7 @@
             echo "  8. Reboot: reboot" >> "$file"
 
             echo "======================" >> "$file"
-            echo "File saved to: $file"
-
-            cat /tmp/root_reset_steps.txt
-            exit_to_main_menu
+            echo " File saved to: $file"
         }
 
         # Generate a QR Code with Steps
@@ -2487,14 +2484,17 @@
         function submenu_linux_root_password_reset() {
             clear
             display_banner_inside_functions
+            generate_reset_steps
             echo
             echo -e "${MAGENTA} [0] Generate Instructions${RESET}"
             echo -e "${MAGENTA} [1] Generate QR Code${RESET}"
             echo -e "${MAGENTA} [2] Print Instructions${RESET}"
-            echo -e "${MAGENTA} [3] Exit to Main Menu${RESET}"
+            echo -e "${MAGENTA} [3] Print in Screen${RESET}"
+            echo -e "${MAGENTA} [4] Exit to Main Menu${RESET}"
             echo
             echo -ne "${GREEN} Choose an option: ${RESET}"
             read -r option
+            echo
             case $option in
                 0) generate_reset_steps ;;
                 1) generate_qr_code ;;
