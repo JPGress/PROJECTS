@@ -2321,6 +2321,7 @@
             # Last Updated: 2025-02-01
             # Version: 2.0
 
+        title="Find Command Examples"  # Define the title for this operation
         function display_find_usage_section() {
             local title="$1"
             echo -e "${RED}# $title${RESET}"
