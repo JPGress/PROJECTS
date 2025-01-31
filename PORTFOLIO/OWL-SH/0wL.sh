@@ -51,7 +51,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "\t\t ${BG_RED}${RED} 0wL Operators Script (0wLOpS) v$VERSION ${GRAY}by $AUTHOR ${RESET}"
+        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script (0wLOpS) v$VERSION ${GRAY}by $AUTHOR ${RESET}"
         subtitle;
     }
 
@@ -237,7 +237,7 @@
 
     #! TODO: RENAME THIS FUNCTION TO A BETTER NAME
     function subtitle() {
-        echo -e "${GRAY}+====================================================================================+${RESET}"
+        echo -e "${RED}+====================================================================================+${RESET}"
     }
 
     # Function: Validate user input for the main menu
@@ -260,20 +260,20 @@
 #* ====== MAIN FUNCTION ======
     # Display numbered menu options
     function display_numbered_menu_options() {
-        echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
-        echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
-        echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
-        echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
-        echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
-        echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
-        echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
-        echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
-        echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
-        echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
-        echo -e "${MAGENTA} [11] Useful Commands for Network Management - Quick Ref ${RESET}"
-        echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
-        echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
-        echo -e "${MAGENTA} [14] 'find' Examples - Quick Ref (Linux OS) ${RESET}"
+        echo -e "${GREEN} [01] Portscan (netcat) ${RESET}" 
+        echo -e "${GREEN} [02] Parsing HTML ${RESET}" 
+        echo -e "${GREEN} [03] Google Hacking for people OSINT ${RESET}" 
+        echo -e "${GREEN} [04] Metadata Analysis ${RESET}" 
+        echo -e "${GREEN} [05] DNS Zone Transfer ${RESET}" 
+        echo -e "${GREEN} [06] Subdomain Takeover ${RESET}" 
+        echo -e "${GREEN} [07] Reverse DNS ${RESET}" 
+        echo -e "${GREEN} [08] DNS Reconnaissance ${RESET}"
+        echo -e "${GREEN} [09] MiTM (Man-in-the-Middle) ${RESET}"
+        echo -e "${GREEN} [10] Portscan (Bash sockets) ${RESET}"
+        echo -e "${GREEN} [11] Useful Commands for Network Management - Quick Ref ${RESET}"
+        echo -e "${GREEN} [12] System Information to Linux OS ${RESET}"
+        echo -e "${GREEN} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
+        echo -e "${GREEN} [14] 'find' Examples - Quick Ref (Linux OS) ${RESET}"
         echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
         echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
         echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
@@ -283,8 +283,8 @@
         echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
         echo -e "${GRAY} [22] RDP for Windows ${RESET}"
         echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
-        echo -e "${MAGENTA} [00] Exit ${RESET}"
-        echo -e "${GRAY}+=================================== \u2143w0.0wL ========================================+${RESET}"
+        echo -e "${GREEN} [00] Exit ${RESET}"
+        echo -e "${RED}+=================================== \u2143w0.0wL ========================================+${RESET}"
     }
 
     # Function: Main menu with Fast Mode execution
