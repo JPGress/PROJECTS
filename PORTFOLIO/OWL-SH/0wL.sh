@@ -28,7 +28,7 @@
     # Author
     AUTHOR="JPGress a.k.a R3v4N||0wL"
 
-#* ====== MAIN MENU ======
+#* ====== MAIN FUNCTION ======
     # Display numbered menu options
     function display_numbered_menu_options() {
         echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
@@ -55,11 +55,11 @@
         echo -e "${GRAY} [22] RDP for Windows ${RESET}"
         echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
         echo -e "${MAGENTA} [00] Exit ${RESET}"
-        echo -e "${GRAY}+===================================== 0.0wL ========================================+${RESET}"
+        echo -e "${GRAY}+=================================== \u2143w0.0wL ========================================+${RESET}"
     }
 
     # Function: Main menu
-    function main_menu() {
+    function main() {
         # main_menu - Display the main menu and handle user input
             #
             # Description:
@@ -3273,7 +3273,7 @@
             show_help;
         else
             enable_proxychains; # Call the function to enable proxychains at script start
-            main_menu;
+            main;
     fi
 
 
