@@ -2456,17 +2456,24 @@
             echo "  8. Reboot: reboot" >> "$file"
 
             echo "======================" >> "$file"
-            echo " File saved to: $file"
+            echo " File with instructions saved in: $file"
+        }
+
+        function go_back(){
+            pause_script
+            submenu_linux_root_password_reset
         }
 
         # Generate a QR Code with Steps
         function generate_qr_code() {
             if command -v qrencode &>/dev/null; then
                 cat /tmp/root_reset_steps.txt | qrencode -o /tmp/root_reset_qr.png
-                echo -e "${GREEN}QR Code saved to /tmp/root_reset_qr.png.${RESET}"
-                echo -e "${GRAY}Scan it with your phone before rebooting.${RESET}"
+                echo -e "${GREEN} QR Code saved to /tmp/root_reset_qr.png.${RESET}"
+                echo -e "${GRAY} Scan it with your phone before rebooting.${RESET}"
+                go_back
             else
-                echo -e "${RED}qrencode not installed. Install and try again. Skipping QR code generation.${RESET}"
+                echo -e "${RED} qrencode not installed. Install and try again. Skipping QR code generation.${RESET}"
+                go_back
             fi
         }
 
@@ -2474,19 +2481,29 @@
         function print_instructions() {
             if command -v lp &>/dev/null; then
                 lp /tmp/root_reset_steps.txt
-                echo -e "${GREEN}Instructions sent to printer.${RESET}"
+                echo -e "${GREEN} Instructions sent to printer.${RESET}"
+                go_back
             else
-                echo -e "${YELLOW}No printer detected. Skipping print.${RESET}"
+                echo -e "${YELLOW} No printer detected. Skipping print.${RESET}"
+                go_back
             fi
+        }
+
+        function print_in_screen() {
+            cat /tmp/root_reset_steps.txt
+            echo
+            echo -e "${YELLOW} Instructions printed on screen. Please follow them manually.${RESET}"
+            echo
+            go_back
         }
 
         # Display Instructions on Screen
         function submenu_linux_root_password_reset() {
-            clear
+            #clear
             display_banner_inside_functions
             generate_reset_steps
             echo
-            echo -e "${MAGENTA} [0] Generate Instructions${RESET}"
+            #echo -e "${MAGENTA} [0] Generate Instructions${RESET}"
             echo -e "${MAGENTA} [1] Generate QR Code${RESET}"
             echo -e "${MAGENTA} [2] Print Instructions${RESET}"
             echo -e "${MAGENTA} [3] Print in Screen${RESET}"
@@ -2499,8 +2516,9 @@
                 0) generate_reset_steps ;;
                 1) generate_qr_code ;;
                 2) print_instructions ;;
-                3) main ;;
-                *) echo -e "${RED} Invalid choice.${RESET}"; sleep 2; display_instructions ;;
+                3) print_in_screen ;;
+                4) main ;;
+                *) echo -e "${RED} Invalid choice.${RESET}"; go_back ;;
             esac
         }
 
