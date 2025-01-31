@@ -322,7 +322,7 @@
         echo -e "${GREEN} [13] Attack Surface Analysis (find Based) ${RESET}"
         echo -e "${GREEN} [14] find Examples (Quick Ref) (Linux OS) ${RESET}"
         echo -e "${GREEN} [15] Root Password Reset Guide (Linux OS) ${RESET}"
-        echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
+        echo -e "${GREEN} [16] How to Use VIm (Quick Ref) ${RESET}"
         echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
         echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
         echo -e "${GRAY} [19] Windows Tips ${RESET}"
@@ -377,7 +377,7 @@
                 13) find_based_attack_surface_analysis ;;  
                 14) find_command_examples ;;
                 15) linux_root_password_reset ;; 
-                16) xvi_vim_quick_guide ;;  
+                16) vim_quick_reference ;;  
                 18) xviii_wifi_attacks ;;  
                 19) xix_windows_basic_commands ;;  
                 21) xxi_sgt_domingues_scanning_script ;;  
@@ -2673,59 +2673,6 @@
 
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-
-    # Definição da função xvi_vim_memento
-    function xvi_vim_memento(){
-        # Limpa a tela
-        clear
-
-        # Exibe cabeçalho do lembrete de uso do Vim
-        echo -e "${GREEN}============= LEMBRETE DE USO DO VIM =============${RESET}"
-        echo
-
-        # Inserção de texto
-        echo -e "${YELLOW}Inserção de texto:${RESET}"
-        echo -e "Pressione 'i' para entrar no modo de inserção."
-
-        # Salvar e sair
-        echo -e "\n${YELLOW}Salvar e sair:${RESET}"
-        echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':wq' para salvar e sair."
-
-        # Sair sem salvar
-        echo -e "\n${YELLOW}Sair sem salvar:${RESET}"
-        echo -e "Pressione 'Esc' para sair do modo de inserção, então digite ':q!' para sair sem salvar."
-
-        # Movimentação pelo texto
-        echo -e "\n${YELLOW}Movimentação pelo texto:${RESET}"
-        echo -e "Use as teclas de seta ou as teclas 'h', 'j', 'k' e 'l' para mover o cursor."
-
-        # Excluir texto
-        echo -e "\n${YELLOW}Excluir texto:${RESET}"
-        echo -e "Pressione 'x' para excluir o caractere sob o cursor."
-
-        # Desfazer e refazer
-        echo -e "\n${YELLOW}Desfazer e Refazer:${RESET}"
-        echo -e "Pressione 'u' para desfazer e 'Ctrl + r' para refazer."
-
-        # Buscar e substituir
-        echo -e "\n${YELLOW}Buscar e Substituir:${RESET}"
-        echo -e "Digite '/' para iniciar a busca. Para substituir, use ':s/palavra/nova_palavra/g'."
-
-        # Ajuda
-        echo -e "\n${YELLOW}Ajuda:${RESET}"
-        echo -e "Digite ':help' para obter ajuda."
-
-        # Exibe rodapé do lembrete de uso do Vim
-        echo -e "\n${GREEN}===================================================${RESET}"
-        echo
-
-        # Mensagem para pressionar ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        # Chamada da função principal do menu principal após pressionar ENTER
-        main_menu;
-    }
 
     # Definição da função principal xvii_tec_esc_rbash
     function xvii_tec_esc_rbash(){
