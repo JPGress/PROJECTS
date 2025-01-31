@@ -179,7 +179,7 @@
         # Wait for the user to press ENTER before returning to the main menu
         echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
         read -r 2>/dev/null
-        main_menu  # Return to the main menu
+        main  # Return to the main menu
         exit 0  # Exit the script
     }
 
@@ -2457,7 +2457,7 @@
 
             echo "======================" >> "$file"
             echo "File saved to: $file"
-            submenu_linux_root_password_reset
+            exit_to_main_menu
         }
 
         # Generate a QR Code with Steps
@@ -2486,18 +2486,19 @@
             clear
             display_banner_inside_functions
             echo
-            echo -e "${MAGENTA}[0] Show Instructions${RESET}"
-            echo -e "${MAGENTA}[1] Generate QR Code${RESET}"
-            echo -e "${MAGENTA}[2] Print Instructions${RESET}"
-            echo -e "${MAGENTA}[3] Exit to Main Menu${RESET}"
-            echo -ne "${CYAN}Choose an option: ${RESET}"
+            echo -e "${MAGENTA} [0] Show Instructions${RESET}"
+            echo -e "${MAGENTA} [1] Generate QR Code${RESET}"
+            echo -e "${MAGENTA} [2] Print Instructions${RESET}"
+            echo -e "${MAGENTA} [3] Exit to Main Menu${RESET}"
+            echo
+            echo -ne "${GREEN} Choose an option: ${RESET}"
             read -r option
             case $option in
                 0) cat /tmp/root_reset_steps.txt ;;
                 1) generate_qr_code ;;
                 2) print_instructions ;;
                 3) main ;;
-                *) echo -e "${RED}Invalid choice.${RESET}"; sleep 2; display_instructions ;;
+                *) echo -e "${RED} Invalid choice.${RESET}"; sleep 2; display_instructions ;;
             esac
         }
 
