@@ -2658,7 +2658,7 @@
             vim_search_replace
             vim_help
             display_vim_footer
-            pause_for_user
+            exit_to_main_menu
         }
 
         # Start the Vim usage reminder workflow
