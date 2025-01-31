@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.27"
+VERSION="0.21.28"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3039,12 +3039,12 @@ RELEASE="ANAKIN"
             ip -br a | awk '{print NR ") " $1 " - " $3}'
             echo
 
-            read -r -p " Enter the number of the interface to scan: " interface_num
+            read -r -p "Enter the number of the interface to scan: " interface_num
             total_interfaces=$(ip -br a | wc -l)
 
             # Validate user input
             if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
-                echo -e " Invalid interface number. Please try again."
+                echo -e "Invalid interface number. Please try again."
                 pause_script
                 nmap_discovery_workflow
             fi
@@ -3052,7 +3052,7 @@ RELEASE="ANAKIN"
             selected_network=$(ip -br a | awk "NR==$interface_num {print \$3}")
 
             if [[ -z "$selected_network" ]]; then
-                echo -e " Failed to retrieve network details. Exiting..."
+                echo -e "Failed to retrieve network details. Exiting..."
                 exit 1
             fi
 
@@ -3065,8 +3065,10 @@ RELEASE="ANAKIN"
                 mkdir -p "$LOG_DIR"
             fi
             LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
-            echo -e " Starting Nmap Scan on $NETWORK..."
-            nmap -sn "$NETWORK" -oS "$LOG_FILE"  # Ping scan
+            echo -e "Starting Nmap Scan on $NETWORK..."
+            echo
+            nmap -sn "$NETWORK" -oG "$LOG_FILE"  # Ping scan
+            echo
             echo -e " Scan completed. Results saved in: $LOG_FILE"
         }
 
