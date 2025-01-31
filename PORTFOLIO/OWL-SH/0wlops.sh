@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.304"
+VERSION="0.22.305"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -411,7 +411,8 @@ RELEASE="ANAKIN"
         echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & NETWORK DISCOVERY ${RESET}"
             echo -e "\t${RED} [600] Nmap Network Scan ${RESET}"
         echo
-        echo -e "\t${GRAY} [000] Exit ${RESET}"
+        echo -e "${GRAY} [+] MISC ${RESET}"
+            echo -e "\t${GRAY} [000] Exit ${RESET}"
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
     }
 
@@ -453,22 +454,22 @@ RELEASE="ANAKIN"
                 107) recon_dns ;; # DNS Reconnaissance
                 108) arp_scan ;; # ARP Network Scan
             #* [+] VULNERABILITY ANALYSI*
-                10) mitm ;; # MiTM (Man-in-the-Middle)  
-                11) portscan_bashsocket ;; # Portscan (Bash sockets)  
-                12) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
-                13) linux_sysinfo ;; # System Information (Linux OS)
+                200) mitm ;; # MiTM (Man-in-the-Middle)  
+                201) portscan_bashsocket ;; # Portscan (Bash sockets)  
+                202) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
+                203) linux_sysinfo ;; # System Information (Linux OS)
             #* [+] EXPLOITATION & PRIVIL*GE ESCALATION
-                14) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
-                15) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
-                16) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
+                300) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
+                301) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
+                302) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
             #* [+] POST-EXPLOITATION & P*RSISTENCE
-                17) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
-                18) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
+                400) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
+                401) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
             #* [+] NETWORK & SYSTEM EXPL*ITATION
-                19) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
-                20) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
+                500) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
+                501) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
             #* [+] LATERAL MOVEMENT & NE*WORK DISCOVERY
-                21) nmap_network_discovery ;; # Network Discovery (Nmap)  
+                600) nmap_network_discovery ;; # Network Discovery (Nmap)  
             #* [+] EXIT
                 0) exit_script ;;
             #* Invalid option
