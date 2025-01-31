@@ -2505,7 +2505,6 @@
         }
 
         # Main Execution
-        generate_reset_steps
         submenu_linux_root_password_reset
         }
 
