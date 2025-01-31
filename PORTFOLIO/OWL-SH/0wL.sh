@@ -23,10 +23,10 @@
     RESET="\e[0m"
 
     # Version
-    VERSION="0.10.1"
+    VERSION="0.10.2"
 
     # Author
-    AUTHOR="JPGress a.k.a R3v4N||0wL"
+    AUTHOR="R3v4N's 0wL"
 
 
 
