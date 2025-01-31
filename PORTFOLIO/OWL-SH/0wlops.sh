@@ -2439,7 +2439,7 @@
         find_examples_workflow
     }
 
-    # linux_root_password_reset - Interactive Guide for Resetting Root Password via GRUB
+    # Function: Interactive Guide for Resetting Root Password via GRUB
     function linux_root_password_reset() {
 
         title="\tLinux Root Password Reset via GRUB"  # Define the title for this operation
@@ -2568,7 +2568,105 @@
 
         # Main Execution
         submenu_linux_root_password_reset
+    }
+
+    # Function: Quick Reference Guide for Vim Commands
+    function vim_quick_reference() {
+        # vim_quick_reference - Quick Reference Guide for Vim Commands
+            #
+            # Description:
+            #   This script provides a quick reference for essential Vim commands,
+            #   covering navigation, editing, saving, and common operations.
+            #
+            # Features:
+            #   - Covers essential commands for inserting, saving, and exiting Vim
+            #   - Includes text navigation, deletion, undo/redo, search, and replace
+            #   - Provides an easy-to-read guide with structured formatting
+            #
+            # Usage:
+            #   Run this script to display a quick reference for using Vim.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Notes:
+            #   - This is NOT a full Vim tutorial but a **rapid cheat sheet**.
+            #   - Useful for Red Team operations, forensics, and system admins.
+
+        title="VIM QUICK REFERENCE" # Title
+
+        function display_vim_header() {
+            display_banner_inside_functions()
         }
+
+        function vim_text_insertion() {
+            echo -e "${YELLOW}Text Insertion:${RESET}"
+            echo -e "Press 'i' to enter INSERT mode."
+        }
+
+        function vim_save_exit() {
+            echo -e "\n${YELLOW}Saving and Exiting:${RESET}"
+            echo -e "Press 'Esc' to exit INSERT mode, then type ':wq' to save and quit."
+        }
+
+        function vim_exit_without_saving() {
+            echo -e "\n${YELLOW}Exit Without Saving:${RESET}"
+            echo -e "Press 'Esc' to exit INSERT mode, then type ':q!' to quit without saving."
+        }
+
+        function vim_navigation() {
+            echo -e "\n${YELLOW}Navigation:${RESET}"
+            echo -e "Use arrow keys or 'h' (left), 'j' (down), 'k' (up), 'l' (right)."
+        }
+
+        function vim_delete_text() {
+            echo -e "\n${YELLOW}Deleting Text:${RESET}"
+            echo -e "Press 'x' to delete the character under the cursor."
+        }
+
+        function vim_undo_redo() {
+            echo -e "\n${YELLOW}Undo & Redo:${RESET}"
+            echo -e "Press 'u' to undo. Press 'Ctrl + r' to redo."
+        }
+
+        function vim_search_replace() {
+            echo -e "\n${YELLOW}Search & Replace:${RESET}"
+            echo -e "Type '/' to search. Use ':s/old/new/g' to replace all instances."
+        }
+
+        function vim_help() {
+            echo -e "\n${YELLOW}Help:${RESET}"
+            echo -e "Type ':help' for more detailed documentation."
+        }
+
+        function display_vim_footer() {
+            echo -e "\n${GREEN}===================================================${RESET}"
+            echo
+        }
+
+        # Execute all functions in order
+        function vim_quick_reference_workflow() {
+            display_vim_header
+            vim_text_insertion
+            vim_save_exit
+            vim_exit_without_saving
+            vim_navigation
+            vim_delete_text
+            vim_undo_redo
+            vim_search_replace
+            vim_help
+            display_vim_footer
+            pause_for_user
+        }
+
+        # Start the Vim usage reminder workflow
+        vim_quick_reference_workflow
+    }
+    
+
+
 
 
 
