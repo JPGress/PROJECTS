@@ -2230,6 +2230,26 @@
                     find / -type f -atime -1 -size -5M -exec  ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
             }
 
+            function log_tampering_detection() {
+                log_and_display "=== Searching for Recently Modified Logs ==="
+                    find /var/log -type f -mtime -1 -exec ls -lah {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function sensitive_file_discovery() {
+                log_and_display "=== Searching for Sensitive Files (API Keys, Credentials, Configs) ==="
+                    find / -type f \( -name '*.json' -o -name '*.yaml' -o -name '*.env' -o -name '*.ini' \) -exec grep -Ei 'senha|pass|password|secret|apikey|token' {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function suspicious_executables_scripts() {
+                log_and_display "=== Searching for Suspicious Executables & Scripts ==="
+                    find /tmp /dev/shm /var/tmp -type f -executable -exec ls -lah {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function container_cloud_artifacts() {
+                log_and_display "=== Searching for Cloud & Container Credentials ==="
+                    find / -type f \( -name 'config.json' -o -name 'credentials' -o -name '.dockercfg' -o -name '.kube/config' \) 2>/dev/null | tee -a "$LOG_FILE"
+            }
+
             function caller_functions(){
                 privilege_escalation_checks
                 world_writable_unowned_files
@@ -2237,6 +2257,10 @@
                 persistence_mechanisms
                 hidden_files_detection
                 exfiltration_traces
+                log_tampering_detection
+                sensitive_file_discovery
+                suspicious_executables_scripts
+                container_cloud_artifacts
             }
 
             caller_functions;
