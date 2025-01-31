@@ -28,145 +28,7 @@
     # Author
     AUTHOR="JPGress a.k.a R3v4N||0wL"
 
-#* ====== MAIN FUNCTION ======
-    # Display numbered menu options
-    function display_numbered_menu_options() {
-        echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
-        echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
-        echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
-        echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
-        echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
-        echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
-        echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
-        echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
-        echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
-        echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
-        echo -e "${MAGENTA} [11] Useful Commands for Network Management - Quick Ref ${RESET}"
-        echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
-        echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
-        echo -e "${MAGENTA} [14] 'find' Examples - Quick Ref (Linux OS) ${RESET}"
-        echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
-        echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
-        echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
-        echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
-        echo -e "${GRAY} [19] Windows Tips ${RESET}"
-        echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
-        echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
-        echo -e "${GRAY} [22] RDP for Windows ${RESET}"
-        echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
-        echo -e "${MAGENTA} [00] Exit ${RESET}"
-        echo -e "${GRAY}+=================================== \u2143w0.0wL ========================================+${RESET}"
-    }
 
-    # Function: Main menu
-    function main() {
-        # main_menu - Display the main menu and handle user input
-            #
-            # Description:
-            # This function displays the main menu, validates the user's selection, and calls the appropriate script or feature based on the input.
-            # It performs the following operations:
-            # 1. Displays the main menu with valid options.
-            # 2. Validates user input against available options.
-            # 3. Calls the respective function for the selected option.
-            #
-            # Notes:
-            # - Invalid inputs will prompt the user to re-enter their choice.
-            # - Disabled options are marked in the menu and cannot be selected.
-            #
-            # Example usage:
-            # - Input: Option number (e.g., 1 for Port Scan).
-            # - Output: Calls the selected function or feature.
-            #
-            # Created on: 2025-01-26
-            # Last Updated: 2025-01-26
-            # Version: 1.1
-            #
-            # Author: R3v4N (w/GPT)
-            #
-
-        function display_banner_main_menu(){    
-            clear; # Clears the terminal screen
-            ascii_banner_art; # Call ASCII banner art
-            echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
-            subtitle; # Display a subtitle
-        }
-
-        # Process the menu option selected by the user
-        function process_menu_option() {
-            local option="$1"
-            case $option in
-                0) exit_script ;;  # Exit the script
-                1) portscan ;;  # Perform a port scan
-                2) parsing_html ;;  # Parse HTML
-                3) google_hacking ;;  # Google Hacking
-                4) metadata_analysis ;;  # Metadata Analysis
-                5) dns_zt ;;  # DNS Zone Transfer
-                6) Subdomain_takeover ;;  # Subdomain Takeover
-                7) rev_dns ;;  # Reverse DNS
-                8) recon_dns ;;  # DNS Reconnaissance
-                9) mitm ;;  # MiTM (Man-in-the-Middle)
-                10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
-                11) useful_linux_commands ;; # Useful Linux commands
-                12) linux_sysinfo ;;  # System info
-                13) find_based_attack_surface_analysis ;; # Disabled
-                14) find_command_examples ;;  # find command examples
-                16) xvi_vim_quick_guide ;;  # Vim Quick Guide
-                18) xviii_wifi_attacks ;;  # Wireless Network Attacks
-                19) xix_windows_basic_commands ;;  # Basic Windows Commands
-                21) xxi_sgt_domingues_scanning_script ;;  # Sgt Domingues' Scanning Script
-                22) xxii_nmap_network_discovery ;;  # NMAP Network Discovery
-                *) invalid_option ;;  # Fallback case for unexpected values
-            esac
-        }
-
-        # Function: Validate user input against allowed menu options
-        function validate_input() {
-            local input="$1"
-            local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
-            
-            # Remove invalid option 23
-            valid_options=("${valid_options[@]/23}")
-
-            # Check if input is in the list of valid options
-            for valid in "${valid_options[@]}"; do
-                if [[ "$input" == "$valid" ]]; then
-                    return 0  # Valid input
-                fi
-            done
-            return 1  # Invalid input
-        }
-
-        function prompt_user_inputs() {
-            # Prompt the user for input
-            echo -ne "${CYAN} Enter the option number: ${RESET}"
-            read -r MENU_OPTION  # Read user input
-            if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" ]] ; then
-                exit_script
-                return 0
-            else
-                MENU_OPTION=$(echo "$MENU_OPTION" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
-            fi
-
-            # Validate the input
-            if ! validate_input "$MENU_OPTION"; then
-                invalid_option  # Handle invalid input
-                main_menu_workflow  # Restart the menu
-                return
-            fi
-
-            # Process the valid menu option
-            process_menu_option "$MENU_OPTION"
-        }
-
-        function main_menu_workflow() {
-            display_banner_main_menu
-            display_numbered_menu_options
-            prompt_user_inputs
-        }
-        
-        # Execute the main menu workflow
-        main_menu_workflow
-    }
 
 #* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
@@ -397,6 +259,146 @@
         # If we reach here, the input is invalid
         echo -e "${RED} >>> Invalid option: $input. Please choose a valid menu option. <<< ${RESET}"
         return 1 # Input is invalid
+    }
+
+#* ====== MAIN FUNCTION ======
+    # Display numbered menu options
+    function display_numbered_menu_options() {
+        echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
+        echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
+        echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
+        echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
+        echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
+        echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
+        echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
+        echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
+        echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
+        echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
+        echo -e "${MAGENTA} [11] Useful Commands for Network Management - Quick Ref ${RESET}"
+        echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
+        echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
+        echo -e "${MAGENTA} [14] 'find' Examples - Quick Ref (Linux OS) ${RESET}"
+        echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
+        echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
+        echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
+        echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
+        echo -e "${GRAY} [19] Windows Tips ${RESET}"
+        echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
+        echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
+        echo -e "${GRAY} [22] RDP for Windows ${RESET}"
+        echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
+        echo -e "${MAGENTA} [00] Exit ${RESET}"
+        echo -e "${GRAY}+=================================== \u2143w0.0wL ========================================+${RESET}"
+    }
+
+    # Function: Main menu
+    function main() {
+        # main_menu - Display the main menu and handle user input
+            #
+            # Description:
+            # This function displays the main menu, validates the user's selection, and calls the appropriate script or feature based on the input.
+            # It performs the following operations:
+            # 1. Displays the main menu with valid options.
+            # 2. Validates user input against available options.
+            # 3. Calls the respective function for the selected option.
+            #
+            # Notes:
+            # - Invalid inputs will prompt the user to re-enter their choice.
+            # - Disabled options are marked in the menu and cannot be selected.
+            #
+            # Example usage:
+            # - Input: Option number (e.g., 1 for Port Scan).
+            # - Output: Calls the selected function or feature.
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.1
+            #
+            # Author: R3v4N (w/GPT)
+            #
+
+        function display_banner_main_menu(){    
+            clear; # Clears the terminal screen
+            ascii_banner_art; # Call ASCII banner art
+            echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
+            subtitle; # Display a subtitle
+        }
+
+        # Process the menu option selected by the user
+        function process_menu_option() {
+            local option="$1"
+            case $option in
+                0) exit_script ;;  # Exit the script
+                1) portscan ;;  # Perform a port scan
+                2) parsing_html ;;  # Parse HTML
+                3) google_hacking ;;  # Google Hacking
+                4) metadata_analysis ;;  # Metadata Analysis
+                5) dns_zt ;;  # DNS Zone Transfer
+                6) Subdomain_takeover ;;  # Subdomain Takeover
+                7) rev_dns ;;  # Reverse DNS
+                8) recon_dns ;;  # DNS Reconnaissance
+                9) mitm ;;  # MiTM (Man-in-the-Middle)
+                10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
+                11) useful_linux_commands ;; # Useful Linux commands
+                12) linux_sysinfo ;;  # System info
+                13) find_based_attack_surface_analysis ;; # Disabled
+                14) find_command_examples ;;  # find command examples
+                16) xvi_vim_quick_guide ;;  # Vim Quick Guide
+                18) xviii_wifi_attacks ;;  # Wireless Network Attacks
+                19) xix_windows_basic_commands ;;  # Basic Windows Commands
+                21) xxi_sgt_domingues_scanning_script ;;  # Sgt Domingues' Scanning Script
+                22) xxii_nmap_network_discovery ;;  # NMAP Network Discovery
+                *) invalid_option ;;  # Fallback case for unexpected values
+            esac
+        }
+
+        # Function: Validate user input against allowed menu options
+        function validate_input() {
+            local input="$1"
+            local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
+            
+            # Remove invalid option 23
+            valid_options=("${valid_options[@]/23}")
+
+            # Check if input is in the list of valid options
+            for valid in "${valid_options[@]}"; do
+                if [[ "$input" == "$valid" ]]; then
+                    return 0  # Valid input
+                fi
+            done
+            return 1  # Invalid input
+        }
+
+        function prompt_user_inputs() {
+            # Prompt the user for input
+            echo -ne "${CYAN} Enter the option number: ${RESET}"
+            read -r MENU_OPTION  # Read user input
+            if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" ]] ; then
+                exit_script
+                return 0
+            else
+                MENU_OPTION=$(echo "$MENU_OPTION" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+            fi
+
+            # Validate the input
+            if ! validate_input "$MENU_OPTION"; then
+                invalid_option  # Handle invalid input
+                main_menu_workflow  # Restart the menu
+                return
+            fi
+
+            # Process the valid menu option
+            process_menu_option "$MENU_OPTION"
+        }
+
+        function main_menu_workflow() {
+            display_banner_main_menu
+            display_numbered_menu_options
+            prompt_user_inputs
+        }
+        
+        # Execute the main menu workflow
+        main_menu_workflow
     }
 
 #* ====== MAIN SCRIPTS (A-Z) ======
@@ -3262,15 +3264,15 @@
     #
 
 
-#* ====== CHECKING PARAMETERS AND EXECUTING THE MAIN MENU ======
+#* ====== CHECKING PARAMETERS AND EXECUTING THE MAIN ======
     # Checks if the number of arguments passed to the script is non-zero.
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
     if [ "$(id -u)" != "0" ]; then
         error_not_root; 
         # Check for Help Flag 
-        elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
-            show_help;
+        #elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
+            #show_help;
         else
             enable_proxychains; # Call the function to enable proxychains at script start
             main;
