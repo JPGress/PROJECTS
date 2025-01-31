@@ -214,6 +214,48 @@
         fi
     }
 
+    function show_help() {
+        echo -e "${CYAN}0wL OPS - Offensive Security Toolkit${RESET}"
+        echo -e "${GRAY}Usage:${RESET}"
+        echo -e "  ./0wl.sh                # Launch interactive menu"
+        echo -e "  ./0wl.sh [option]       # Run a specific function"
+        echo -e "  ./0wl.sh -h | --help    # Show this help menu"
+        echo
+        echo -e "${GRAY}Fast Mode Options:${RESET}"
+        echo -e "  0   - Exit Script"
+        echo -e "  1   - Port Scan"
+        echo -e "  2   - HTML Parsing"
+        echo -e "  3   - Google Hacking"
+        echo -e "  4   - Metadata Analysis"
+        echo -e "  5   - DNS Zone Transfer"
+        echo -e "  6   - Subdomain Takeover"
+        echo -e "  7   - Reverse DNS Lookup"
+        echo -e "  8   - DNS Reconnaissance"
+        echo -e "  9   - Man-in-the-Middle Attack"
+        echo -e " 10   - Port Scan (Bash Sockets)"
+        echo -e " 11   - Useful Linux Commands"
+        echo -e " 12   - Linux System Information"
+        echo -e " 13   - Find-Based Attack Surface Analysis"
+        echo -e " 14   - Find Command Examples"
+        echo -e " 16   - Vim Quick Guide"
+        echo -e " 18   - Wireless Network Attacks"
+        echo -e " 19   - Windows Basic Commands"
+        echo -e " 21   - Sgt Domingues' Scanning Script"
+        echo -e " 22   - NMAP Network Discovery"
+        echo
+        echo -e "${GRAY}Example Usage:${RESET}"
+        echo -e "  ./0wl.sh 12       # Instantly run Linux System Information"
+        echo -e "  ./0wl.sh 5        # Perform a DNS Zone Transfer"
+        echo
+        exit 0
+    }
+
+# 🚀 Check for Help Flag
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    show_help
+fi
+
+
     #! TODO: RENAME THIS FUNCTION TO A BETTER NAME
     function subtitle() {
         echo -e "${GRAY}+====================================================================================+${RESET}"
