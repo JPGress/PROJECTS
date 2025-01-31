@@ -2223,7 +2223,7 @@
         # Exfiltration Traces
         function exfiltration_traces() {
             log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
-                find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                timeout 600s find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
             log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
                 find / -type f -atime -1 -size -5M -exec  ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
