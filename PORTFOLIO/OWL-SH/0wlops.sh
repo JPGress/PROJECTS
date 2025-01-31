@@ -54,7 +54,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE)${RESET}"
+        echo -e "\t\t${BG_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE)${RESET}"
         subtitle;
     }
 
@@ -170,7 +170,7 @@
     # Exit the script gracefully
     function exit_script() {
         echo
-        echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
+        echo -e "${CYAN} May be the force be with you! Bye! ${RESET}"
         exit 0
     }
 
