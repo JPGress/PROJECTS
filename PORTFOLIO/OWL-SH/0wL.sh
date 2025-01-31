@@ -401,7 +401,7 @@
 
 
 
-#* ====== SCRIPTS (A-Z) ======
+#* ====== MAIN SCRIPTS (A-Z) ======
     #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
