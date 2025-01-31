@@ -3276,19 +3276,16 @@
     #
 
 
-#* ====== CHECAGEM DE PARAMETROS & EXECUÇÃO DO MAIN_MENU ======
-    # Verifica se o número de argumentos passados para o script é diferente de zero.
+#* ====== CHECKING PARAMETERS AND EXECUTING THE MAIN MENU ======
+    # Checks if the number of arguments passed to the script is non-zero.
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
-    #Encerra todos os processos do openvpn
     if [ "$(id -u)" != "0" ]; then
-        error_not_root;
-        # Check if the correct number of arguments is provided 
+        error_not_root; 
         # Check for Help Flag 
         elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
             show_help;
         else
-            ######### Executa a função principal ########
             enable_proxychains; # Call the function to enable proxychains at script start
             main_menu;
     fi
