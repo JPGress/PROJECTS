@@ -2,6 +2,10 @@
 # TODO: ADD HEADER INFORMATION
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
+# Version
+VERSION="0.17.0"
+# Darth Release
+RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
 
     # Standard foreground colors
@@ -64,12 +68,6 @@
     RESET_INVERT="\e[27m"
     RESET_HIDDEN="\e[28m"
     RESET_STRIKETHROUGH="\e[29m"
-
-    # Version
-    VERSION="0.16.2"
-
-    # Darth Release
-    RELEASE="ANAKIN"
 
     # Author (jpgress@gmail.com)
     AUTHOR="R3v4N's 0wL"
