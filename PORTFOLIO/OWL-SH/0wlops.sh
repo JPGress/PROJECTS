@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.21.133"
+VERSION="0.21.134"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -157,7 +157,7 @@ RELEASE="ANAKIN"
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "\t\t${BG_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE)${RESET}"
+        echo -e "\t\t${BG_BRIGHT_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE)${RESET}"
         subtitle;
     }
 
@@ -272,7 +272,7 @@ RELEASE="ANAKIN"
 
     # Exit the script gracefully
     function exit_script() {
-        title="\t${RED}WE HUNT IN THE SHADOWS${RESET}"
+        title="\t${BOLD}${BRIGHT_RED}WE HUNT IN THE SHADOWS${RESET_BOLD}${RESET}"
         display_banner_inside_functions
         echo
         echo -e "${RED} Exiting... Happy hunting!${RESET}"
@@ -377,42 +377,42 @@ RELEASE="ANAKIN"
 
 #* ====== MAIN FUNCTION ======
     # Display numbered menu options
-function display_numbered_menu_options() {
-    echo -e "${GREEN} [+] RECONNAISSANCE & OSINT (TA0043) ${RESET}"
-        echo -e "\t${CYAN} [01] Portscan (Netcat) ${RESET}" 
-        echo -e "\t${CYAN} [02] Parsing HTML ${RESET}" 
-        echo -e "\t${CYAN} [03] Google Hacking for OSINT ${RESET}" 
-        echo -e "\t${CYAN} [04] Metadata Analysis ${RESET}" 
-        echo -e "\t${CYAN} [05] DNS Zone Transfer ${RESET}" 
-        echo -e "\t${CYAN} [06] Subdomain Takeover ${RESET}" 
-        echo -e "\t${CYAN} [07] Reverse DNS Lookup ${RESET}" 
-        echo -e "\t${CYAN} [08] DNS Reconnaissance ${RESET}"
-    echo
-    echo -e "${GREEN} [+] INITIAL ACCESS (TA0001) ${RESET}"
-        echo -e "\t${YELLOW} [09] MiTM (Man-in-the-Middle) ${RESET}"
-        echo -e "\t${YELLOW} [10] Portscan (Bash sockets) ${RESET}"
-        echo -e "\t${YELLOW} [11] Useful Network Commands (Quick Ref) ${RESET}"
-        echo -e "\t${YELLOW} [12] System Information (Linux OS) ${RESET}"
-    echo
-    echo -e "${GREEN} [+] ATTACK SURFACE & PRIVILEGE ESCALATION (TA0004) ${RESET}"
-        echo -e "\t${RED} [13] Attack Surface Analysis (find Based) ${RESET}"
-        echo -e "\t${RED} [14] File Discovery & Enumeration (Quick Ref) ${RESET}"
-        echo -e "\t${RED} [15] Root Password Reset Guide (Linux OS) ${RESET}"
-    echo
-    echo -e "${GREEN} [+] DEFENSE EVASION & PERSISTENCE (TA0005 | TA0003) ${RESET}"
-        echo -e "\t${MAGENTA} [16] Vim Escape Techniques (Quick Ref) ${RESET}"
-        echo -e "\t${MAGENTA} [17] Rbash Escape Techniques (Linux OS)${RESET}"
-    echo
-    echo -e "${GREEN} [+] NETWORK & SYSTEM EXPLOITATION (TA0002) ${RESET}"
-        echo -e "\t${BLUE} [18] Wireless Penetration Testing Toolkit ${RESET}"
-        echo -e "\t${BLUE} [19] Windows Basic Commands (Quick Ref) ${RESET}"
-    echo
-    echo -e "${GREEN} [+] LATERAL MOVEMENT & DISCOVERY (TA0008) ${RESET}"
-        echo -e "\t${PURPLE} [20] Network Discovery (Nmap) ${RESET}"
-    echo
-    echo -e "${WHITE} [00] Exit ${RESET}"
-    echo -e "${RED}+=========================== ${GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
-}
+    function display_numbered_menu_options() {
+        echo -e "${BRIGHT_GREEN} [+] RECONNAISSANCE & OSINT (TA0043) ${RESET}"
+            echo -e "\t${RED} [01] Portscan (Netcat) ${RESET}" 
+            echo -e "\t${RED} [02] Parsing HTML ${RESET}" 
+            echo -e "\t${RED} [03] Google Hacking for OSINT ${RESET}" 
+            echo -e "\t${RED} [04] Metadata Analysis ${RESET}" 
+            echo -e "\t${RED} [05] DNS Zone Transfer ${RESET}" 
+            echo -e "\t${RED} [06] Subdomain Takeover ${RESET}" 
+            echo -e "\t${RED} [07] Reverse DNS Lookup ${RESET}" 
+            echo -e "\t${RED} [08] DNS Reconnaissance ${RESET}"
+        echo
+        echo -e "${BRIGHT_GREEN} [+] INITIAL ACCESS (TA0001) ${RESET}"
+            echo -e "\t${RED} [09] MiTM (Man-in-the-Middle) ${RESET}"
+            echo -e "\t${RED} [10] Portscan (Bash sockets) ${RESET}"
+            echo -e "\t${RED} [11] Useful Network Commands (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [12] System Information (Linux OS) ${RESET}"
+        echo
+        echo -e "${BRIGHT_GREEN} [+] ATTACK SURFACE & PRIVILEGE ESCALATION (TA0004) ${RESET}"
+            echo -e "\t${RED} [13] Attack Surface Analysis (find Based) ${RESET}"
+            echo -e "\t${RED} [14] File Discovery & Enumeration (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [15] Root Password Reset Guide (Linux OS) ${RESET}"
+        echo
+        echo -e "${BRIGHT_GREEN} [+] DEFENSE EVASION & PERSISTENCE (TA0005 | TA0003) ${RESET}"
+            echo -e "\t${RED} [16] Vim Escape Techniques (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [17] Rbash Escape Techniques (Linux OS)${RESET}"
+        echo
+        echo -e "${BRIGHT_GREEN} [+] NETWORK & SYSTEM EXPLOITATION (TA0002) ${RESET}"
+            echo -e "\t${RED} [18] Wireless Penetration Testing Toolkit ${RESET}"
+            echo -e "\t${RED} [19] Windows Basic Commands (Quick Ref) ${RESET}"
+        echo
+        echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & DISCOVERY (TA0008) ${RESET}"
+            echo -e "\t${RED} [20] Network Discovery (Nmap) ${RESET}"
+        echo
+        echo -e "${GRAY} [00] Exit ${RESET}"
+        echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
+    }
 
     # Function: Main menu with Fast Mode execution
     function main() {
