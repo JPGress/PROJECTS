@@ -262,11 +262,15 @@
             #
             # Author: R3v4N (w/GPT)
             #
+        
         function display_main_menu() {
-            clear; # Clears the terminal screen
-            ascii_banner_art; # Call ASCII banner art
-            echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
-            subtitle; # Display a subtitle
+
+            function display_banner_main_menu(){    
+                clear; # Clears the terminal screen
+                ascii_banner_art; # Call ASCII banner art
+                echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
+                subtitle; # Display a subtitle
+            }
             
             # Display numbered menu options
             echo -e "${MAGENTA} [01]- Portscan (netcat) ${RESET}" 
