@@ -2173,7 +2173,8 @@
             #   - Requires root privileges for full execution.
             # Create log directory & file
         title="Find-Based Attack Surface Analysis"  # Define the title for this operation
-        function create_log_file() {
+        
+        function find_analysis_create_log_file() {
             LOG_DIR="./logs"
             mkdir -p "$LOG_DIR"
             LOG_FILE="${LOG_DIR}/find_analysis_$(date +%d%m%Y_%H%M%S).log"
@@ -2229,7 +2230,7 @@
         # Automated Execution of All Checks
         function run_find_based_analysis() {
             display_banner_inside_functions
-            create_log_file
+            find_analysis_create_log_file
             privilege_escalation_checks
             world_writable_unowned_files
             credential_discovery
