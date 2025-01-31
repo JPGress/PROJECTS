@@ -300,16 +300,16 @@
         function process_menu_option() {
             local option="$1"
             case $option in
-                0) exit_script ;;  # Exit the script
-                1) portscan ;;  # Perform a port scan
-                2) parsing_html ;;  # Parse HTML
-                3) google_hacking ;;  # Google Hacking
-                4) metadata_analysis ;;  # Metadata Analysis
-                5) dns_zt ;;  # DNS Zone Transfer
-                6) Subdomain_takeover ;;  # Subdomain Takeover
-                7) rev_dns ;;  # Reverse DNS
-                8) recon_dns ;;  # DNS Reconnaissance
-                9) mitm ;;  # MiTM (Man-in-the-Middle)
+                00|0) exit_script ;;  # Exit the script
+                01|1) portscan ;;  # Perform a port scan
+                02|2) parsing_html ;;  # Parse HTML
+                03|3) google_hacking ;;  # Google Hacking
+                04|4) metadata_analysis ;;  # Metadata Analysis
+                05|5) dns_zt ;;  # DNS Zone Transfer
+                06|6) Subdomain_takeover ;;  # Subdomain Takeover
+                07|7) rev_dns ;;  # Reverse DNS
+                08|8) recon_dns ;;  # DNS Reconnaissance
+                09|9) mitm ;;  # MiTM (Man-in-the-Middle)
                 10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
                 11) useful_linux_commands ;; # Useful Linux commands
                 12) linux_sysinfo ;;  # System info
