@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.4"
+VERSION="0.21.5"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3052,7 +3052,8 @@ RELEASE="ANAKIN"
             # Validate user input
             if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
                 log_and_display_no_date "---"
-                log_and_display_no_date "$(invalid_option)"
+                log_and_display_no_date "Invalid interface number. Please try again."
+                pause_script
                 nmap_discovery_workflow
             fi
 
