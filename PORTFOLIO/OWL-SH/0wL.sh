@@ -2216,7 +2216,7 @@
         # Hidden Files & Anti-Forensics
         function hidden_files_detection() {
             log_and_display "=== Searching for Hidden Files ==="
-            find / -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
+                find / \( -path /proc -o -path /sys -o -path /dev -o -path /run -o -path /snap -o -path /var/lib/docker \) -prune -o -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
             log_and_display "=== Searching for Files with Strange Timestamps ==="
             find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
