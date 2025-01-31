@@ -1,72 +1,69 @@
 #!/bin/bash
-#
 # 0wlops.sh - 0wL Operational Security 
-#
-# Site: https://github.com/R3v4N/0wL-OPS
-# Author: R3v4N aka 0wL (jpgress@gmail.com)
-# Maintainer: R3v4N aka 0wL
-#
-# ---------------------------------------------------------------------------------
-#
-# 0wL OPS is an advanced Bash-based Operational Security designed for
-# penetration testers, red teamers, and security researchers.
-#
-# It automates various reconnaissance, exploitation, and post-exploitation tasks,
-# enhancing operational efficiency in offensive security engagements.
-#
-# The toolkit includes modules for network scanning, enumeration, wireless attacks,
-# privilege escalation, OSINT, forensic analysis, and much more.
-#
-# 0wL OpS — We Hunt in the Shadows
-#
-# ---------------------------------------------------------------------------------
-#
-# Usage:
-#
-#  - Interactive Mode:
-#       $ ./0wlops.sh
-#
-#  - Fast Mode (Direct Function Execution):
-#       $ ./0wlops.sh <option>
-#
-#  - Help:
-#       $ ./0wlops.sh -h
-#
-# ---------------------------------------------------------------------------------
-#
-# Features:
-#
-#  - Interactive menu system for easy navigation
-#  - Automated recon (Google Hacking, DNS Recon, Metadata Extraction)
-#  - Active and passive network scanning (Nmap, Netcat, Wi-Fi attacks)
-#  - Exploitation frameworks and privilege escalation techniques
-#  - Forensic and incident response utilities
-#  - Windows & Linux command reference for red team operations
-#  - Comprehensive logging system with structured output
-#
-# ---------------------------------------------------------------------------------
-#
-# Version History:
-#
-#  v1.21.30 - 2025-01-31, R3v4N:
-#   - Refactored function structure for better readability and modularity.
-#   - Improved logging mechanism for network scans and attacks.
-#   - Enhanced error handling in multiple modules.
-#   - Fixed issues with network interface selection in Nmap scans.
-#   - Standardized output formatting across all functions.
-#
-#  v0.21.30 - 2025-01-30, R3v4N:
-#   - Initial stable release featuring core functionalities.
-#
-# ---------------------------------------------------------------------------------
-#
-# License: MIT License
-#
-# This software is provided "as is", without warranty of any kind.
-# Use responsibly and only on authorized systems.
-#
-
-
+    #
+    # Site: https://github.com/R3v4N/0wL-OPS
+    # Author: R3v4N aka 0wL (jpgress@gmail.com)
+    # Maintainer: R3v4N aka 0wL
+    #
+    # ---------------------------------------------------------------------------------
+    #
+    # 0wL OPS is an advanced Bash-based Operational Security designed for
+    # penetration testers, red teamers, and security researchers.
+    #
+    # It automates various reconnaissance, exploitation, and post-exploitation tasks,
+    # enhancing operational efficiency in offensive security engagements.
+    #
+    # The toolkit includes modules for network scanning, enumeration, wireless attacks,
+    # privilege escalation, OSINT, forensic analysis, and much more.
+    #
+    # 0wL OpS — We Hunt in the Shadows
+    #
+    # ---------------------------------------------------------------------------------
+    #
+    # Usage:
+    #
+    #  - Interactive Mode:
+    #       $ ./0wlops.sh
+    #
+    #  - Fast Mode (Direct Function Execution):
+    #       $ ./0wlops.sh <option>
+    #
+    #  - Help:
+    #       $ ./0wlops.sh -h
+    #
+    # ---------------------------------------------------------------------------------
+    #
+    # Features:
+    #
+    #  - Interactive menu system for easy navigation
+    #  - Automated recon (Google Hacking, DNS Recon, Metadata Extraction)
+    #  - Active and passive network scanning (Nmap, Netcat, Wi-Fi attacks)
+    #  - Exploitation frameworks and privilege escalation techniques
+    #  - Forensic and incident response utilities
+    #  - Windows & Linux command reference for red team operations
+    #  - Comprehensive logging system with structured output
+    #
+    # ---------------------------------------------------------------------------------
+    #
+    # Version History:
+    #
+    #  v1.21.30 - 2025-01-31, R3v4N:
+    #   - Refactored function structure for better readability and modularity.
+    #   - Improved logging mechanism for network scans and attacks.
+    #   - Enhanced error handling in multiple modules.
+    #   - Fixed issues with network interface selection in Nmap scans.
+    #   - Standardized output formatting across all functions.
+    #
+    #  v0.21.30 - 2025-01-30, R3v4N:
+    #   - Initial stable release featuring core functionalities.
+    #
+    # ---------------------------------------------------------------------------------
+    #
+    # License: MIT License
+    #
+    # This software is provided "as is", without warranty of any kind.
+    # Use responsibly and only on authorized systems.
+    #
 # Version
 VERSION="1.21.30"
 # Darth Release
