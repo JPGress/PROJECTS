@@ -3305,7 +3305,7 @@ if [ "$(id -u)" != "0" ]; then
     exit 1  
 fi
 
-# Check for Fast Mode Execution or Help Menu
+# Handle command-line arguments (fast mode)
 if [[ -n "$1" ]]; then
     case "$1" in
         -h|--help)
@@ -3317,21 +3317,22 @@ if [[ -n "$1" ]]; then
             exit 1
             ;;
         *)
-            option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+            option=$((10#$1))  # Convert argument to integer
             if validate_input "$option"; then
                 process_menu_option "$option"  # Run the chosen function immediately
-                exit 0  # Prevent further execution
+                exit 0
             else
-                echo -e "${RED}Invalid option. Run './0wl.sh -h' for help.${RESET}"
+                echo -e "${RED} Invalid option: $option. Run './0wl.sh -h' for help.${RESET}"
                 exit 1
             fi
             ;;
     esac
 fi
 
-# No arguments: Run Interactive Menu
-enable_proxychains  # Call the function to enable proxychains at script start
-main  # Start the interactive menu
+# No arguments provided: Run interactive menu
+enable_proxychains  # Enable proxychains at script start
+main  # Run interactive mode
+
 
 
 
