@@ -263,7 +263,7 @@
 #* ====== MAIN FUNCTION ======
     # Display numbered menu options
     function display_numbered_menu_options() {
-        echo -e "${GREEN} [01] Portscan (netcat) ${RESET}" 
+        echo -e "${GREEN} [01] Portscan (Netcat) ${RESET}" 
         echo -e "${GREEN} [02] Parsing HTML ${RESET}" 
         echo -e "${GREEN} [03] Google Hacking for people OSINT ${RESET}" 
         echo -e "${GREEN} [04] Metadata Analysis ${RESET}" 
@@ -273,10 +273,10 @@
         echo -e "${GREEN} [08] DNS Reconnaissance ${RESET}"
         echo -e "${GREEN} [09] MiTM (Man-in-the-Middle) ${RESET}"
         echo -e "${GREEN} [10] Portscan (Bash sockets) ${RESET}"
-        echo -e "${GREEN} [11] Useful Commands for Network Management - Quick Ref ${RESET}"
+        echo -e "${GREEN} [11] Useful Commands for Network Management (Quick Ref) ${RESET}"
         echo -e "${GREEN} [12] System Information to Linux OS ${RESET}"
         echo -e "${GREEN} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
-        echo -e "${GREEN} [14] 'find' Examples - Quick Ref (Linux OS) ${RESET}"
+        echo -e "${GREEN} [14] find Examples (Quick Ref) (Linux OS) ${RESET}"
         echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
         echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
         echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
