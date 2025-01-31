@@ -31,15 +31,15 @@
 #* ====== MAIN MENU ======
     # Display numbered menu options
     function display_numbered_menu_options() {
-        echo -e "${MAGENTA}  [1] Portscan (netcat) ${RESET}" 
-        echo -e "${MAGENTA}  [2] Parsing HTML ${RESET}" 
-        echo -e "${MAGENTA}  [3] Google Hacking for people OSINT ${RESET}" 
-        echo -e "${MAGENTA}  [4] Metadata Analysis ${RESET}" 
-        echo -e "${MAGENTA}  [5] DNS Zone Transfer ${RESET}" 
-        echo -e "${MAGENTA}  [6] Subdomain Takeover ${RESET}" 
-        echo -e "${MAGENTA}  [7] Reverse DNS ${RESET}" 
-        echo -e "${MAGENTA}  [8] DNS Reconnaissance ${RESET}"
-        echo -e "${MAGENTA}  [9] MiTM (Man-in-the-Middle) ${RESET}"
+        echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
+        echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
+        echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
+        echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
+        echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
+        echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
+        echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
+        echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
+        echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
         echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
         echo -e "${MAGENTA} [11] Useful Commands for Network Management ${RESET}"
         echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
@@ -94,16 +94,16 @@
         function process_menu_option() {
             local option="$1"
             case $option in
-                00|0) exit_script ;;  # Exit the script
-                01|1) portscan ;;  # Perform a port scan
-                02|2) parsing_html ;;  # Parse HTML
-                03|3) google_hacking ;;  # Google Hacking
-                04|4) metadata_analysis ;;  # Metadata Analysis
-                05|5) dns_zt ;;  # DNS Zone Transfer
-                06|6) Subdomain_takeover ;;  # Subdomain Takeover
-                07|7) rev_dns ;;  # Reverse DNS
-                08|8) recon_dns ;;  # DNS Reconnaissance
-                09|9) mitm ;;  # MiTM (Man-in-the-Middle)
+                0) exit_script ;;  # Exit the script
+                1) portscan ;;  # Perform a port scan
+                2) parsing_html ;;  # Parse HTML
+                3) google_hacking ;;  # Google Hacking
+                4) metadata_analysis ;;  # Metadata Analysis
+                5) dns_zt ;;  # DNS Zone Transfer
+                6) Subdomain_takeover ;;  # Subdomain Takeover
+                7) rev_dns ;;  # Reverse DNS
+                8) recon_dns ;;  # DNS Reconnaissance
+                9) mitm ;;  # MiTM (Man-in-the-Middle)
                 10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
                 11) useful_linux_commands ;; # Useful Linux commands
                 12) linux_sysinfo ;;  # System info
