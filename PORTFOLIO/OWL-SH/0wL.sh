@@ -54,47 +54,40 @@
             #
             # Author: R3v4N (w/GPT)
             #
-        
-        function display_main_menu() {
 
-            function display_banner_main_menu(){    
-                clear; # Clears the terminal screen
-                ascii_banner_art; # Call ASCII banner art
-                echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
-                subtitle; # Display a subtitle
-            }
-
-            # Display numbered menu options
-            function display_numbered_menu_options() {
-                echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
-                echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
-                echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
-                echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
-                echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
-                echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
-                echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
-                echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
-                echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
-                echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
-                echo -e "${MAGENTA} [11] Useful Commands for Network Management ${RESET}"
-                echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
-                echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
-                echo -e "${MAGENTA} [14] Quick Ref for finding and manipulating texts (Linux OS) ${RESET}"
-                echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
-                echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
-                echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
-                echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
-                echo -e "${GRAY} [19] Windows Tips ${RESET}"
-                echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
-                echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
-                echo -e "${GRAY} [22] RDP for Windows ${RESET}"
-                echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
-                echo -e "${MAGENTA} [00] Exit ${RESET}"
-                subtitle;
-            }
-
-            display_banner_main_menu;
-            display_numbered_menu_options;
+        function display_banner_main_menu(){    
+            clear; # Clears the terminal screen
+            ascii_banner_art; # Call ASCII banner art
+            echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
+            subtitle; # Display a subtitle
+        }
+        # Display numbered menu options
+        function display_numbered_menu_options() {
+            echo -e "${MAGENTA} [01] Portscan (netcat) ${RESET}" 
+            echo -e "${MAGENTA} [02] Parsing HTML ${RESET}" 
+            echo -e "${MAGENTA} [03] Google Hacking for people OSINT ${RESET}" 
+            echo -e "${MAGENTA} [04] Metadata Analysis ${RESET}" 
+            echo -e "${MAGENTA} [05] DNS Zone Transfer ${RESET}" 
+            echo -e "${MAGENTA} [06] Subdomain Takeover ${RESET}" 
+            echo -e "${MAGENTA} [07] Reverse DNS ${RESET}" 
+            echo -e "${MAGENTA} [08] DNS Reconnaissance ${RESET}"
+            echo -e "${MAGENTA} [09] MiTM (Man-in-the-Middle) ${RESET}"
+            echo -e "${MAGENTA} [10] Portscan (Bash sockets) ${RESET}"
+            echo -e "${MAGENTA} [11] Useful Commands for Network Management ${RESET}"
+            echo -e "${MAGENTA} [12] System Information to Linux OS ${RESET}"
+            echo -e "${MAGENTA} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
+            echo -e "${MAGENTA} [14] Quick Ref for finding and manipulating texts (Linux OS) ${RESET}"
+            echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
+            echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
+            echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
+            echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
+            echo -e "${GRAY} [19] Windows Tips ${RESET}"
+            echo -e "${GRAY} [20] Create Scripts in .bat or .ps1 ${RESET}"
+            echo -e "${GRAY} [21] Reverse Shell for Windows ${RESET}"
+            echo -e "${GRAY} [22] RDP for Windows ${RESET}"
+            echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
+            echo -e "${MAGENTA} [00] Exit ${RESET}"
+            subtitle;
         }
 
         # Process the menu option selected by the user
@@ -148,7 +141,8 @@
 
         # Main workflow
         function main_menu_workflow() {
-            display_main_menu  # Display the menu
+            display_banner_main_menu;
+            display_numbered_menu_options;
 
             # Define valid menu options dynamically
             valid_options=()
