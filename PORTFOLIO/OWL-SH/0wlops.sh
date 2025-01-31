@@ -2394,6 +2394,112 @@
         find_examples_workflow
     }
 
+    # linux_root_password_reset - Interactive Guide for Resetting Root Password via GRUB
+    function linux_root_password_reset() {
+
+        # Define Reset Instructions for Each OS
+        function generate_reset_steps() {
+            local file="/tmp/root_reset_steps.txt"
+            echo "======================" > "$file"
+            echo "  ROOT PASSWORD RESET  " >> "$file"
+            echo "======================" >> "$file"
+
+            echo -e "\n[Debian/Ubuntu]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Find the line starting with: linux boot..." >> "$file"
+            echo "  4. Replace 'ro quiet' with 'init=/bin/bash rw'" >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. Run: passwd root" >> "$file"
+            echo "  7. Reboot: reboot -f" >> "$file"
+
+            echo -e "\n[Red Hat (CentOS, Fedora, Alma, Rocky)]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Find the line starting with: linux16..." >> "$file"
+            echo "  4. Replace 'rghb quiet LANG=en_US.UTF-8' with 'init=/bin/bash rw'" >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. If SELinux blocks changes, run: setenforce 0" >> "$file"
+            echo "  7. Run: passwd root" >> "$file"
+            echo "  8. Reboot: reboot -f" >> "$file"
+
+            echo -e "\n[Arch Linux]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Locate the line starting with: linux ..." >> "$file"
+            echo "  4. Add 'init=/bin/bash' at the end of the line." >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. Run: mount -o remount,rw /" >> "$file"
+            echo "  7. Run: passwd root" >> "$file"
+            echo "  8. Reboot: reboot -f" >> "$file"
+
+            echo -e "\n[SUSE/OpenSUSE]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Locate the line starting with: linux ..." >> "$file"
+            echo "  4. Replace 'quiet' with 'init=/bin/bash'" >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. Run: passwd root" >> "$file"
+            echo "  7. Reboot: reboot -f" >> "$file"
+
+            echo -e "\n[FreeBSD]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. At the boot menu, press 'Esc' for the loader prompt." >> "$file"
+            echo "  3. Type: boot -s" >> "$file"
+            echo "  4. When prompted for a shell, press 'Enter'." >> "$file"
+            echo "  5. Remount root filesystem as read-write: mount -u /" >> "$file"
+            echo "  6. Run: mount -a" >> "$file"
+            echo "  7. Run: passwd root" >> "$file"
+            echo "  8. Reboot: reboot" >> "$file"
+
+            echo "======================" >> "$file"
+            echo "File saved to: $file"
+        }
+
+        # Generate a QR Code with Steps
+        function generate_qr_code() {
+            if command -v qrencode &>/dev/null; then
+                cat /tmp/root_reset_steps.txt | qrencode -o /tmp/root_reset_qr.png
+                echo -e "${GREEN}QR Code saved to /tmp/root_reset_qr.png.${RESET}"
+                echo -e "${GRAY}Scan it with your phone before rebooting.${RESET}"
+            else
+                echo -e "${YELLOW}qrencode not installed. Skipping QR code generation.${RESET}"
+            fi
+        }
+
+        # Option to Print Steps (if physical access)
+        function print_instructions() {
+            if command -v lp &>/dev/null; then
+                lp /tmp/root_reset_steps.txt
+                echo -e "${GREEN}Instructions sent to printer.${RESET}"
+            else
+                echo -e "${YELLOW}No printer detected. Skipping print.${RESET}"
+            fi
+        }
+
+        # Display Instructions on Screen
+        function display_instructions() {
+            clear
+            echo -e "${CYAN}Root Password Reset Guide:${RESET}"
+            cat /tmp/root_reset_steps.txt
+            echo
+            echo -e "${MAGENTA}[1] Generate QR Code${RESET}"
+            echo -e "${MAGENTA}[2] Print Instructions${RESET}"
+            echo -e "${MAGENTA}[3] Exit to Main Menu${RESET}"
+            echo -ne "${CYAN}Choose an option: ${RESET}"
+            read -r option
+            case $option in
+                1) generate_qr_code ;;
+                2) print_instructions ;;
+                3) main_menu ;;
+                *) echo -e "${RED}Invalid choice.${RESET}"; sleep 2; display_instructions ;;
+            esac
+        }
+
+        # Main Execution
+        generate_reset_steps
+        display_instructions
+    }
 
 
 
