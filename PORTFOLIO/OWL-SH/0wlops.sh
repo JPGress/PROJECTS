@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.303"
+VERSION="0.22.304"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -443,15 +443,15 @@ RELEASE="ANAKIN"
             local option="$1"
             case $option in
             #* [+] INTELLIGENCE GATHERING (RECON & OSINT)       
-                1) portscan ;; # Portscan (Netcat)
-                2) parsing_html ;; # Parsing HTML
-                3) google_hacking ;; # Google Hacking for OSINT  
-                4) metadata_analysis ;; # Metadata analysis
-                5) dns_zt ;; # DNS Zone Transfer  
-                6) Subdomain_takeover ;; # Subdomain Takeover  
-                7) rev_dns ;; # Reverse DNS Lookup   
-                8) recon_dns ;; # DNS Reconnaissance
-                9) arp_scan ;; # ARP Network Scan
+                100) portscan ;; # Portscan (Netcat)
+                101) parsing_html ;; # Parsing HTML
+                102) google_hacking ;; # Google Hacking for OSINT  
+                103) metadata_analysis ;; # Metadata analysis
+                104) dns_zt ;; # DNS Zone Transfer  
+                105) Subdomain_takeover ;; # Subdomain Takeover  
+                106) rev_dns ;; # Reverse DNS Lookup   
+                107) recon_dns ;; # DNS Reconnaissance
+                108) arp_scan ;; # ARP Network Scan
             #* [+] VULNERABILITY ANALYSI*
                 10) mitm ;; # MiTM (Man-in-the-Middle)  
                 11) portscan_bashsocket ;; # Portscan (Bash sockets)  
@@ -728,7 +728,7 @@ RELEASE="ANAKIN"
         echo -e "${GREEN}Scan completed for $NETWORK_MASK using the TOP $TOP_PORTS ports.${RESET}"
         echo -e "${GRAY}Press ENTER to continue...${RESET}"
         read -r
-        main_menu
+        main
     }
 
     # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
