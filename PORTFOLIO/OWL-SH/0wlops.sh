@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.100"
+VERSION="0.22.200"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -378,7 +378,7 @@ RELEASE="ANAKIN"
 #* ====== MAIN FUNCTION ======
     # Display numbered menu options
     function display_numbered_menu_options() {
-        echo -e "${BRIGHT_GREEN} [+] RECONNAISSANCE & OSINT (TA0043) ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] INTELLIGENCE GATHERING (RECON & OSINT) ${RESET}"
             echo -e "\t${RED} [01] Portscan (Netcat) ${RESET}" 
             echo -e "\t${RED} [02] Parsing HTML ${RESET}" 
             echo -e "\t${RED} [03] Google Hacking for OSINT ${RESET}" 
@@ -387,28 +387,28 @@ RELEASE="ANAKIN"
             echo -e "\t${RED} [06] Subdomain Takeover ${RESET}" 
             echo -e "\t${RED} [07] Reverse DNS Lookup ${RESET}" 
             echo -e "\t${RED} [08] DNS Reconnaissance ${RESET}"
+            echo -e "\t${RED} [09] ARP Network Scan ${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] INITIAL ACCESS (TA0001) ${RESET}"
-            echo -e "\t${RED} [09] MiTM (Man-in-the-Middle) ${RESET}"
-            echo -e "\t${RED} [10] Portscan (Bash sockets) ${RESET}"
-            echo -e "\t${RED} [11] Useful Network Commands (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [12] System Information (Linux OS) ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
+            echo -e "\t${RED} [10] MiTM (Man-in-the-Middle) ${RESET}"
+            echo -e "\t${RED} [11] Portscan (Bash sockets) ${RESET}"
+            echo -e "\t${RED} [12] Useful Network Commands (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [13] System Information (Linux OS) ${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] ATTACK SURFACE & PRIVILEGE ESCALATION (TA0004) ${RESET}"
-            echo -e "\t${RED} [13] Attack Surface Analysis (find Based) ${RESET}"
-            echo -e "\t${RED} [14] File Discovery & Enumeration (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [15] Root Password Reset Guide (Linux OS) ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] EXPLOITATION & PRIVILEGE ESCALATION ${RESET}"
+            echo -e "\t${RED} [14] Attack Surface Analysis (find Based) ${RESET}"
+            echo -e "\t${RED} [15] File Discovery & Enumeration (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [16] Root Password Reset Guide (Linux OS) ${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] DEFENSE EVASION & PERSISTENCE (TA0005 | TA0003) ${RESET}"
-            echo -e "\t${RED} [16] Vim Escape Techniques (Quick Ref) ${RESET}"
-            echo -e "\t${RED} [17] Rbash Escape Techniques (Linux OS)${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] POST-EXPLOITATION & PERSISTENCE ${RESET}"
+            echo -e "\t${RED} [17] Vim Escape Techniques (Quick Ref) ${RESET}"
+            echo -e "\t${RED} [18] Rbash Escape Techniques (Linux OS)${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] NETWORK & SYSTEM EXPLOITATION (TA0002) ${RESET}"
-            echo -e "\t${RED} [18] Wireless Penetration Testing Toolkit ${RESET}"
-            echo -e "\t${RED} [19] Windows Basic Commands (Quick Ref) ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] NETWORK & SYSTEM EXPLOITATION ${RESET}"
+            echo -e "\t${RED} [19] Wireless Penetration Testing Toolkit ${RESET}"
+            echo -e "\t${RED} [20] Windows Basic Commands (Quick Ref) ${RESET}"
         echo
-        echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & DISCOVERY (TA0008) ${RESET}"
-            echo -e "\t${RED} [20] Network Discovery (Nmap) ${RESET}"
+        echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & NETWORK DISCOVERY ${RESET}"
             echo -e "\t${RED} [21] ARP Network Scan ${RESET}"
         echo
         echo -e "${GRAY} [00] Exit ${RESET}"
@@ -603,7 +603,6 @@ RELEASE="ANAKIN"
         arp_scan_workflow
     }
 
-    
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
