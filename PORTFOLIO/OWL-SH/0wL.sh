@@ -2194,15 +2194,15 @@
         }
         # World-Writable & Unowned Files
         function world_writable_unowned_files() {
-            log_and_display "=== Searching for World-Writable Files ==="
-            find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            log_and_display "=== Searching for Unowned Files ==="
-            find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for World-Writable Files (Top 500) ==="
+                find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for Unowned Files (Top 500) ==="
+                find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
         }
         # Credential Discovery
         function credential_discovery() {
             log_and_display "=== Searching for SSH Keys ==="
-            find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
+                find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
             log_and_display "=== Searching for Useful Files (Config files) ==="
                 find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" -name "*.log" -o -name "*.db" -o -name "*.pem"  \)  -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
