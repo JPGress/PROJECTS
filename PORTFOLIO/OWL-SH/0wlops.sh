@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.12"
+VERSION="0.21.13"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3039,6 +3039,7 @@ RELEASE="ANAKIN"
                 mkdir -p "$LOG_DIR"
             fi
             LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S)"
+            touch "$LOG_FILE"
         }
 
         function select_network() {
