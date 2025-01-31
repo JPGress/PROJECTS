@@ -313,7 +313,7 @@
         echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
         exit 0
     }
-    
+
     # Function: Exit to main menu
     function exit_to_main_menu(){
         # Wait for the user to press ENTER before returning to the main menu
@@ -2327,81 +2327,88 @@
             echo
         }
 
-        function list_all_files() {
-            display_find_usage_section "List All Files in a Directory"
-            echo -e "${GREEN}$ find .${RESET}"
-            echo
+        function all_find_examples(){
+            
+            function list_all_files() {
+                display_find_usage_section "List All Files in a Directory"
+                echo -e "${GREEN}$ find .${RESET}"
+                echo
+            }
+
+            function find_files_by_maxdepth() {
+                display_find_usage_section "Find Files with Limited Depth"
+                echo -e "${GREEN}$ find /etc -maxdepth 1 -name '*.sh'${RESET}"
+                echo
+            }
+
+            function find_specific_files() {
+                display_find_usage_section "Find Files by Name"
+                echo -e "${GREEN}$ find ./test -type f -name '<file*>'${RESET}"
+                echo
+            }
+
+            function find_specific_directories() {
+                display_find_usage_section "Find Directories by Name"
+                echo -e "${GREEN}$ find ./test -type d -name '<directory*>'${RESET}"
+                echo
+            }
+
+            function find_hidden_files() {
+                display_find_usage_section "Find Hidden Files"
+                echo -e "${GREEN}$ find ~ -type f -name '.*'${RESET}"
+                echo
+            }
+
+            function find_by_permissions() {
+                display_find_usage_section "Find Files by Permissions"
+                echo -e "${GREEN}$ find / -type f -perm 0740 -exec ls -la {} 2>/dev/null \;${RESET}"
+                echo -e "${GREEN}$ find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;  # Find SUID files${RESET}"
+                echo
+            }
+
+            function find_by_user_group() {
+                display_find_usage_section "Find Files by User or Group"
+                echo -e "${GREEN}$ find . -user msfadmin${RESET}"
+                echo -e "${GREEN}$ find . -user msfadmin -name '*.txt'${RESET}"
+                echo -e "${GREEN}$ find . -group adm${RESET}"
+                echo
+            }
+
+            function find_by_time() {
+                display_find_usage_section "Find Files Modified/Accessed in the Last N Days"
+                echo -e "${GREEN}$ find / -mtime 5${RESET}  # Modified in the last 5 days"
+                echo -e "${GREEN}$ find / -atime 5${RESET}  # Accessed in the last 5 days"
+                echo
+            }
+
+            function find_and_execute() {
+                display_find_usage_section "Find and Execute Commands"
+                echo -e "${GREEN}$ find / -name '*.pdf' -type f -exec ls -lah {} \;${RESET}"
+                echo
+            }
+
+            function call_find_examples() {
+                list_all_files
+                find_files_by_maxdepth
+                find_specific_files
+                find_specific_directories
+                find_hidden_files
+                find_by_permissions
+                find_by_user_group
+                find_by_time
+                find_and_execute
+            }
+
+            call_find_examples
         }
 
-        function find_files_by_maxdepth() {
-            display_find_usage_section "Find Files with Limited Depth"
-            echo -e "${GREEN}$ find /etc -maxdepth 1 -name '*.sh'${RESET}"
-            echo
+        function find_examples_workflow() {
+            display_banner_inside_functions
+            all_find_examples
+            exit_to_main_menu
         }
 
-        function find_specific_files() {
-            display_find_usage_section "Find Files by Name"
-            echo -e "${GREEN}$ find ./test -type f -name '<file*>'${RESET}"
-            echo
-        }
-
-        function find_specific_directories() {
-            display_find_usage_section "Find Directories by Name"
-            echo -e "${GREEN}$ find ./test -type d -name '<directory*>'${RESET}"
-            echo
-        }
-
-        function find_hidden_files() {
-            display_find_usage_section "Find Hidden Files"
-            echo -e "${GREEN}$ find ~ -type f -name '.*'${RESET}"
-            echo
-        }
-
-        function find_by_permissions() {
-            display_find_usage_section "Find Files by Permissions"
-            echo -e "${GREEN}$ find / -type f -perm 0740 -exec ls -la {} 2>/dev/null \;${RESET}"
-            echo -e "${GREEN}$ find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;  # Find SUID files${RESET}"
-            echo
-        }
-
-        function find_by_user_group() {
-            display_find_usage_section "Find Files by User or Group"
-            echo -e "${GREEN}$ find . -user msfadmin${RESET}"
-            echo -e "${GREEN}$ find . -user msfadmin -name '*.txt'${RESET}"
-            echo -e "${GREEN}$ find . -group adm${RESET}"
-            echo
-        }
-
-        function find_by_time() {
-            display_find_usage_section "Find Files Modified/Accessed in the Last N Days"
-            echo -e "${GREEN}$ find / -mtime 5${RESET}  # Modified in the last 5 days"
-            echo -e "${GREEN}$ find / -atime 5${RESET}  # Accessed in the last 5 days"
-            echo
-        }
-
-        function find_and_execute() {
-            display_find_usage_section "Find and Execute Commands"
-            echo -e "${GREEN}$ find / -name '*.pdf' -type f -exec ls -lah {} \;${RESET}"
-            echo
-        }
-
-        function call_find_examples() {
-            list_all_files
-            find_files_by_maxdepth
-            find_specific_files
-            find_specific_directories
-            find_hidden_files
-            find_by_permissions
-            find_by_user_group
-            find_by_time
-            find_and_execute
-        }
-
-        call_find_examples
-
-        echo -e "${GRAY}Press ENTER to continue${RESET}"
-        read -r 2>/dev/null
-        main_menu
+        find_examples_workflow
     }
 
 
