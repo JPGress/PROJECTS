@@ -291,119 +291,96 @@
         echo -e "${GRAY}+=================================== \u2143w0.0wL ========================================+${RESET}"
     }
 
-# Function: Main menu with Fast Mode execution
-function main() {
-    # Description:
-    # This function handles both interactive menu navigation and fast mode execution.
-    #
-    # Features:
-    # - If a valid function number is passed as an argument, it runs that function instantly.
-    # - If no argument is provided, it launches the interactive menu.
-    # - If '-h' or '--help' is provided, it shows the help menu.
-    #
-    # Example usage:
-    # ./0wl.sh           # Interactive menu
-    # ./0wl.sh 12        # Instantly run Linux System Info
-    # ./0wl.sh -h        # Show help menu
+    # Function: Main menu with Fast Mode execution
+    function main() {
+        # Description:
+        # This function handles both interactive menu navigation and fast mode execution.
+        #
+        # Features:
+        # - If a valid function number is passed as an argument, it runs that function instantly.
+        # - If no argument is provided, it launches the interactive menu.
+        # - If '-h' or '--help' is provided, it shows the help menu.
+        #
+        # Example usage:
+        # ./0wl.sh           # Interactive menu
+        # ./0wl.sh 12        # Instantly run Linux System Info
+        # ./0wl.sh -h        # Show help menu
 
-    # If an argument is provided, attempt fast execution
-#    if [[ -n "$1" ]]; then
-#        case "$1" in
-#            -h|--help)
-#                show_help
-#                exit 0
-#                ;;
-#            ''|*[!0-9]*)  # Reject non-numeric inputs
-#                echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
-#                exit 1
-#                ;;
-#            *)
-#                option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
-#                if validate_input "$option"; then
-#                    process_menu_option "$option"  # Run the chosen function immediately
-#                    exit 0
-#                else
-#                    echo -e "${RED}Invalid option. Run './0wl.sh -h' for help.${RESET}"
-#                    exit 1
-#                fi
-#                ;;
-#        esac
-#    fi
+        # If no argument is provided, launch interactive menu
+        function display_banner_main_menu(){    
+            clear  # Clear the screen
+            ascii_banner_art  # Display ASCII banner
+            echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
+            subtitle  # Show a subtitle
+        }
 
-    # If no argument is provided, launch interactive menu
-    function display_banner_main_menu(){    
-        clear  # Clear the screen
-        ascii_banner_art  # Display ASCII banner
-        echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
-        subtitle  # Show a subtitle
-    }
+        # Process menu selection
+        function process_menu_option() {
+            local option="$1"
+            case $option in
+                0) exit_script ;;  
+                1) portscan ;;  
+                2) parsing_html ;;  
+                3) google_hacking ;;  
+                4) metadata_analysis ;;  
+                5) dns_zt ;;  
+                6) Subdomain_takeover ;;  
+                7) rev_dns ;;  
+                8) recon_dns ;;  
+                9) mitm ;;  
+                10) portscan_bashsocket ;;  
+                11) useful_linux_commands ;;  
+                12) linux_sysinfo ;;  
+                13) find_based_attack_surface_analysis ;;  
+                14) find_command_examples ;;  
+                16) xvi_vim_quick_guide ;;  
+                18) xviii_wifi_attacks ;;  
+                19) xix_windows_basic_commands ;;  
+                21) xxi_sgt_domingues_scanning_script ;;  
+                22) xxii_nmap_network_discovery ;;  
+                *) invalid_option ;;  
+            esac
+        }
 
-    # Process menu selection
-    function process_menu_option() {
-        local option="$1"
-        case $option in
-            0) exit_script ;;  
-            1) portscan ;;  
-            2) parsing_html ;;  
-            3) google_hacking ;;  
-            4) metadata_analysis ;;  
-            5) dns_zt ;;  
-            6) Subdomain_takeover ;;  
-            7) rev_dns ;;  
-            8) recon_dns ;;  
-            9) mitm ;;  
-            10) portscan_bashsocket ;;  
-            11) useful_linux_commands ;;  
-            12) linux_sysinfo ;;  
-            13) find_based_attack_surface_analysis ;;  
-            14) find_command_examples ;;  
-            16) xvi_vim_quick_guide ;;  
-            18) xviii_wifi_attacks ;;  
-            19) xix_windows_basic_commands ;;  
-            21) xxi_sgt_domingues_scanning_script ;;  
-            22) xxii_nmap_network_discovery ;;  
-            *) invalid_option ;;  
-        esac
-    }
+        function validate_input() {
+            local input="$1"
+            local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
+            valid_options=("${valid_options[@]/23}")  # Remove invalid option 23
+            for valid in "${valid_options[@]}"; do
+                if [[ "$input" == "$valid" ]]; then
+                    return 0  
+                fi
+            done
+            return 1  
+        }
 
-    function validate_input() {
-        local input="$1"
-        local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
-        valid_options=("${valid_options[@]/23}")  # Remove invalid option 23
-        for valid in "${valid_options[@]}"; do
-            if [[ "$input" == "$valid" ]]; then
-                return 0  
+        function prompt_user_inputs() {
+            echo -ne "${CYAN} Enter the option number: ${RESET}"
+            read -r MENU_OPTION
+            if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" ]] ; then
+                    exit_script
+                    return 0
+                else
+                    MENU_OPTION=$(echo "$MENU_OPTION" | sed 's/^0*//')
             fi
-        done
-        return 1  
+
+            if ! validate_input "$MENU_OPTION"; then
+                invalid_option
+                main_menu_workflow
+                return
+            fi
+
+            process_menu_option "$MENU_OPTION"
+        }
+
+        function main_menu_workflow() {
+            display_banner_main_menu
+            display_numbered_menu_options
+            prompt_user_inputs
+        }
+
+        main_menu_workflow
     }
-
-    function prompt_user_inputs() {
-        echo -ne "${CYAN} Enter the option number: ${RESET}"
-        read -r MENU_OPTION
-        if [[ "$MENU_OPTION" == "0" || "$MENU_OPTION" == "00" ]] ; then
-            exit_script
-            return 0
-        else
-            MENU_OPTION=$(echo "$MENU_OPTION" | sed 's/^0*//')
-        fi
-        if ! validate_input "$MENU_OPTION"; then
-            invalid_option
-            main_menu_workflow
-            return
-        fi
-        process_menu_option "$MENU_OPTION"
-    }
-
-    function main_menu_workflow() {
-        display_banner_main_menu
-        display_numbered_menu_options
-        prompt_user_inputs
-    }
-
-    main_menu_workflow
-}
-
 
 #* ====== MAIN SCRIPTS (A-Z) ======
     #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
@@ -3276,28 +3253,26 @@ function main() {
         error_not_root; 
         # Check for Help Flag
         elif [[ -n "$1" ]]; then
-        case "$1" in
-            -h|--help)
-                show_help
-                exit 0
-                ;;
-            ''|*[!0-9]*)  # Reject non-numeric inputs
-                echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
-                exit 1
-                ;;
-            *)
-                option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
-                if validate_input "$option"; then
-                    process_menu_option "$option"  # Run the chosen function immediately
+            case "$1" in
+                -h|--help)
+                    show_help
                     exit 0
-                else
-                    echo -e "${RED} Invalid option. Run './0wl.sh -h' for help.${RESET}"
+                    ;;
+                ''|*[!0-9]*)  # Reject non-numeric inputs
+                    echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
                     exit 1
-                fi
-                ;;
-        esac
-        #elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
-            #show_help;
+                    ;;
+                *)
+                    option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+                    if validate_input "$option"; then
+                        process_menu_option "$option"  # Run the chosen function immediately
+                        exit 0
+                    else
+                        echo -e "${RED} Invalid option. Run './0wl.sh -h' for help.${RESET}"
+                        exit 1
+                    fi
+                    ;;
+            esac
         else
             enable_proxychains; # Call the function to enable proxychains at script start
             main;
