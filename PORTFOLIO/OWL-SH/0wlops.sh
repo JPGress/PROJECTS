@@ -172,6 +172,7 @@
         echo
         echo -e "${CYAN} May be the force be with you! Bye! ${RESET}"
         exit 0
+        # 0wL OPS shutting down. Remember: There is no patch for human stupidity.
     }
 
     # Function: Exit to main menu
