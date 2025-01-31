@@ -3249,38 +3249,37 @@
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
     # Check if the script is run as root
-if [ "$(id -u)" != "0" ]; then
-    error_not_root  
-    exit 1  
-fi
-
-# Handle command-line arguments (fast mode)
-if [[ -n "$1" ]]; then
-    case "$1" in
-        -h|--help)
-            show_help
-            exit 0
-            ;;
-        ''|*[!0-9]*)  # Reject non-numeric inputs
-            echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
-            exit 1
-            ;;
-        *)
-            option=$((10#$1))  # Convert argument to integer
-            if validate_input "$option"; then
-                process_menu_option "$option"  # Run the chosen function immediately
+    if [ "$(id -u)" != "0" ]; then
+        error_not_root  
+        exit 1  
+    fi
+    #! TODO: FIXME! Handle command-line arguments (fast mode)
+    if [[ -n "$1" ]]; then
+        case "$1" in
+            -h|--help)
+                show_help
                 exit 0
-            else
-                echo -e "${RED} Invalid option: $option. Run './0wl.sh -h' for help.${RESET}"
+                ;;
+            ''|*[!0-9]*)  # Reject non-numeric inputs
+                echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
                 exit 1
-            fi
-            ;;
-    esac
-fi
+                ;;
+            *)
+                option=$((10#$1))  # Convert argument to integer
+                if validate_input "$option"; then
+                    process_menu_option "$option"  # Run the chosen function immediately
+                    exit 0
+                else
+                    echo -e "${RED} Invalid option: $option. Run './0wl.sh -h' for help.${RESET}"
+                    exit 1
+                fi
+                ;;
+        esac
+    fi
 
-# No arguments provided: Run interactive menu
-enable_proxychains  # Enable proxychains at script start
-main  # Run interactive mode
+    # No arguments provided: Run interactive menu
+    enable_proxychains  # Enable proxychains at script start
+    main  # Run interactive mode
 
 
 
