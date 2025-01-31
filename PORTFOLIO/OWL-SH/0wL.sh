@@ -3249,33 +3249,39 @@
     # Checks if the number of arguments passed to the script is non-zero.
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
-    if [ "$(id -u)" != "0" ]; then
-        error_not_root; 
-        # Check for Help Flag
-        elif [[ -n "$1" ]]; then
-            case "$1" in
-                -h|--help)
-                    show_help
-                    exit 0
-                    ;;
-                ''|*[!0-9]*)  # Reject non-numeric inputs
-                    echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
-                    exit 1
-                    ;;
-                *)
-                    option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
-                    if validate_input "$option"; then
-                        process_menu_option "$option"  # Run the chosen function immediately
-                        exit 0
-                    else
-                        echo -e "${RED} Invalid option. Run './0wl.sh -h' for help.${RESET}"
-                        exit 1
-                    fi
-                    ;;
-            esac
-        else
-            enable_proxychains; # Call the function to enable proxychains at script start
-            main;
-    fi
+    # Check if the script is run as root
+if [ "$(id -u)" != "0" ]; then
+    error_not_root  
+    exit 1  
+fi
+
+# Check for Fast Mode Execution or Help Menu
+if [[ -n "$1" ]]; then
+    case "$1" in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        ''|*[!0-9]*)  # Reject non-numeric inputs
+            echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
+            exit 1
+            ;;
+        *)
+            option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+            if validate_input "$option"; then
+                process_menu_option "$option"  # Run the chosen function immediately
+                exit 0  # Prevent further execution
+            else
+                echo -e "${RED}Invalid option. Run './0wl.sh -h' for help.${RESET}"
+                exit 1
+            fi
+            ;;
+    esac
+fi
+
+# No arguments: Run Interactive Menu
+enable_proxychains  # Call the function to enable proxychains at script start
+main  # Start the interactive menu
+
 
 
