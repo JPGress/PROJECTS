@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.24"
+VERSION="0.21.25"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3035,8 +3035,9 @@ RELEASE="ANAKIN"
 
         function select_network() {
             echo -e " === Available Network Interfaces ==="
+            echo
             ip -br a | awk '{print NR ") " $1 " - " $3}'
-            echo ""
+            echo
 
             read -r -p " Enter the number of the interface to scan: " interface_num
             total_interfaces=$(ip -br a | wc -l)
@@ -3056,7 +3057,6 @@ RELEASE="ANAKIN"
             fi
 
             NETWORK=$(ipcalc -n -b "$selected_network" | awk '/Network/ {print $2}')
-            echo -e " Selected Network: $NETWORK"
         }
 
         function execute_nmap_scan() {
@@ -3064,10 +3064,10 @@ RELEASE="ANAKIN"
             if [ ! -d "$LOG_DIR" ]; then
                 mkdir -p "$LOG_DIR"
             fi
-            LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
+            #LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
             echo -e " Starting Nmap Scan on $NETWORK..."
             cd /usr/share/nmap/scripts || exit
-            nmap -sn "$NETWORK" >> "$LOG_FILE"
+            nmap -sn "$NETWORK" -oX "$LOG_DIR"/nmap_$(date +%d%m%Y_%H%M%S)  # Ping scan
             echo -e " Scan completed. Results saved in: $LOG_FILE"
         }
 
