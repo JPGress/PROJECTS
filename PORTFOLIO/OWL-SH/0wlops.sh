@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.5"
+VERSION="0.21.6"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3051,8 +3051,7 @@ RELEASE="ANAKIN"
 
             # Validate user input
             if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
-                log_and_display_no_date "---"
-                log_and_display_no_date "Invalid interface number. Please try again."
+                log_and_display_no_date " Invalid interface number. Please try again."
                 pause_script
                 nmap_discovery_workflow
             fi
@@ -3060,19 +3059,19 @@ RELEASE="ANAKIN"
             selected_network=$(ip -br a | awk "NR==$interface_num {print \$3}")
 
             if [[ -z "$selected_network" ]]; then
-                log_and_display "Failed to retrieve network details. Exiting..."
+                log_and_display_no_date "Failed to retrieve network details. Exiting..."
                 exit 1
             fi
 
             NETWORK=$(ipcalc -n -b "$selected_network" | awk '/Network/ {print $2}')
-            log_and_display "Selected Network: $NETWORK"
+            log_and_display_no_date "Selected Network: $NETWORK"
         }
 
         function execute_nmap_scan() {
-            log_and_display "Starting Nmap Scan on $NETWORK..."
+            log_and_display_no_date "Starting Nmap Scan on $NETWORK..."
             cd /usr/share/nmap/scripts || exit
-            nmap -sC -sV -O -vv "$NETWORK" | tee "$log_file"
-            log_and_display "Scan completed. Results saved in: $log_file"
+            nmap -sC -sV -O -vv "$NETWORK" | tee "$LOG_FILE"
+            log_and_display_no_date "Scan completed. Results saved in: $LOG_FILE"
         }
 
         function nmap_discovery_workflow() {
