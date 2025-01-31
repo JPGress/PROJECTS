@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.20.2"
+VERSION="0.20.3"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -2899,17 +2899,18 @@ RELEASE="ANAKIN"
             display_banner_inside_functions
         }
 
-        #function create_log_file() {
-        #    LOG_DIR="./logs"
-        #    if [ ! -d "$LOG_DIR" ]; then
-        #        mkdir -p "$LOG_DIR"
-        #    fi
-        #    LOG_FILE="${LOG_DIR}/win_qck_ref.log"
-        #    echo -e "$title $LOG_FILE" >> "$LOG_FILE"
-        #    echo "===========================================================">> "$LOG_FILE"
-        #}
+        function create_win_log_file() {
+            LOG_DIR="./logs"
+            if [ ! -d "$LOG_DIR" ]; then
+                mkdir -p "$LOG_DIR"
+            fi
+            LOG_FILE="${LOG_DIR}/win_qck_ref.log"
+            echo -e "$title $LOG_FILE" >> "$LOG_FILE"
+            echo "===========================================================">> "$LOG_FILE"
+        }
 
         function all_win_cmds() {
+            
             function basic_commands() {
                 log_and_display "=== Basic Commands ==="
                 log_and_display "help          # List available commands."
@@ -2983,8 +2984,10 @@ RELEASE="ANAKIN"
         }
 
         function dump_windows_reference() {
-            all_win_cmds | tee windows_commands.txt
-            log_and_display "Windows command reference saved to windows_commands.txt."
+            create_win_log_file
+            log_and_display "=== Windows Command Reference ==="
+            all_win_cmds | tee $LOG_FILE
+            #log_and_display "Windows command reference saved to $LOG_FILE."
         }
 
         function main_windows_reference() {
