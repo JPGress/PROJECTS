@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.20.3"
+VERSION="0.20.4"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -236,6 +236,12 @@ RELEASE="ANAKIN"
     function log_and_display() {
         local message="$1"
         echo -e "$(date '+[%Y-%m-%d %H:%M:%S]')" | tee -a "$LOG_FILE"
+        echo -e "$message" | tee -a "$LOG_FILE"
+        echo -e "" | tee -a "$LOG_FILE"
+    }
+
+    function log_and_display_no_date() {
+        local message="$1"
         echo -e "$message" | tee -a "$LOG_FILE"
         echo -e "" | tee -a "$LOG_FILE"
     }
