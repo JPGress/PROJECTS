@@ -315,7 +315,7 @@
         }
 
         # Process menu selection
-        function process_menu_option() {
+        function process_menu_option_bkp() {
             local option="$1"
             case $option in
                 0) exit_script ;;  
@@ -342,7 +342,40 @@
             esac
         }
 
-        function validate_input() {
+        function process_menu_option() {
+            local option="$1"
+            option=$((10#$option))  # Convert to proper integer
+
+            case $option in
+                0) exit_script ;;  
+                1) portscan ;;  
+                2) parsing_html ;;  
+                3) google_hacking ;;  
+                4) metadata_analysis ;;  
+                5) dns_zt ;;  
+                6) subdomain_takeover ;;  
+                7) rev_dns ;;  
+                8) recon_dns ;;  
+                9) mitm ;;  
+                10) portscan_bashsocket ;;  
+                11) useful_linux_commands ;;  
+                12) linux_sysinfo ;;  
+                13) find_based_attack_surface_analysis ;;  
+                14) find_command_examples ;;  
+                16) xvi_vim_quick_guide ;;  
+                18) xviii_wifi_attacks ;;  
+                19) xix_windows_basic_commands ;;  
+                21) xxi_sgt_domingues_scanning_script ;;  
+                22) xxii_nmap_network_discovery ;;  
+                *) 
+                    echo -e "${RED} >>> Invalid option: $option. Please choose a valid menu option. <<< ${RESET}"
+                    exit 1
+                    ;;
+            esac
+        }
+
+
+        function validate_input_bkp() {
             local input="$1"
             local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
             valid_options=("${valid_options[@]/23}")  # Remove invalid option 23
@@ -353,6 +386,23 @@
             done
             return 1  
         }
+
+        function validate_input() {
+            local input="$1"
+            local valid_options=( $(seq 0 22) )  # Create a list of valid options (0-22)
+            
+            # Convert to integer (Remove leading zeros safely)
+            input=$((10#$input))
+        
+            # Check if input is in the valid list
+            for valid in "${valid_options[@]}"; do
+                if [[ "$input" == "$valid" ]]; then
+                    return 0  # Valid input
+                fi
+            done
+            return 1  # Invalid input
+        }
+
 
         function prompt_user_inputs() {
             echo -ne "${CYAN} Enter the option number: ${RESET}"
