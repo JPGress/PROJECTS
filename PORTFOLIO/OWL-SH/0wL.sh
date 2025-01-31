@@ -293,7 +293,7 @@
 
     # Function: Main menu
     function main() {
-        # main_menu - Display the main menu and handle user input
+        # main - Display the main menu and handle user input
             #
             # Description:
             # This function displays the main menu, validates the user's selection, and calls the appropriate script or feature based on the input.
