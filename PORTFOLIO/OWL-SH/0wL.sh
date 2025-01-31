@@ -2181,75 +2181,80 @@
             echo "Find-Based Attack Surface Analysis Log - $(date)" > "$LOG_FILE"
             echo "===============================================" >> "$LOG_FILE"
         }
-        # Helper function to display and log results
-        function log_and_display() {
-            local message="$1"
-            echo -e "$message" | tee -a "$LOG_FILE"
-            echo -e "" | tee -a "$LOG_FILE"
-        }
-        
-        # Privilege Escalation Checks
-        function privilege_escalation_checks() {
-            log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
-                find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-        }
 
-        # World-Writable & Unowned Files
-        function world_writable_unowned_files() {
-            log_and_display "=== Searching for World-Writable Files (Top 500) ==="
-                find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
-            log_and_display "=== Searching for Unowned Files (Top 500) ==="
-                find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
-        }
+        function all_find_based_attack_functions() {
+            
+            # Privilege Escalation Checks
+            function privilege_escalation_checks() {
+                log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
+                    find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
 
-        # Credential Discovery
-        function credential_discovery() {
-            log_and_display "=== Searching for SSH Keys ==="
-                find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
-            log_and_display "=== Searching for Useful Files (Config files) ==="
-                find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" -name "*.log" -o -name "*.db" -o -name "*.pem"  \)  -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
-        }
+            # World-Writable & Unowned Files
+            function world_writable_unowned_files() {
+                log_and_display "=== Searching for World-Writable Files (Top 500) ==="
+                    find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Unowned Files (Top 500) ==="
+                    find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
+            }
 
-        # Persistence Mechanisms
-        function persistence_mechanisms() {
-            log_and_display "=== Searching for Suspicious Cron Jobs ==="
-                find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
-                find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-        }
+            # Credential Discovery
+            function credential_discovery() {
+                log_and_display "=== Searching for SSH Keys ==="
+                    find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Useful Files (Config files) ==="
+                    find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" -name "*.log" -o -name "*.db" -o -name "*.pem"  \)  -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
 
-        # Hidden Files & Anti-Forensics
-        function hidden_files_detection() {
-            log_and_display "=== Searching for Hidden Files ==="
-                find / \( -path /proc -o -path /sys -o -path /dev -o -path /run -o -path /snap -o -path /var/lib/docker \) -prune -o -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
-            log_and_display "=== Searching for Files with Strange Timestamps ==="
-                timeout 600s find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-        }
+            # Persistence Mechanisms
+            function persistence_mechanisms() {
+                log_and_display "=== Searching for Suspicious Cron Jobs ==="
+                    find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
+                    find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
 
-        # Exfiltration Traces
-        function exfiltration_traces() {
-            log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
-                timeout 600s find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
-                find / -type f -atime -1 -size -5M -exec  ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            # Hidden Files & Anti-Forensics
+            function hidden_files_detection() {
+                log_and_display "=== Searching for Hidden Files ==="
+                    find / \( -path /proc -o -path /sys -o -path /dev -o -path /run -o -path /snap -o -path /var/lib/docker \) -prune -o -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Files with Strange Timestamps ==="
+                    timeout 600s find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Exfiltration Traces
+            function exfiltration_traces() {
+                log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
+                    timeout 600s find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
+                    find / -type f -atime -1 -size -5M -exec  ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function caller_functions(){
+                privilege_escalation_checks
+                world_writable_unowned_files
+                credential_discovery
+                persistence_mechanisms
+                hidden_files_detection
+                exfiltration_traces
+            }
+
+            caller_functions;
+
         }
 
         # Automated Execution of All Checks
-        function run_find_based_analysis() {
+        function find_based_analysis_workflow() {
             display_banner_inside_functions
-            find_analysis_create_log_file
-            privilege_escalation_checks
-            world_writable_unowned_files
-            credential_discovery
-            persistence_mechanisms
-            hidden_files_detection
-            exfiltration_traces
+            all_find_based_attack_functions
             log_and_display "=== Analysis Complete! Results saved to: $LOG_FILE ==="
         }
 
         # Execute the workflow
-        run_find_based_analysis
+        find_based_analysis_workflow
     }
+
+
 
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
