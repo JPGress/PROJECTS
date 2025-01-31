@@ -479,7 +479,7 @@ RELEASE="ANAKIN"
 
         function validate_input() {
             local input="$1"
-            local valid_options=( $(seq 0 20) )  # Create a list of valid options (0-25)
+            local valid_options=( $(seq 0 21) )  # Create a list of valid options (0-25)
             valid_options=("${valid_options[@]}")
             for valid in "${valid_options[@]}"; do
                 if [[ "$input" == "$valid" ]]; then
