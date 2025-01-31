@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.0"
+VERSION="0.21.1"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3008,7 +3008,7 @@ RELEASE="ANAKIN"
     }
 
     # Function: Nmap Network Discovery
-    function nmap_network_discovery() {
+    function nmap_network_discovery_bkp() {
         # nmap_network_discovery - Interactive Network Discovery using Nmap
             #
             # Description:
@@ -3071,6 +3071,82 @@ RELEASE="ANAKIN"
 
         nmap_discovery_workflow
     }
+
+    # Function: Nmap Network Discovery
+    function nmap_network_discovery() {
+        # nmap_network_discovery - Interactive Network Discovery using Nmap
+            #
+            # Description:
+            #   Automates network discovery using Nmap with user-selected network.
+            #
+            # Features:
+            #   - Allows the operator to choose the network instead of auto-selection.
+            #   - Uses Nmap scripts (-sC), service/version detection (-sV), OS detection (-O).
+            #   - Saves results to a structured log file.
+            #
+            # Usage:
+            #   Run this function to scan a network for live hosts and open services.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-30
+            # Last Updated: 2025-01-31
+            # Version: 2.1
+            #
+            # Notes:
+            #   - Designed for **Red Team reconnaissance & infrastructure mapping**.
+            #   - Requires root privileges to execute certain Nmap features.
+
+        title="NMAP NETWORK DISCOVERY"
+
+        function setup_logging() {
+            log_dir="/home/kali/nmap_logs"
+            mkdir -p "$log_dir"
+            log_file="${log_dir}/nmap_$(date +%d%m%Y_%H%M%S).txt"
+        }
+
+        function select_network() {
+            log_and_display "=== Available Network Interfaces ==="
+            ip -br a | awk '{print NR ") " $1 " - " $3}'
+            echo ""
+
+            read -r -p "Enter the number of the interface to scan: " interface_num
+            total_interfaces=$(ip -br a | wc -l)
+
+            # Validate user input
+            if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
+                log_and_display "Invalid selection. Please choose a valid interface number."
+                exit 1
+            fi
+
+            selected_network=$(ip -br a | awk "NR==$interface_num {print \$3}")
+
+            if [[ -z "$selected_network" ]]; then
+                log_and_display "Failed to retrieve network details. Exiting..."
+                exit 1
+            fi
+
+            NETWORK=$(ipcalc -n -b "$selected_network" | awk '/Network/ {print $2}')
+            log_and_display "Selected Network: $NETWORK"
+        }
+
+        function execute_nmap_scan() {
+            log_and_display "Starting Nmap Scan on $NETWORK..."
+            cd /usr/share/nmap/scripts || exit
+            nmap -sC -sV -O -vv "$NETWORK" | tee "$log_file"
+            log_and_display "Scan completed. Results saved in: $log_file"
+        }
+
+        function nmap_discovery_workflow() {
+            setup_logging
+            display_banner_inside_functions
+            select_network
+            execute_nmap_scan
+            exit_to_main_menu
+        }
+
+        nmap_discovery_workflow
+    }
+
 
 
 
