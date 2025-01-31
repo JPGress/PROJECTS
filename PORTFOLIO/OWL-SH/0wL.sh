@@ -40,18 +40,18 @@
                 #! ╚██████╔╝╚███╔███╔╝███████╗    ██║     ███████╗██║ ╚████║   ██║   ███████╗███████║   ██║       ███████║╚██████╗██║  ██║██║██║        ██║   
                 #!  ╚═════╝  ╚══╝╚══╝ ╚══════╝    ╚═╝     ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚══════╝   ╚═╝       ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   
         echo
-        echo -e "\t\t ${RED} ██████╗ ██╗    ██╗██╗        ██████╗ ██████╗ ███████╗${RESET}"
-        echo -e "\t\t ${RED}██╔═████╗██║    ██║██║       ██╔═══██╗██╔══██╗██╔════╝${RESET}"
-        echo -e "\t\t ${RED}██║██╔██║██║ █╗ ██║██║       ██║   ██║██████╔╝███████╗${RESET}"
-        echo -e "\t\t ${RED}████╔╝██║██║███╗██║██║       ██║   ██║██╔═══╝ ╚════██║${RESET}"
-        echo -e "\t\t ${RED}╚██████╔╝╚███╔███╔╝███████╗  ╚██████╔╝██║     ███████║${RESET}"
-        echo -e "\t\t ${RED} ╚═════╝  ╚══╝╚══╝ ╚══════╝   ╚═════╝ ╚═╝     ╚══════╝${RESET}"
+        echo -e "\t\t ${GREEN}${BG_BLACK} ██████╗ ██╗    ██╗██╗        ██████╗ ██████╗ ███████╗ ${RESET}"
+        echo -e "\t\t ${GREEN}${BG_BLACK}██╔═████╗██║    ██║██║       ██╔═══██╗██╔══██╗██╔════╝ ${RESET}"
+        echo -e "\t\t ${GREEN}${BG_BLACK}██║██╔██║██║ █╗ ██║██║       ██║   ██║██████╔╝███████╗ ${RESET}"
+        echo -e "\t\t ${GREEN}${BG_BLACK}████╔╝██║██║███╗██║██║       ██║   ██║██╔═══╝ ╚════██║ ${RESET}"
+        echo -e "\t\t ${GREEN}${BG_BLACK}╚██████╔╝╚███╔███╔╝███████╗  ╚██████╔╝██║     ███████║ ${RESET}"
+        echo -e "\t\t ${GREEN}${BG_BLACK} ╚═════╝  ╚══╝╚══╝ ╚══════╝   ╚═════╝ ╚═╝     ╚══════╝ ${RESET}"
         author_version;
     }
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "${RED}                                           0wL Operators Script (0wLOpS) .sh v $VERSION ${GRAY}by $AUTHOR ${RESET}"
+        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script (0wLOpS) v$VERSION ${GRAY}by $AUTHOR ${RESET}"
         subtitle;
     }
 
