@@ -124,7 +124,6 @@
             exit 0
         }
 
-        
         # Function: Validate user input against allowed menu options
         function validate_input() {
             local input="$1"
@@ -142,10 +141,7 @@
             return 1  # Invalid input
         }
 
-        function main_menu_workflow() {
-            display_banner_main_menu
-            display_numbered_menu_options
-
+        function prompt_user_inputs() {
             # Prompt the user for input
             echo -ne "${CYAN} Enter the option number: ${RESET}"
             read -r MENU_OPTION  # Read user input
@@ -167,10 +163,18 @@
             process_menu_option "$MENU_OPTION"
         }
 
+        function main_menu_workflow() {
+            display_banner_main_menu
+            display_numbered_menu_options
+            prompt_user_inputs
+        }
+        
         # Execute the main menu workflow
         main_menu_workflow
-
     }
+
+        
+
 #* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
     function ascii_banner_art() {
