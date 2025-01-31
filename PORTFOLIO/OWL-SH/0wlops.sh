@@ -140,7 +140,7 @@
         echo -e "${GRAY} >>> Please wait a moment...${RESET}"
         if proxychains curl -I https://dnsleaktest.com &> /dev/null; then
             echo -e "${GRAY} >>> Proxychains is working correctly. All traffic will be routed through it.${RESET}"
-            countdown; # Wait for 5 seconds before continuing
+            #countdown; # Wait for 3 seconds before continuing
             export PROXYCHAINS=1
         else
             echo -e "${RED} >>> WARNING: Proxychains test failed. Please verify your proxychains configuration. <<< ${RESET}"
