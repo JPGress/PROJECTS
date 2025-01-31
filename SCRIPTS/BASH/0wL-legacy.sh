@@ -857,6 +857,7 @@ function xii_comandos_uteis_linux(){
 }
 # Define a função xiii_exemplos_find para explicar sobre o comando find
 function xiii_exemplos_find(){
+
   # limpa a tela
   clear
 
@@ -960,6 +961,7 @@ function xiii_exemplos_find(){
   # chama a função main_menu para retornar ao menu principal
   main_menu;
 }
+
 # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no debian
 function xiv_debian_memento_troca_senha_root(){
   # limpa a tela

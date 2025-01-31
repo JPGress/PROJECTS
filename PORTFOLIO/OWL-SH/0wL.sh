@@ -269,20 +269,20 @@
             subtitle; # Display a subtitle
             
             # Display numbered menu options
-            echo -e "${MAGENTA} 1 - Portscan (netcat) ${RESET}" 
-            echo -e "${MAGENTA} 2 - Parsing HTML ${RESET}" 
-            echo -e "${MAGENTA} 3 - Google Hacking for people OSINT ${RESET}" 
-            echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}" 
-            echo -e "${MAGENTA} 5 - DNS Zone Transfer ${RESET}" 
-            echo -e "${MAGENTA} 6 - Subdomain Takeover ${RESET}" 
-            echo -e "${MAGENTA} 7 - Reverse DNS ${RESET}" 
-            echo -e "${MAGENTA} 8 - DNS Reconnaissance ${RESET}"
-            echo -e "${MAGENTA} 9 - MiTM (Man-in-the-Middle) ${RESET}"
-            echo -e "${MAGENTA} 10 - Portscan (Bash sockets) ${RESET}"
-            echo -e "${MAGENTA} 11 - Useful Commands for Network Management ${RESET}"
-            echo -e "${MAGENTA} 12 - System Information to Linux OS ${RESET}"
-            echo -e "${MAGENTA} 13 - Attack Surface Analysis (find Based) ${RESET}"
-            echo -e "${GRAY} 14 - Root Password Reset Guide (Debian) ${RESET}${RESET}"
+            echo -e "${MAGENTA} [01]- Portscan (netcat) ${RESET}" 
+            echo -e "${MAGENTA} [02]- Parsing HTML ${RESET}" 
+            echo -e "${MAGENTA} [03]- Google Hacking for people OSINT ${RESET}" 
+            echo -e "${MAGENTA} [04]- Metadata Analysis ${RESET}" 
+            echo -e "${MAGENTA} [05]- DNS Zone Transfer ${RESET}" 
+            echo -e "${MAGENTA} [06]- Subdomain Takeover ${RESET}" 
+            echo -e "${MAGENTA} [07]- Reverse DNS ${RESET}" 
+            echo -e "${MAGENTA} [08]- DNS Reconnaissance ${RESET}"
+            echo -e "${MAGENTA} [09]- MiTM (Man-in-the-Middle) ${RESET}"
+            echo -e "${MAGENTA} [10] - Portscan (Bash sockets) ${RESET}"
+            echo -e "${MAGENTA} [11] - Useful Commands for Network Management ${RESET}"
+            echo -e "${MAGENTA} [12] - System Information to Linux OS ${RESET}"
+            echo -e "${MAGENTA} [13] - Attack Surface Automated Analysis (find Based) ${RESET}"
+            echo -e "${MAGENTA} [14] - Quick Ref for finding and manipulating texts (Linux OS) ${RESET}"
             echo -e "${GRAY} 15 - Root Password Reset Guide (Red Hat) ${RESET}"
             echo -e "${GRAY} 16 - Quick Guide to Using Vim ${RESET}"
             echo -e "${GRAY} 17 - Escape Techniques for rbash (Testing) ${RESET}"
@@ -292,8 +292,36 @@
             echo -e "${GRAY} 21 - Reverse Shell for Windows ${RESET}"
             echo -e "${GRAY} 22 - RDP for Windows ${RESET}"
             echo -e "${GRAY} 23 - Examples of the 'find' Command ${RESET}"
-            echo -e " ${GRAY} 0 - (zero) to exit ${RESET}"
+            echo -e " ${GRAY} [00] - (zero) to exit ${RESET}"
             subtitle;
+        }
+
+        # Process the menu option selected by the user
+        function process_menu_option() {
+            local option="$1"
+            case $option in
+                0) exit_script ;;  # Exit the script
+                1) portscan ;;  # Perform a port scan
+                2) parsing_html ;;  # Parse HTML
+                3) google_hacking ;;  # Google Hacking
+                4) metadata_analysis ;;  # Metadata Analysis
+                5) dns_zt ;;  # DNS Zone Transfer
+                6) Subdomain_takeover ;;  # Subdomain Takeover
+                7) rev_dns ;;  # Reverse DNS
+                8) recon_dns ;;  # DNS Reconnaissance
+                9) mitm ;;  # MiTM (Man-in-the-Middle)
+                10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
+                11) useful_linux_commands ;; # Useful Linux commands
+                12) linux_sysinfo ;;  # System info
+                13) find_based_attack_surface_analysis ;; # Disabled
+                14) find_command_examples ;;  # find command examples
+                16) xvi_vim_quick_guide ;;  # Vim Quick Guide
+                18) xviii_wifi_attacks ;;  # Wireless Network Attacks
+                19) xix_windows_basic_commands ;;  # Basic Windows Commands
+                21) xxi_sgt_domingues_scanning_script ;;  # Sgt Domingues' Scanning Script
+                22) xxii_nmap_network_discovery ;;  # NMAP Network Discovery
+                *) invalid_option ;;  # Fallback case for unexpected values
+            esac
         }
 
         # Validate user input
@@ -315,34 +343,6 @@
         function exit_script() {
             echo -e "${CYAN} Exiting... Thank you for using the script! ${RESET}"
             exit 0
-        }
-
-        # Process the menu option selected by the user
-        function process_menu_option() {
-            local option="$1"
-            case $option in
-                0) exit_script ;;  # Exit the script
-                1) portscan ;;  # Perform a port scan
-                2) parsing_html ;;  # Parse HTML
-                3) google_hacking ;;  # Google Hacking
-                4) metadata_analysis ;;  # Metadata Analysis
-                5) dns_zt ;;  # DNS Zone Transfer
-                6) Subdomain_takeover ;;  # Subdomain Takeover
-                7) rev_dns ;;  # Reverse DNS
-                8) recon_dns ;;  # DNS Reconnaissance
-                9) mitm ;;  # MiTM (Man-in-the-Middle)
-                10) portscan_bashsocket ;;  # Port Scan (Bash Sockets)
-                11) useful_linux_commands ;; # Useful Linux commands
-                12) linux_sysinfo ;;  # System info
-                13) find_based_attack_surface_analysis ;; # Disabled
-                14) xiv_debian_root_password_reset ;;  # Root Password Reset (Debian)
-                16) xvi_vim_quick_guide ;;  # Vim Quick Guide
-                18) xviii_wifi_attacks ;;  # Wireless Network Attacks
-                19) xix_windows_basic_commands ;;  # Basic Windows Commands
-                21) xxi_sgt_domingues_scanning_script ;;  # Sgt Domingues' Scanning Script
-                22) xxii_nmap_network_discovery ;;  # NMAP Network Discovery
-                *) invalid_option ;;  # Fallback case for unexpected values
-            esac
         }
 
         # Main workflow
@@ -2277,6 +2277,109 @@
         # Execute the workflow
         find_based_analysis_workflow
     }
+
+    function find_command_examples() {
+
+        # find_command_examples - Display examples of the 'find' command for reconnaissance & automation
+            #
+            # Description:
+            #   This function provides quick reference examples of using 'find' for:
+            #   - File discovery, privilege escalation, and hidden files detection.
+            #   - Searching based on permissions, user, group, modification/access times.
+            #   - Executing commands on discovered files.
+            #
+            # Notes:
+            #   - Useful for Red Teamers & Forensics Investigators.
+            #   - Helps automate common search operations.
+            #   - No actual scanning—this is just a reference tool.
+            #
+            # Author: R3v4N (w/GPT)
+            # Last Updated: 2025-02-01
+            # Version: 2.0
+
+        function display_find_usage_section() {
+            local title="$1"
+            echo -e "${RED}# $title${RESET}"
+            echo
+        }
+
+        function list_all_files() {
+            display_find_usage_section "List All Files in a Directory"
+            echo -e "${GREEN}$ find .${RESET}"
+            echo
+        }
+
+        function find_files_by_maxdepth() {
+            display_find_usage_section "Find Files with Limited Depth"
+            echo -e "${GREEN}$ find /etc -maxdepth 1 -name '*.sh'${RESET}"
+            echo
+        }
+
+        function find_specific_files() {
+            display_find_usage_section "Find Files by Name"
+            echo -e "${GREEN}$ find ./test -type f -name '<file*>'${RESET}"
+            echo
+        }
+
+        function find_specific_directories() {
+            display_find_usage_section "Find Directories by Name"
+            echo -e "${GREEN}$ find ./test -type d -name '<directory*>'${RESET}"
+            echo
+        }
+
+        function find_hidden_files() {
+            display_find_usage_section "Find Hidden Files"
+            echo -e "${GREEN}$ find ~ -type f -name '.*'${RESET}"
+            echo
+        }
+
+        function find_by_permissions() {
+            display_find_usage_section "Find Files by Permissions"
+            echo -e "${GREEN}$ find / -type f -perm 0740 -exec ls -la {} 2>/dev/null \;${RESET}"
+            echo -e "${GREEN}$ find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;  # Find SUID files${RESET}"
+            echo
+        }
+
+        function find_by_user_group() {
+            display_find_usage_section "Find Files by User or Group"
+            echo -e "${GREEN}$ find . -user msfadmin${RESET}"
+            echo -e "${GREEN}$ find . -user msfadmin -name '*.txt'${RESET}"
+            echo -e "${GREEN}$ find . -group adm${RESET}"
+            echo
+        }
+
+        function find_by_time() {
+            display_find_usage_section "Find Files Modified/Accessed in the Last N Days"
+            echo -e "${GREEN}$ find / -mtime 5${RESET}  # Modified in the last 5 days"
+            echo -e "${GREEN}$ find / -atime 5${RESET}  # Accessed in the last 5 days"
+            echo
+        }
+
+        function find_and_execute() {
+            display_find_usage_section "Find and Execute Commands"
+            echo -e "${GREEN}$ find / -name '*.pdf' -type f -exec ls -lah {} \;${RESET}"
+            echo
+        }
+
+        function call_find_examples() {
+            list_all_files
+            find_files_by_maxdepth
+            find_specific_files
+            find_specific_directories
+            find_hidden_files
+            find_by_permissions
+            find_by_user_group
+            find_by_time
+            find_and_execute
+        }
+
+        call_find_examples
+
+        echo -e "${GRAY}Press ENTER to continue${RESET}"
+        read -r 2>/dev/null
+        main_menu
+    }
+
 
 
 
