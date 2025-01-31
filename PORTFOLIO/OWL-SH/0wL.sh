@@ -2203,16 +2203,18 @@
         function credential_discovery() {
             log_and_display "=== Searching for SSH Keys ==="
             find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
-            log_and_display "=== Searching for Password Files (Config files) ==="
-            find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" \) -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            log_and_display "=== Searching for Useful Files (Config files) ==="
+                find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" -name "*.log" -o -name "*.db" -o -name "*.pem"  \)  -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
+
         # Persistence Mechanisms
         function persistence_mechanisms() {
             log_and_display "=== Searching for Suspicious Cron Jobs ==="
-            find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
             log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
-            find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
+
         # Hidden Files & Anti-Forensics
         function hidden_files_detection() {
             log_and_display "=== Searching for Hidden Files ==="
@@ -2220,6 +2222,7 @@
             log_and_display "=== Searching for Files with Strange Timestamps ==="
                 timeout 600s find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
+
         # Exfiltration Traces
         function exfiltration_traces() {
             log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
