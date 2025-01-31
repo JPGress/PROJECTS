@@ -2187,11 +2187,13 @@
             echo -e "$message" | tee -a "$LOG_FILE"
             echo -e "" | tee -a "$LOG_FILE"
         }
+        
         # Privilege Escalation Checks
         function privilege_escalation_checks() {
             log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
-            find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
         }
+
         # World-Writable & Unowned Files
         function world_writable_unowned_files() {
             log_and_display "=== Searching for World-Writable Files (Top 500) ==="
@@ -2199,6 +2201,7 @@
             log_and_display "=== Searching for Unowned Files (Top 500) ==="
                 find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
         }
+
         # Credential Discovery
         function credential_discovery() {
             log_and_display "=== Searching for SSH Keys ==="
