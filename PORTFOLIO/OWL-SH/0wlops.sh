@@ -412,7 +412,6 @@ RELEASE="ANAKIN"
             echo -e "\t${RED} [21] Nmap Network Scan ${RESET}"
         echo
         echo -e "\t${GRAY} [00] Exit ${RESET}"
-        echo
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
     }
 
