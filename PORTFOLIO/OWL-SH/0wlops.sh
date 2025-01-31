@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.22.200"
+VERSION="0.22.201"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -409,9 +409,10 @@ RELEASE="ANAKIN"
             echo -e "\t${RED} [20] Windows Basic Commands (Quick Ref) ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & NETWORK DISCOVERY ${RESET}"
-            echo -e "\t${RED} [21] ARP Network Scan ${RESET}"
+            echo -e "\t${RED} [21] Nmap Network Scan ${RESET}"
         echo
         echo -e "${GRAY} [00] Exit ${RESET}"
+        echo
         echo -e "${RED}+=========================== ${BRIGHT_GREEN}We Hunt in the Shadows${RESET}${RED} ================================+${RESET}"
     }
 
@@ -442,7 +443,7 @@ RELEASE="ANAKIN"
         function process_menu_option() {
             local option="$1"
             case $option in
-            # [+] RECONNAISSANCE & OSINT (TA0043)       
+            #* [+] INTELLIGENCE GATHERING (RECON & OSINT)       
                 1) portscan ;; # Portscan (Netcat)
                 2) parsing_html ;; # Parsing HTML
                 3) google_hacking ;; # Google Hacking for OSINT  
@@ -451,34 +452,35 @@ RELEASE="ANAKIN"
                 6) Subdomain_takeover ;; # Subdomain Takeover  
                 7) rev_dns ;; # Reverse DNS Lookup   
                 8) recon_dns ;; # DNS Reconnaissance
-            # [+] INITIAL ACCESS (TA0001)
+                9) arp_scan ;; # ARP Network Scan
+            #* [+] VULNERABILITY ANALYSI*
                 9) mitm ;; # MiTM (Man-in-the-Middle)  
                 10) portscan_bashsocket ;; # Portscan (Bash sockets)  
                 11) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
                 12) linux_sysinfo ;; # System Information (Linux OS)
-            # [+] ATTACK SURFACE & PRIVILEGE ESCALATION (TA0004)
+            #* [+] EXPLOITATION & PRIVIL*GE ESCALATION
                 13) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
                 14) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
                 15) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
-            # [+] DEFENSE EVASION & PERSISTENCE (TA0005 | TA0003)
+            #* [+] POST-EXPLOITATION & P*RSISTENCE
                 16) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
                 17) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
-            # [+] NETWORK & SYSTEM EXPLOITATION (TA0002)
+            #* [+] NETWORK & SYSTEM EXPL*ITATION
                 18) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
                 19) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
-            # [+] LATERAL MOVEMENT & DISCOVERY (TA0008)
+            #* [+] LATERAL MOVEMENT & NE*WORK DISCOVERY
                 20) nmap_network_discovery ;; # Network Discovery (Nmap)  
-                21) arp_network_scan ;; # ARP Network Scan
-            # [+] EXIT
+            #* [+] EXIT
                 0) exit_script ;;
+            #* Invalid option
                 *) invalid_option ;;  
             esac
         }
 
         function validate_input() {
             local input="$1"
-            local valid_options=( $(seq 0 25) )  # Create a list of valid options (0-25)
-            valid_options=("${valid_options[@]/23}")  # Remove invalid option 23
+            local valid_options=( $(seq 0 20) )  # Create a list of valid options (0-25)
+            valid_options=("${valid_options[@]}")
             for valid in "${valid_options[@]}"; do
                 if [[ "$input" == "$valid" ]]; then
                     return 0  
