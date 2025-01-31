@@ -3,7 +3,7 @@
 # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 # Version
-VERSION="0.21.1"
+VERSION="0.21.2"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -3099,9 +3099,11 @@ RELEASE="ANAKIN"
         title="NMAP NETWORK DISCOVERY"
 
         function setup_logging() {
-            log_dir="/home/kali/nmap_logs"
-            mkdir -p "$log_dir"
-            log_file="${log_dir}/nmap_$(date +%d%m%Y_%H%M%S).txt"
+            LOG_DIR="./logs"
+            if [ ! -d "$LOG_DIR" ]; then
+                mkdir -p "$LOG_DIR"
+            fi
+            LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).txt"
         }
 
         function select_network() {
