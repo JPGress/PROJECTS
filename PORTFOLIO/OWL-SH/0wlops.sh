@@ -274,10 +274,10 @@
         echo -e "${GREEN} [09] MiTM (Man-in-the-Middle) ${RESET}"
         echo -e "${GREEN} [10] Portscan (Bash sockets) ${RESET}"
         echo -e "${GREEN} [11] Useful Commands for Network Management (Quick Ref) ${RESET}"
-        echo -e "${GREEN} [12] System Information to Linux OS ${RESET}"
-        echo -e "${GREEN} [13] Attack Surface Automated Analysis (find Based) ${RESET}"
+        echo -e "${GREEN} [12] System Information (Linux OS) ${RESET}"
+        echo -e "${GREEN} [13] Attack Surface Analysis (find Based) ${RESET}"
         echo -e "${GREEN} [14] find Examples (Quick Ref) (Linux OS) ${RESET}"
-        echo -e "${GRAY} [15] Root Password Reset Guide (Red Hat) ${RESET}"
+        echo -e "${GREEN} [15] Root Password Reset Guide (Linux OS) ${RESET}"
         echo -e "${GRAY} [16] Quick Guide to Using Vim ${RESET}"
         echo -e "${GRAY} [17] Escape Techniques for rbash (Testing) ${RESET}"
         echo -e "${GRAY} [18] Wireless Network Attacks ${RESET}"
@@ -331,7 +331,8 @@
                 11) useful_linux_commands ;;  
                 12) linux_sysinfo ;;  
                 13) find_based_attack_surface_analysis ;;  
-                14) find_command_examples ;;  
+                14) find_command_examples ;;
+                15) linux_root_password_reset ;; 
                 16) xvi_vim_quick_guide ;;  
                 18) xviii_wifi_attacks ;;  
                 19) xix_windows_basic_commands ;;  
@@ -2397,6 +2398,9 @@
     # linux_root_password_reset - Interactive Guide for Resetting Root Password via GRUB
     function linux_root_password_reset() {
 
+        title="\tLinux Root Password Reset via GRUB"  # Define the title for this operation
+        function display_grub_reset_section() {
+            local title="$1"
         # Define Reset Instructions for Each OS
         function generate_reset_steps() {
             local file="/tmp/root_reset_steps.txt"
@@ -2463,7 +2467,7 @@
                 echo -e "${GREEN}QR Code saved to /tmp/root_reset_qr.png.${RESET}"
                 echo -e "${GRAY}Scan it with your phone before rebooting.${RESET}"
             else
-                echo -e "${YELLOW}qrencode not installed. Skipping QR code generation.${RESET}"
+                echo -e "${RED}qrencode not installed. Install and try again. Skipping QR code generation.${RESET}"
             fi
         }
 
@@ -2480,18 +2484,19 @@
         # Display Instructions on Screen
         function display_instructions() {
             clear
-            echo -e "${CYAN}Root Password Reset Guide:${RESET}"
-            cat /tmp/root_reset_steps.txt
+            display_banner_main_menu
             echo
+            echo -e "${MAGENTA}[0] Show Instructions${RESET}"
             echo -e "${MAGENTA}[1] Generate QR Code${RESET}"
             echo -e "${MAGENTA}[2] Print Instructions${RESET}"
             echo -e "${MAGENTA}[3] Exit to Main Menu${RESET}"
             echo -ne "${CYAN}Choose an option: ${RESET}"
             read -r option
             case $option in
+                0) cat /tmp/root_reset_steps.txt ;;
                 1) generate_qr_code ;;
                 2) print_instructions ;;
-                3) main_menu ;;
+                3) main ;;
                 *) echo -e "${RED}Invalid choice.${RESET}"; sleep 2; display_instructions ;;
             esac
         }
@@ -2506,163 +2511,6 @@
 
 #! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
 
-    # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no debian
-    function xiv_debian_memento_troca_senha_root(){
-        # limpa a tela
-        clear
-
-        # exibe um cabeçalho informativo
-        echo
-        echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Debian e derivados ###${RESET}"
-        echo
-
-        ### Passo 1: Reiniciar o computador
-
-        # instrui o usuário a reiniciar o computador alvo
-        echo -e " 1. ${RED}Reiniciar o computador alvo;${RESET}"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 2: Editar o menu do GRUB
-
-        # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
-        echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 3: Localizar e modificar a linha de comando
-
-        # instrui o usuário a localizar a linha que inicia com "linux boot..." e substituir "ro quiet" por "init=/bin/bash rw"
-        echo -e " 3. Procurar pela linha que inicia com ${RED}'linux boot…${RESET}', substituir ${RED}'ro quiet${RESET}' ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 4: Salvar as alterações e inicializar o sistema
-
-        # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
-        echo -e " 4. Pressione ${RED}'Ctrl+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 5: Definir a nova senha de root
-
-        # instrui o usuário a definir a nova senha de root após o sistema inicializar
-        echo -e " 5. Após a inicialização do sistema, execute ${RED}'passwd root'${RESET} e digite a nova senha."
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 6: Reinicializar o sistema
-
-        # instrui o usuário a reinicializar o sistema após definir a nova senha
-        echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'reboot -f'${RESET}"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Mensagem de confirmação
-
-        # exibe uma mensagem informando que a senha do root foi redefinida
-        echo
-        echo -e "${RED}### NESSE MOMENTO, SE DEU TUDO CERTO, VOCÊ POSSUI A SENHA DO ROOT USER ###${RESET}"
-        echo
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        # volta para o menu principal
-        main_menu;
-    }
-    
-    # Define a função xiv_debian_memento_troca_senha_root para explicar sobre a troca de senha root no redhat
-    function xv_redhat_memento_troca_senha_root(){
-        # limpa a tela
-        clear
-
-        # exibe um cabeçalho informativo
-        echo
-        echo -e "${RED}### Redefinindo a senha de root em sistemas Operacionais Red Hat e derivados ###${RESET}"
-        echo
-
-        ### Passo 1: Reiniciar o computador
-
-        # instrui o usuário a reiniciar o computador alvo
-        echo -e " 1. ${RED}Reiniciar o computador alvo${RESET}"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 2: Editar o menu do GRUB
-
-        # instrui o usuário a entrar no menu de edição do GRUB pressionando a tecla 'e'
-        echo -e " 2. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 3: Localizar e modificar a linha de comando no CentOS/Fedora
-
-        # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en_US.UTF-8" por "init=/bin/bash rw" (para CentOS/Fedora)
-        echo -e " 3. Procurar pela linha que inicia com ${RED}'linux16...'${RESET}, substituir ${RED}'rghb quiet LANG=en_US.UTF-8${RESET} ao final dessa linha por ${RED}'init=/bin/bash rw'${RESET};"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 4: Salvar as alterações e inicializar o sistema
-
-        # instrui o usuário a salvar as alterações pressionando "Ctrl+x" e inicializar o sistema com os novos parâmetros
-        echo -e " 4. Pressione ${RED}'Ctrl\+x'${RESET} para iniciar o sistema com os parâmetros alterados;"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 5: Desabilitar o SELinux (somente CentOS/Fedora)
-
-        # informa ao usuário que o SELinux precisa ser desabilitado (apenas para CentOS/Fedora)
-        echo -e " 5. Após a inicialização do sistema, temos que desabilitar o SELinux. Para isso, edite o arquivo ${RED}'/etc/selinux/config'${RESET} e substitua a opção ${RED}'enforcing'${RESET} por ${RED}'disable'${RESET};"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 6: Reinicializar o sistema (somente CentOS/Fedora)
-
-        # instrui o usuário a reinicializar o sistema após desabilitar o SELinux (apenas para CentOS/Fedora)
-        echo -e " 6. Reinicialize o SO, utilize o comando: ${RED}'/sbin/halt –reboot \-f'${RESET}"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 7: Editar o menu do GRUB novamente (somente Rocky/Alma)
-
-        # informa ao usuário que o menu do GRUB precisa ser editado novamente (apenas para Rocky/Alma)
-        echo -e " 7. Editar o menu do grub pressionando a tecla ${RED}'e'${RESET};"
-
-        # pausa o script até que o usuário pressione ENTER para continuar
-        echo -e "${GRAY} Pressione ENTER para continuar${RESET}"
-        read -r 2> /dev/null
-
-        ### Passo 8: Localizar e modificar a linha de comando no Rocky/Alma
-
-        # instrui o usuário a localizar a linha que inicia com "linux16..." e substituir "rghb quiet LANG=en
-    }
-    
     # Definição da função xvi_vim_memento
     function xvi_vim_memento(){
         # Limpa a tela
