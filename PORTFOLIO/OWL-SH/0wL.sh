@@ -307,28 +307,28 @@ function main() {
     # ./0wl.sh -h        # Show help menu
 
     # If an argument is provided, attempt fast execution
-    if [[ -n "$1" ]]; then
-        case "$1" in
-            -h|--help)
-                show_help
-                exit 0
-                ;;
-            ''|*[!0-9]*)  # Reject non-numeric inputs
-                echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
-                exit 1
-                ;;
-            *)
-                option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
-                if validate_input "$option"; then
-                    process_menu_option "$option"  # Run the chosen function immediately
-                    exit 0
-                else
-                    echo -e "${RED}Invalid option. Run './0wl.sh -h' for help.${RESET}"
-                    exit 1
-                fi
-                ;;
-        esac
-    fi
+#    if [[ -n "$1" ]]; then
+#        case "$1" in
+#            -h|--help)
+#                show_help
+#                exit 0
+#                ;;
+#            ''|*[!0-9]*)  # Reject non-numeric inputs
+#                echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
+#                exit 1
+#                ;;
+#            *)
+#                option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+#                if validate_input "$option"; then
+#                    process_menu_option "$option"  # Run the chosen function immediately
+#                    exit 0
+#                else
+#                    echo -e "${RED}Invalid option. Run './0wl.sh -h' for help.${RESET}"
+#                    exit 1
+#                fi
+#                ;;
+#        esac
+#    fi
 
     # If no argument is provided, launch interactive menu
     function display_banner_main_menu(){    
@@ -3274,7 +3274,28 @@ function main() {
     # If not, display an error message and exit with a non-zero status code 
     if [ "$(id -u)" != "0" ]; then
         error_not_root; 
-        # Check for Help Flag 
+        # Check for Help Flag
+        elif [[ -n "$1" ]]; then
+        case "$1" in
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            ''|*[!0-9]*)  # Reject non-numeric inputs
+                echo -e "${RED}Invalid input. Use a number or '-h' for help.${RESET}"
+                exit 1
+                ;;
+            *)
+                option=$(echo "$1" | sed 's/^0*//')  # Remove leading zeros (e.g., "03" -> "3")
+                if validate_input "$option"; then
+                    process_menu_option "$option"  # Run the chosen function immediately
+                    exit 0
+                else
+                    echo -e "${RED} Invalid option. Run './0wl.sh -h' for help.${RESET}"
+                    exit 1
+                fi
+                ;;
+        esac
         #elif [[ "$1" == "-h" || "$1" == "--help" ]]; then
             #show_help;
         else
