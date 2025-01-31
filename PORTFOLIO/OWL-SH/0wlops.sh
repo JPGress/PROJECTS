@@ -1,6 +1,6 @@
 #!/bin/bash
 # TODO: ADD HEADER INFORMATION
-# TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
+
 
 # Version
 VERSION="0.21.30"
@@ -3086,45 +3086,8 @@ RELEASE="ANAKIN"
         nmap_discovery_workflow
     }
 
-
-
-
-#! TODO: UPDATE ALL BELOW HERE. The main objective is translate to english and if necessary, refactor the code.
-
-    #
-    function xxiii_nmap(){
-        echo "nmap"
-    }
-
-    #
-    function xxiv_revshell_windows(){
-        echo "revshell_windows"
-    }
-
-    #
-    function xxv_rdp_windows(){
-        echo -n "Insira o IP do host windows: "
-        read -r  IP_HOST
-        echo -n "Insira o usuario: "
-        read -r USER
-        echo -n "Insira o password: "
-        read -r PASSWD
-        tilix --action=app-new-session --command="$(xfreerdp /u:"$USER" /p:"$PASSWD" /w:1366 /h:768 /v:"$IP_HOST" /smart-sizing +auto-reconnect)"
-    }
-    #
-    function xxvi_ssh_windows(){
-        echo -n "Insira o IP do host windows: "
-        read -r IP_HOST
-        echo -n "Insira o usuario: "
-        read -r USER
-        echo -n "Insira o password: "
-        read -r PASSWD
-        ssh -p 3389 "$USER@$IP_HOST"
-    }
-    #
-
-
 #* ====== CHECKING PARAMETERS AND EXECUTING THE MAIN ======
+
     # Checks if the number of arguments passed to the script is non-zero.
     # Check if the script is being run with root privileges 
     # If not, display an error message and exit with a non-zero status code 
@@ -3160,6 +3123,8 @@ RELEASE="ANAKIN"
     # No arguments provided: Run interactive menu
     enable_proxychains  # Enable proxychains at script start
     main  # Run interactive mode
+
+    # TODO: Extracting URLs from a Web Page - Web and Internet Users (177) - Chapter 7 - Wicked Cool Scripts
 
 
 
