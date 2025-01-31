@@ -28,8 +28,6 @@
     # Author (jpgress@gmail.com)
     AUTHOR="R3v4N's 0wL"
 
-
-
 #* ====== SUPPORT FUNCTIONS (A-Z) ======
     # Function: Enable Proxychains
     function ascii_banner_art() {
@@ -53,9 +51,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "${RED}                                           0wL Operators Script (0wLOpS) .sh v $VERSION ${RESET}"
-        subtitle;
-        echo -e "${GRAY}+                          Created by $AUTHOR                       +${RESET}"
+        echo -e "${RED}                                           0wL Operators Script (0wLOpS) .sh v $VERSION ${GRAY}by $AUTHOR ${RESET}"
         subtitle;
     }
 
