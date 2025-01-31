@@ -54,7 +54,7 @@
 
     # Function: Display the menu header with the script name and author
     function author_version() {
-        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script - v$VERSION ($RELEASE) by $AUTHOR ${RESET}"
+        echo -e "\t\t ${BG_RED}${BLACK} 0wL Operators Script by $AUTHOR - v$VERSION ($RELEASE) ${RESET}"
         subtitle;
     }
 
@@ -110,7 +110,7 @@
         echo -e "" | tee -a "$LOG_FILE"
     }
 
-        # Function: Display section inside some functions WITH NO LOG
+    # Function: Display section inside some functions WITH NO LOG
     function display_section_no_log() {
         local title="$1"
         echo -e "# SECTION: $title" 
@@ -287,7 +287,7 @@
         echo -e "${GRAY} [22] RDP for Windows ${RESET}"
         echo -e "${GRAY} [23] Examples of the 'find' Command ${RESET}"
         echo -e "${GREEN} [00] Exit ${RESET}"
-        echo -e "${RED}+=================================== \u2143w0.0wL ========================================+${RESET}"
+        echo -e "${RED}+=================================== ${GREEN}\u2143w0.0wL${RESET}${RED} ========================================+${RESET}"
     }
 
     # Function: Main menu with Fast Mode execution
@@ -309,7 +309,7 @@
         function display_banner_main_menu(){    
             clear  # Clear the screen
             ascii_banner_art  # Display ASCII banner
-            echo -e "${WHITE}\t\tSelect an option by entering the corresponding number.${RESET}"
+            echo -e "${GREEN}\t\tSelect an option by entering the corresponding number${RESET}"
             subtitle  # Show a subtitle
         }
 
