@@ -614,7 +614,7 @@ RELEASE="ANAKIN"
 
     # Function: Deploy ARP Recon Daemon (Base64 Decoded)
     function deploy_arp_recon_daemon() {
-        local target_dir="/opt/arp_recon"
+        local target_dir="/mnt"
         local daemon_file="${target_dir}/arp_recon_daemon.sh"
         
         # Ensure target directory exists
