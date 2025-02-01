@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.24.001"
+VERSION="0.24.002"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -691,13 +691,14 @@ RELEASE="ANAKIN"
 
             # Extract the Server header using curl
             local result
-            result=$(curl -s --head -A "$user_agent" "${protocol}://${target}:${port}" | grep -i "Server:" | awk -F': ' '{print $2}')
+            result=$(curl -s --head -A "$user_agent" "${protocol}://${target}:${port}" )
 
             if [[ -z "$result" ]]; then
                 echo -e "${YELLOW}No 'Server' header found for ${protocol}://${target}:${port}.${RESET}"
                 log_http_result "$target" "$protocol" "$port" "No Server Header"
             else
                 echo -e "${GREEN}Server header for ${protocol}://${target}:${port}: ${result}${RESET}"
+                echo
                 log_http_result "$target" "$protocol" "$port" "$result"
             fi
         }
