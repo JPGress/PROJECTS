@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.23.101"
+VERSION="0.23.102"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -388,6 +388,7 @@ RELEASE="ANAKIN"
             echo -e "\t${RED} [106] Reverse DNS Lookup ${RESET}" 
             echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
             echo -e "\t${RED} [108] ARP Network Scan ${RESET}"
+            echo -e "\t${RED} [109] Deploy ARP Recon Agent ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
             echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
@@ -453,6 +454,7 @@ RELEASE="ANAKIN"
                 106) rev_dns ;; # Reverse DNS Lookup   
                 107) recon_dns ;; # DNS Reconnaissance
                 108) arp_scan ;; # ARP Network Scan
+                109) arp_recon_daemon ;; # Deploy ARP Recon Agent
             #* [+] VULNERABILITY ANALYSIS
                 200) mitm ;; # MiTM (Man-in-the-Middle)  
                 201) portscan_bashsocket ;; # Portscan (Bash sockets)  
@@ -480,7 +482,7 @@ RELEASE="ANAKIN"
         function validate_input() {
             local input="$1"
             local valid_options=(
-                                $(seq 100 108) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
+                                $(seq 100 109) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
                                 $(seq 200 203) # [+] VULNERABILITY ANALYSIS
                                 $(seq 300 302) # [+] EXPLOITATION & PRIVILEGE ESCALATION
                                 $(seq 400 401) # [+] POST-EXPLOITATION & PERSISTENCE
