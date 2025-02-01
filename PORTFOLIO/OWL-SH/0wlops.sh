@@ -609,7 +609,6 @@ RELEASE="ANAKIN"
 
         arp_scan_workflow
     }
-
     # Function: Deploy ARP Recon Daemon (Base64 Decoded)
     function deploy_arp_recon_daemon() {
         local target_dir="/mnt"
@@ -631,7 +630,6 @@ RELEASE="ANAKIN"
         echo "[*] Configure NETWORK_RANGE, INTERFACE, and other settings before running."
         echo "[*] To start manually, use: $daemon_file &"
     }
-    
     # Function: Perform DNS Zone Transfer for reconnaissance
     function dns_zt() {
         # v_dns_zt - Perform DNS Zone Transfer for reconnaissance
@@ -718,7 +716,6 @@ RELEASE="ANAKIN"
         # Execute the DNS Zone Transfer workflow
         dns_zt_workflow;
     }
-
     # Function: Find-base attack surface analysis
     function find_based_attack_surface_analysis() {
         # find_based_attack_surface_analysis - Automates Attack Surface Discovery using 'find'
@@ -856,7 +853,6 @@ RELEASE="ANAKIN"
         # Execute the workflow
         find_based_analysis_workflow
     }
-
     # Function: Find command examples
     function find_command_examples() {
 
@@ -967,7 +963,6 @@ RELEASE="ANAKIN"
 
         find_examples_workflow
     }
-
     # Function: Script to automate Google hacking queries for reconnaissance
     function google_hacking() {
         # iii_google_hacking - Automates Google hacking queries for reconnaissance
@@ -1136,7 +1131,6 @@ RELEASE="ANAKIN"
         read -r 2>/dev/null
         main_menu
     }
-
     # Function: Interactive Guide for Resetting Root Password via GRUB
     function linux_root_password_reset() {
 
@@ -1267,7 +1261,6 @@ RELEASE="ANAKIN"
         # Main Execution
         submenu_linux_root_password_reset
     }
-
     # Function: Collects system & network reconnaissance data
     function linux_sysinfo() {
         # linux_sysinfo - Comprehensive Linux System & Network Reconnaissance
@@ -1612,7 +1605,6 @@ RELEASE="ANAKIN"
         # Execute workflow
         sysinfo_workflow
     }
-
     # Function: Perform metadata analysis for files on specific domains
     function metadata_analysis() {
         # Metadata Analysis - Perform metadata analysis for files on specific domains    
@@ -1899,7 +1891,6 @@ RELEASE="ANAKIN"
         run_metadata_analysis;
 
     }
-
     # Function: Perform a Man-in-the-Middle (MiTM) attack
     function mitm() {
         # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
@@ -2040,7 +2031,6 @@ RELEASE="ANAKIN"
         # Execute the MiTM attack workflow
         main_mitm
     }
-
     # Function: Nmap Network Discovery
     function nmap_network_discovery() {
         # Function: Nmap Network Discovery  
@@ -2119,7 +2109,6 @@ RELEASE="ANAKIN"
 
         nmap_discovery_workflow
     }
-
     # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
     function parsing_html() {
         # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
@@ -2249,7 +2238,6 @@ RELEASE="ANAKIN"
         read -r 2>/dev/null
         main_menu
     }
-
     # Function: Script to perform a port scan on a network using netcat
     function portscan() {
         # i_portscan - Script to perform a port scan on a network using netcat
@@ -2369,7 +2357,6 @@ RELEASE="ANAKIN"
         read -r
         main
     }
-
     # Function: Perform a Bash-based TCP port scan
     function portscan_bashsocket(){
         # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
@@ -2485,7 +2472,6 @@ RELEASE="ANAKIN"
         # Execute port scan function
         portscan_workflow;
     }
-
     # Function: Quick Reference for Escaping Restricted Bash (rbash)
     function rbash_escape_methods() {
         # rbash_escape_methods - Quick Reference Guide for rbash Escape Techniques
@@ -2579,7 +2565,6 @@ RELEASE="ANAKIN"
 
         rbash_escape_workflow
     }
-
     # Function: Perform DNS reconnaissance on a target domain using a subdomain wordlist
     function recon_dns() {
         # viii_recon_dns - Perform DNS reconnaissance on a target domain using a subdomain wordlist
@@ -2675,7 +2660,6 @@ RELEASE="ANAKIN"
         # Execute the main workflow
         dns_recon_workflow
     }
-
     # Function: Perform Reverse DNS Lookup for a specified range of IP addresses
     function rev_dns() {
         # vii_rev_dns - Perform Reverse DNS Lookup for a specified range of IP addresses
@@ -2762,7 +2746,6 @@ RELEASE="ANAKIN"
         # Execute the main workflow
         reverse_dns_workflow
     }
-
     # Function: Perform a Subdomain Takeover check
     function Subdomain_takeover() {
         # vi_Subdomain_takeover - Perform a Subdomain Takeover check
@@ -2851,7 +2834,6 @@ RELEASE="ANAKIN"
         # Execute the workflow
         takeover_workflow
     }
-
     # Function: Show a list of useful Linux networking commands
     function useful_linux_commands() {
         # Function: Display useful Linux networking commands
@@ -2946,7 +2928,6 @@ RELEASE="ANAKIN"
         # Execute workflow
         useful_commands_workflow
     }
-
     # Function: Quick Reference Guide for Vim Commands
     function vim_quick_reference() {
         # vim_quick_reference - Quick Reference Guide for Vim Commands
@@ -3041,7 +3022,6 @@ RELEASE="ANAKIN"
         # Start the Vim usage reminder workflow
         vim_quick_reference_workflow
     }
-
     # Function: Windows Basic Commands Quick Reference
     function windows_basic_commands() {
         # windows_basic_commands - Quick Reference for Essential Windows Commands
@@ -3173,7 +3153,6 @@ RELEASE="ANAKIN"
 
         main_windows_reference
     }
-
     # Function: Wireless Penetration Testing Toolkit
     function wireless_pentest() {
         # wireless_pentest - Conducts penetration testing on Wi-Fi networks
