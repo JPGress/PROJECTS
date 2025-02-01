@@ -67,7 +67,7 @@
 # Version
 VERSION="1.25.000"
 # Darth Release
-RELEASE="ANAKIN"
+RELEASE="VADER"
 #* ====== CONSTANTS ======
 
     # Standard foreground colors
