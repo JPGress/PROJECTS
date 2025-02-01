@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.24.002"
+VERSION="0.24.003"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -646,10 +646,10 @@ RELEASE="ANAKIN"
         DEFAULT_USER_AGENT="Mozilla/5.0 (compatible; OWLOps/1.0; +http://example.com)"
         LOG_DIR="./logs"
         LOG_FILE="${LOG_DIR}/http_headers_$(date +%d%m%Y_%H%M%S).log"
-
+        title="\tHTTP(S) HEADER GRABBER"
         ### === FUNCTION: DISPLAY BANNER ===
         function display_http_header_banner() {
-            display_banner_inside_functions "HTTP(S) HEADER GRABBER"
+            display_banner_inside_functions
         }
 
         ### === FUNCTION: SETUP LOGGING ===
