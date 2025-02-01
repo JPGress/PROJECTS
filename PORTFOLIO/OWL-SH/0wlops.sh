@@ -453,22 +453,22 @@ RELEASE="ANAKIN"
                 106) rev_dns ;; # Reverse DNS Lookup   
                 107) recon_dns ;; # DNS Reconnaissance
                 108) arp_scan ;; # ARP Network Scan
-            #* [+] VULNERABILITY ANALYSI*
+            #* [+] VULNERABILITY ANALYSIS
                 200) mitm ;; # MiTM (Man-in-the-Middle)  
                 201) portscan_bashsocket ;; # Portscan (Bash sockets)  
                 202) useful_linux_commands ;; # Useful Network Commands (Quick Ref) 
                 203) linux_sysinfo ;; # System Information (Linux OS)
-            #* [+] EXPLOITATION & PRIVIL*GE ESCALATION
+            #* [+] EXPLOITATION & PRIVILEGE ESCALATION
                 300) find_based_attack_surface_analysis ;; # Attack Surface Analysis (find Based)   
                 301) find_command_examples ;; # File Discovery & Enumeration (Quick Ref)
                 302) linux_root_password_reset ;; # Root Password Reset Guide (Linux OS)
-            #* [+] POST-EXPLOITATION & P*RSISTENCE
+            #* [+] POST-EXPLOITATION & PERSISTENCE
                 400) vim_quick_reference ;; # Vim Escape Techniques (Quick Ref)
                 401) rbash_escape_methods ;; # Rbash Escape Techniques (Linux OS)
-            #* [+] NETWORK & SYSTEM EXPL*ITATION
+            #* [+] NETWORK & SYSTEM EXPLOITATION
                 500) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
                 501) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
-            #* [+] LATERAL MOVEMENT & NE*WORK DISCOVERY
+            #* [+] LATERAL MOVEMENT & NETWORK DISCOVERY
                 600) nmap_network_discovery ;; # Network Discovery (Nmap)  
             #* [+] EXIT
                 0) exit_script ;;
