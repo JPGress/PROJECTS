@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.24.000"
+VERSION="0.24.001"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -736,7 +736,7 @@ RELEASE="ANAKIN"
 
             exit_to_main_menu
         }
-
+        main_http_header_grabber
     }
     # Function: Deploy ARP Recon Daemon (Base64 Decoded)
     function deploy_arp_recon_daemon() {
