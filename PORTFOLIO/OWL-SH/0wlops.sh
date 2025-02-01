@@ -2,19 +2,18 @@
 # 0wlops.sh - 0wL Operational Security 
     #
     # Site: https://github.com/R3v4N/0wL-OPS
-    # Author: R3v4N aka 0wL (jpgress@gmail.com)
-    # Maintainer: R3v4N aka 0wL
+    # Author & Maintainer : R3v4N aka 0wL (jpgress@gmail.com)
     #
     # ---------------------------------------------------------------------------------
     #
-    # 0wL OPS is an advanced Bash-based Operational Security designed for
+    # 0wL OPS is an advanced Bash-based Operational Security toolkit tailored for
     # penetration testers, red teamers, and security researchers.
     #
-    # It automates various reconnaissance, exploitation, and post-exploitation tasks,
-    # enhancing operational efficiency in offensive security engagements.
+    # It automates reconnaissance, exploitation, and post-exploitation tasks, boosting
+    # efficiency in offensive security engagements.
     #
-    # The toolkit includes modules for network scanning, enumeration, wireless attacks,
-    # privilege escalation, OSINT, forensic analysis, and much more.
+    # The toolkit covers network scanning, enumeration, wireless attacks, privilege
+    # escalation, OSINT, forensic analysis, and more.
     #
     # 0wL OpS — We Hunt in the Shadows
     #
@@ -35,26 +34,31 @@
     #
     # Features:
     #
-    #  - Interactive menu system for easy navigation
-    #  - Automated recon (Google Hacking, DNS Recon, Metadata Extraction)
-    #  - Active and passive network scanning (Nmap, Netcat, Wi-Fi attacks)
-    #  - Exploitation frameworks and privilege escalation techniques
-    #  - Forensic and incident response utilities
-    #  - Windows & Linux command reference for red team operations
-    #  - Comprehensive logging system with structured output
+    #  - Interactive menu for intuitive navigation
+    #  - Extensive recon tools: Google Hacking, DNS Recon, Metadata Extraction
+    #  - Active & passive network scanning (Nmap, ARP Scan, Netcat, Wi-Fi attacks)
+    #  - Privilege escalation & persistence techniques
+    #  - Post-exploitation & forensic utilities
+    #  - Windows & Linux command reference for offensive security
+    #  - Robust logging system with structured output
     #
     # ---------------------------------------------------------------------------------
     #
     # Version History:
     #
-    #  v1.21.30 - 2025-01-31, R3v4N:
-    #   - Refactored function structure for better readability and modularity.
-    #   - Improved logging mechanism for network scans and attacks.
-    #   - Enhanced error handling in multiple modules.
-    #   - Fixed issues with network interface selection in Nmap scans.
-    #   - Standardized output formatting across all functions.
+    #  v1.25.000 - 2025-02-02 (VADER), R3v4N:
+    #   - Introduced ARP-based network scanning.
+    #   - Added automated HTTP(S) banner grabbing.
+    #   - Implemented WHOIS & Passive DNS recon.
+    #   - Standardized menu options using PTES categories.
+    #   - Improved logging, structured output & error handling.
     #
-    #  v0.21.30 - 2025-01-30, R3v4N:
+    #  v0.21.000 - 2025-01-31 (ANAKIN), R3v4N:
+    #   - Refactored function structure for better readability and modularity.
+    #   - Enhanced error handling across multiple modules.
+    #   - Fixed network interface selection issues in Nmap scans.
+    #
+    #  v0.20.000 - 2025-01-30 (ANAKIN), R3v4N:
     #   - Initial stable release featuring core functionalities.
     #
     # ---------------------------------------------------------------------------------
