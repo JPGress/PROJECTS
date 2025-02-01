@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.24.003"
+VERSION="1.25.000"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -387,9 +387,8 @@ RELEASE="ANAKIN"
             echo -e "\t${RED} [105] Subdomain Takeover ${RESET}" 
             echo -e "\t${RED} [106] Reverse DNS Lookup ${RESET}" 
             echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
-            echo -e "\t${RED} [108] ARP Network Scan ${RESET}"
-            echo -e "\t${RED} [109] Deploy ARP Recon Agent ${RESET}"
-            echo -e "\t${RED} [110] HTTP(S) Banner Grabber ${RESET}"
+            echo -e "\t${RED} [108] HTTP(S) Banner Grabber ${RESET}"
+            echo -e "\t${RED} [109] Whois & DNS Reconnaissance ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
             echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
@@ -412,6 +411,8 @@ RELEASE="ANAKIN"
         echo
         echo -e "${BRIGHT_GREEN} [+] LATERAL MOVEMENT & NETWORK DISCOVERY ${RESET}"
             echo -e "\t${RED} [600] Nmap Network Scan ${RESET}"
+            echo -e "\t${RED} [601] ARP Network Scan ${RESET}"
+            echo -e "\t${RED} [602] Deploy ARP Recon Agent ${RESET}"
         echo
         echo -e "${GRAY} [+] MISC ${RESET}"
             echo -e "\t${GRAY} [000] Exit ${RESET}"
@@ -454,9 +455,8 @@ RELEASE="ANAKIN"
                 105) Subdomain_takeover ;; # Subdomain Takeover  
                 106) rev_dns ;; # Reverse DNS Lookup   
                 107) recon_dns ;; # DNS Reconnaissance
-                108) arp_scan ;; # ARP Network Scan
-                109) arp_recon_daemon ;; # Deploy ARP Recon Agent
-                110) banner_grabber ;; # HTTP(S) Banner Grabber
+                108) banner_grabber ;; # HTTP(S) Banner Grabber
+                109) whois_dns_recon ;; # Whois & DNS Reconnaissance
             #* [+] VULNERABILITY ANALYSIS
                 200) mitm ;; # MiTM (Man-in-the-Middle)  
                 201) portscan_bashsocket ;; # Portscan (Bash sockets)  
@@ -473,7 +473,9 @@ RELEASE="ANAKIN"
                 500) wireless_pentest ;; # Wireless Penetration Testing Toolkit   
                 501) windows_basic_commands ;; # Windows Basic Commands (Quick Ref)
             #* [+] LATERAL MOVEMENT & NETWORK DISCOVERY
-                600) nmap_network_discovery ;; # Network Discovery (Nmap)  
+                600) nmap_network_discovery ;; # Network Discovery (Nmap)
+                601) arp_scan ;; # ARP Network Scan
+                602) arp_recon_daemon ;; # Deploy ARP Recon Agent
             #* [+] EXIT
                 0) exit_script ;;
             #* Invalid option
@@ -484,12 +486,12 @@ RELEASE="ANAKIN"
         function validate_input() {
             local input="$1"
             local valid_options=(
-                                $(seq 100 110) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
+                                $(seq 100 109) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
                                 $(seq 200 203) # [+] VULNERABILITY ANALYSIS
                                 $(seq 300 302) # [+] EXPLOITATION & PRIVILEGE ESCALATION
                                 $(seq 400 401) # [+] POST-EXPLOITATION & PERSISTENCE
                                 $(seq 500 501) # [+] NETWORK & SYSTEM EXPLOITATION
-                                $(seq 600 600) # [+] LATERAL MOVEMENT & NETWORK DISCOVERY
+                                $(seq 600 602) # [+] LATERAL MOVEMENT & NETWORK DISCOVERY
                                 )  # Create a list of valid options
             valid_options=("${valid_options[@]}")
             for valid in "${valid_options[@]}"; do
@@ -3151,6 +3153,111 @@ RELEASE="ANAKIN"
 
         # Start the Vim usage reminder workflow
         vim_quick_reference_workflow
+    }
+    # Function: WHOIS & Passive DNS Recon
+    function whois_dns_recon() {
+        # Function: whois_dns_recon - WHOIS & Passive DNS Recon (0wL OPS)
+            # =====================================================================
+            #
+            # Description:
+            #   - Performs WHOIS lookups and passive DNS reconnaissance.
+            #   - Retrieves WHOIS ownership data & subdomains from passive sources.
+            #
+            # Features:
+            #   - Supports single domain and bulk mode (file input).
+            #   - Uses `whois` for domain ownership details.
+            #   - Uses `crt.sh` (Certificate Transparency Logs) for passive DNS.
+            #   - Logs all results for later analysis.
+            #
+            # Usage:
+            #   - Interactive mode: Select a domain or bulk file for processing.
+            #
+            # Created by: R3v4N (w/GPT)
+            # Version: 1.2
+            # Created on: 2025-02-01
+            # =====================================================================
+        # === CONFIGURATION ===
+        local LOG_DIR="/tmp/owl_logs"
+        local WHOIS_LOG="${LOG_DIR}/whois_$(date +%d%m%Y).log"
+        local DNS_LOG="${LOG_DIR}/dns_$(date +%d%m%Y).log"
+
+        # === SETUP LOGGING ===
+        function setup_logging() {
+            mkdir -p "$LOG_DIR"  # Ensure log directory exists
+            touch "$WHOIS_LOG" "$DNS_LOG"  # Create log files if they don't exist
+            echo -e "[+] Logging enabled: WHOIS → ${WHOIS_LOG} | Passive DNS → ${DNS_LOG}"
+        }
+
+        # === VALIDATE DOMAIN INPUT ===
+        function validate_domain() {
+            local domain="$1"
+            if [[ ! "$domain" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+                echo -e "[!] Invalid domain format: $domain"
+                exit 1
+            fi
+        }
+
+        # === WHOIS LOOKUP ===
+        function perform_whois() {
+            local domain="$1"
+            echo -e "[+] Performing WHOIS lookup for: $domain"
+            whois "$domain" | tee -a "$WHOIS_LOG"
+            echo -e "[✔] WHOIS data saved: ${WHOIS_LOG}"
+        }
+
+        # === PASSIVE DNS LOOKUP (Subdomain Enumeration) ===
+        function passive_dns_lookup() {
+            local domain="$1"
+            echo -e "[+] Retrieving Passive DNS records for: $domain"
+            
+            response=$(curl -s "https://crt.sh/?q=%.$domain&output=json")
+
+            if [[ -z "$response" ]]; then
+                echo -e "[!] No passive DNS records found for $domain"
+                return
+            fi
+
+            echo "$response" | jq -r '.[].name_value' | sort -u | tee -a "$DNS_LOG"
+            echo -e "[✔] Passive DNS data saved: ${DNS_LOG}"
+        }
+
+        # === BULK MODE HANDLER ===
+        function bulk_mode() {
+            local file="$1"
+            if [[ ! -f "$file" ]]; then
+                echo -e "[!] File not found: $file"
+                exit 1
+            fi
+
+            while read -r domain; do
+                validate_domain "$domain"
+                perform_whois "$domain"
+                passive_dns_lookup "$domain"
+            done < "$file"
+        }
+
+        # === MAIN WORKFLOW ===
+        function main_whois_dns_recon() {
+            setup_logging
+            display_banner_inside_functions  # 0wL OPS Standard Function
+
+            echo -e "[+] WHOIS & Passive DNS Recon"
+            read -r -p "Enter domain (or press ENTER to use bulk mode): " domain
+
+            if [[ -n "$domain" ]]; then
+                validate_domain "$domain"
+                perform_whois "$domain"
+                passive_dns_lookup "$domain"
+            else
+                read -r -p "Enter file with domains (one per line): " file
+                bulk_mode "$file"
+            fi
+
+            exit_to_main_menu  # 0wL OPS Standard Function
+        }
+
+        # === EXECUTE FUNCTION ===
+        main_whois_dns_recon
     }
     # Function: Windows Basic Commands Quick Reference
     function windows_basic_commands() {
