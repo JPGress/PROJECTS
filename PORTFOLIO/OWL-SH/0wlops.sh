@@ -65,7 +65,7 @@
     # Use responsibly and only on authorized systems.
     #
 # Version
-VERSION="0.23.102"
+VERSION="0.24.000"
 # Darth Release
 RELEASE="ANAKIN"
 #* ====== CONSTANTS ======
@@ -389,6 +389,7 @@ RELEASE="ANAKIN"
             echo -e "\t${RED} [107] DNS Reconnaissance ${RESET}"
             echo -e "\t${RED} [108] ARP Network Scan ${RESET}"
             echo -e "\t${RED} [109] Deploy ARP Recon Agent ${RESET}"
+            echo -e "\t${RED} [110] HTTP(S) Banner Grabber ${RESET}"
         echo
         echo -e "${BRIGHT_GREEN} [+] VULNERABILITY ANALYSIS ${RESET}"
             echo -e "\t${RED} [200] MiTM (Man-in-the-Middle) ${RESET}"
@@ -455,6 +456,7 @@ RELEASE="ANAKIN"
                 107) recon_dns ;; # DNS Reconnaissance
                 108) arp_scan ;; # ARP Network Scan
                 109) arp_recon_daemon ;; # Deploy ARP Recon Agent
+                110) banner_grabber ;; # HTTP(S) Banner Grabber
             #* [+] VULNERABILITY ANALYSIS
                 200) mitm ;; # MiTM (Man-in-the-Middle)  
                 201) portscan_bashsocket ;; # Portscan (Bash sockets)  
@@ -482,7 +484,7 @@ RELEASE="ANAKIN"
         function validate_input() {
             local input="$1"
             local valid_options=(
-                                $(seq 100 109) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
+                                $(seq 100 110) # [+] INTELLIGENCE GATHERING (RECON & OSINT)
                                 $(seq 200 203) # [+] VULNERABILITY ANALYSIS
                                 $(seq 300 302) # [+] EXPLOITATION & PRIVILEGE ESCALATION
                                 $(seq 400 401) # [+] POST-EXPLOITATION & PERSISTENCE
@@ -610,6 +612,131 @@ RELEASE="ANAKIN"
         }
 
         arp_scan_workflow
+    }
+    # Function: HTTP(S) Banner Grabber
+    function banner_grabber(){
+        # OWL OPS - HTTP(S) SERVER HEADER GRABBER
+            # ========================================================================================
+            # Description:
+            #   This script retrieves the "Server" header from an HTTP(S) response of a given IP or domain.
+            #   It supports both IPv4 addresses and domain names, with customizable ports and protocols.
+            #
+            # Features:
+            #   - Supports both HTTP and HTTPS requests.
+            #   - Allows custom User-Agent for stealthy requests.
+            #   - Works with both IP addresses and domain names.
+            #   - Allows custom port selection (defaults to 80 for HTTP, 443 for HTTPS).
+            #   - Logs results to a structured log file for later analysis.
+            #
+            # Usage:
+            #   ./0wlops.sh <function_id>    # Run specific module from the main menu
+            #
+            # Author: R3v4N (w/GPT)
+            # Created on: 2025-02-01
+            # Version: 1.3
+            #
+            # Notes:
+            #   - Designed for **Red Team reconnaissance & banner grabbing**.
+            #   - Requires `curl` to be installed.
+            # ========================================================================================
+
+        ### === CONFIGURATION ===
+        DEFAULT_HTTP_PORT="80"
+        DEFAULT_HTTPS_PORT="443"
+        DEFAULT_USER_AGENT="Mozilla/5.0 (compatible; OWLOps/1.0; +http://example.com)"
+        LOG_DIR="./logs"
+        LOG_FILE="${LOG_DIR}/http_headers_$(date +%d%m%Y_%H%M%S).log"
+
+        ### === FUNCTION: DISPLAY BANNER ===
+        function display_http_header_banner() {
+            display_banner_inside_functions "HTTP(S) HEADER GRABBER"
+        }
+
+        ### === FUNCTION: SETUP LOGGING ===
+        function setup_http_logging() {
+            mkdir -p "$LOG_DIR"  # Ensure log directory exists
+            touch "$LOG_FILE"  # Create log file if it doesn't exist
+            echo -e "${CYAN}[+] Logging enabled: Results will be saved to ${LOG_FILE}${RESET}"
+        }
+
+        ### === FUNCTION: VALIDATE TARGET INPUT ===
+        function validate_http_target() {
+            local target="$1"
+
+            # Check if input is an IPv4 address or a valid domain
+            if [[ "$target" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$target" =~ ^[a-zA-Z0-9.-]+$ ]]; then
+                return 0  # Valid target
+            else
+                echo -e "${RED}Invalid target. Please enter a valid IP address or domain.${RESET}"
+                exit 1
+            fi
+        }
+
+        ### === FUNCTION: LOG RESULTS ===
+        function log_http_result() {
+            local target="$1"
+            local protocol="$2"
+            local port="$3"
+            local result="$4"
+
+            echo -e "$(date '+%Y-%m-%d %H:%M:%S') | ${protocol}://${target}:${port} | ${result}" >> "$LOG_FILE"
+        }
+
+        ### === FUNCTION: GRAB SERVER HEADER ===
+        function grab_http_header() {
+            local protocol="$1"
+            local target="$2"
+            local port="$3"
+            local user_agent="$4"
+
+            # Extract the Server header using curl
+            local result
+            result=$(curl -s --head -A "$user_agent" "${protocol}://${target}:${port}" | grep -i "Server:" | awk -F': ' '{print $2}')
+
+            if [[ -z "$result" ]]; then
+                echo -e "${YELLOW}No 'Server' header found for ${protocol}://${target}:${port}.${RESET}"
+                log_http_result "$target" "$protocol" "$port" "No Server Header"
+            else
+                echo -e "${GREEN}Server header for ${protocol}://${target}:${port}: ${result}${RESET}"
+                log_http_result "$target" "$protocol" "$port" "$result"
+            fi
+        }
+
+        ### === FUNCTION: MAIN WORKFLOW ===
+        function main_http_header_grabber() {
+            display_http_header_banner
+            setup_http_logging
+
+            # Prompt for target (IP or domain)
+            read -r -p "Enter target IP or domain: " target
+            validate_http_target "$target"
+
+            # Choose protocol
+            echo -e "\n${CYAN}Select Protocol:${RESET}"
+            echo -e "1) HTTP"
+            echo -e "2) HTTPS"
+            read -r -p "Enter choice (1 or 2): " protocol_choice
+
+            case "$protocol_choice" in
+                1) protocol="http"; default_port="$DEFAULT_HTTP_PORT" ;;
+                2) protocol="https"; default_port="$DEFAULT_HTTPS_PORT" ;;
+                *) echo -e "${RED}Invalid selection. Defaulting to HTTP.${RESET}"; protocol="http"; default_port="$DEFAULT_HTTP_PORT" ;;
+            esac
+
+            # Prompt for port (default to 80 for HTTP, 443 for HTTPS)
+            read -r -p "Enter target port (default: $default_port): " port
+            port="${port:-$default_port}"  # Use default if none provided
+
+            # Prompt for User-Agent (optional)
+            read -r -p "Enter a custom User-Agent (or press Enter for default): " user_agent
+            user_agent="${user_agent:-$DEFAULT_USER_AGENT}"  # Use default if none provided
+
+            # Perform the HTTP(S) header grab
+            grab_http_header "$protocol" "$target" "$port" "$user_agent"
+
+            exit_to_main_menu
+        }
+
     }
     # Function: Deploy ARP Recon Daemon (Base64 Decoded)
     function deploy_arp_recon_daemon() {
